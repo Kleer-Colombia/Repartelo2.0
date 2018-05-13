@@ -1,3 +1,5 @@
+class NotPermittedException < StandardError; end
+
 module AdminAuthorizable
     extend ActiveSupport::Concern
   
