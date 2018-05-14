@@ -2,7 +2,7 @@ class BalanceActions
 
   def initialize
     @accounter = Accounter.new
-    @saldos = SaldosActions.new
+    @saldos = SaldosCommands.new
   end
 
   def distribute balanceId

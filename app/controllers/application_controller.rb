@@ -3,7 +3,6 @@ class ApplicationController < ActionController::Base
   include AdminAuthorizable
   include TokenAuthenticatable
 
-
   rescue_from ActiveRecord::RecordNotFound, with: -> { render json: { error: 'Not found' }, status: :not_found }
 
   #TODO what happen when the parameter is and object?
@@ -23,5 +22,9 @@ class ApplicationController < ActionController::Base
 
   def halt_message error_code, message
     render json: { message: message }, status: error_code
+  end
+
+  def send_response object, status = 200
+    render json: { response: object }, status: status
   end
 end

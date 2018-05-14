@@ -6,6 +6,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+
+      get '/saldos/:kleerer_id', to: 'saldos#find_saldos'
+      post '/saldos/', to: 'saldos#add_saldo'
+
       resources :kleerers do
         resources :books
       end
