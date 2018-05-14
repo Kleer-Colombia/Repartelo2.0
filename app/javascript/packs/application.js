@@ -9,13 +9,23 @@
 
 import Vue from 'vue'
 import App from '../app.vue'
+import VueResource from 'vue-resource'
+import ElementUI from 'element-ui'
+import money from 'v-money'
+import locale from 'element-ui/lib/locale/lang/en'
+import 'element-ui/lib/theme-chalk/index.css'
+import router from '../router'
+Vue.config.productionTip = false
+Vue.use(VueResource)
+Vue.use(ElementUI, { locale })
+Vue.use(money, {precision: 2})
+Vue.http.options.emulateJSON = true
 
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.body.appendChild(document.createElement('application'))
   const app = new Vue({
     el,
+    router,
     render: h => h(App)
   })
-
-  console.log(app)
 })

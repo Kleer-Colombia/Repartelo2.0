@@ -3,8 +3,13 @@
   "private": true,
   "dependencies": {
     "@rails/webpacker": "^3.2.1",
+    "axios": "^0.16.2",
+    "element-ui": "^2.3.2",
+    "v-money": "^0.8.1",
     "vue": "^2.5.13",
     "vue-loader": "^13.7.0",
+    "vue-resource": "^1.5.0",
+    "vue-router": "^3.0.1",
     "vue-template-compiler": "^2.5.13"
   },
   "devDependencies": {

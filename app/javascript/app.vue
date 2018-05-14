@@ -1,22 +1,41 @@
 <template>
-  <div id="app">
-    <p>{{ message }}</p>
+  <div class="">
+    <el-menu background-color="#428bca" text-color="#fff"
+             active-text-color="#f9f9f9" mode="horizontal">
+      <div v-if="!isAuth()">
+        <el-menu-item index="login" id="Login" @click="route_to('/')">Login</el-menu-item>
+      </div>
+      <div v-if="isAuth()">
+        <el-menu-item index="balance"  id="Balances" style="float: left;" @click="route_to('/balance')">Balances</el-menu-item>
+        <el-menu-item index="saldo" id="Saldos" style="float: left;" @click="route_to('/saldos')">Saldos</el-menu-item>
+        <el-menu-item style="float: right;" id="Logout" @click="logout()" index="logout">Logout</el-menu-item>
+      </div>
+    </el-menu>
+
+    <div id="app">
+      <router-view></router-view> <!-- inyecta los componentes de acuerdo al router-->
+    </div>
   </div>
 </template>
 
 <script>
-export default {
-  data: function () {
-    return {
-      message: "Welcome to Repartelo 2.0 :D"
-    }
-  }
-}
-</script>
 
-<style scoped>
-p {
-  font-size: 2em;
-  text-align: center;
-}
-</style>
+    import auth from './model/auth'
+    import util from './model/util'
+    import router from './router'
+
+    export default {
+        name: 'app',
+        methods: {
+            logout () {
+                auth.logout()
+            },
+            route_to (uri) {
+                router.push(uri)
+            },
+            isAuth () {
+                return util.checkAuth()
+            }
+        }
+    }
+</script>
