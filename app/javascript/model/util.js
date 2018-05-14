@@ -14,23 +14,29 @@ export default {
     return '$' + val
   },
   apiUrl () {
-    return this.loginUrl() + 'api/v1'
+    return this.baseUrl() + 'api/v1'
   },
-  loginUrl () {
-    return 'http://' + window.location.hostname + ':' + process.env.API_PORT + '/'
+  baseUrl () {
+      let url = ''
+      if (window.location.port != "") {
+          url = 'http://' + window.location.hostname + ':' + window.location.port + '/'
+      }else {
+          url = 'http://' + window.location.hostname + '/'
+      }
+    return url
   },
   processErrorMsgs (error, context) {
     console.log(error)
-    console.log(error.response)
+    console.log('---->' + error.response)
     if (error.response) {
-      if (error.response.status === 403) {
+      if (error.response.status === 401) {
         this.manageAuthError(error, context)
       } else if (error.response.status === 404) {
         this.manageSrvNotFoundError(context)
       } else {
         context.$message({
           type: 'error',
-          message: error.response.data.message,
+          message: 'Error: ' +error.response.status + ':' +error.response.data.message,
           duration: 6000
         })
       }

@@ -10,7 +10,7 @@ Rails.application.routes.draw do
         resources :books
       end
 
-      resource :auth, only: %i[create]
+      post '/login', to: 'auths#login'
     end
   end
 end

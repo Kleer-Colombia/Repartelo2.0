@@ -4,13 +4,14 @@ module Api
       class AuthsController < ApplicationController
         skip_before_action :authenticate_user
 
-        def create
-          token_command = AuthenticateUserCommand.call(*params.slice(:user, :password).values)
-  
-          if token_command.success?
-            render json: { token: token_command.result }
-          else
-            render json: { error: token_command.errors }, status: :unauthorized
+        def login
+          validate_parameters [:username,:password], params do
+            token_command = AuthenticateUserCommand.call(*params.slice(:username, :password).values)
+            if token_command.success?
+              render json: { token: token_command.result }
+            else
+              render json: { message: token_command.errors[:base][0] }, status: :unauthorized
+            end
           end
         end
       end

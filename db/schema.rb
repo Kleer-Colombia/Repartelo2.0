@@ -10,19 +10,47 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180512235221) do
+ActiveRecord::Schema.define(version: 20180512185257) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "books", force: :cascade do |t|
-    t.bigint "kleerer_id"
-    t.string "title"
-    t.integer "price_cents", default: 0, null: false
-    t.string "price_currency", default: "COP", null: false
+  create_table "balances", force: :cascade do |t|
+    t.string "client", null: false
+    t.string "project", null: false
+    t.date "date", null: false
+    t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["kleerer_id"], name: "index_books_on_kleerer_id"
+    t.boolean "editable", default: true
+  end
+
+  create_table "distributions", force: :cascade do |t|
+    t.bigint "balance_id", null: false
+    t.bigint "kleerer_id", null: false
+    t.decimal "amount", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["balance_id"], name: "index_distributions_on_balance_id"
+    t.index ["kleerer_id"], name: "index_distributions_on_kleerer_id"
+  end
+
+  create_table "expenses", force: :cascade do |t|
+    t.bigint "balance_id"
+    t.string "description", null: false
+    t.decimal "amount", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["balance_id"], name: "index_expenses_on_balance_id"
+  end
+
+  create_table "incomes", force: :cascade do |t|
+    t.bigint "balance_id"
+    t.string "description", null: false
+    t.decimal "amount", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["balance_id"], name: "index_incomes_on_balance_id"
   end
 
   create_table "kleerers", force: :cascade do |t|
@@ -30,6 +58,28 @@ ActiveRecord::Schema.define(version: 20180512235221) do
     t.string "option", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "percentages", force: :cascade do |t|
+    t.bigint "balance_id", null: false
+    t.bigint "kleerer_id", null: false
+    t.decimal "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["balance_id"], name: "index_percentages_on_balance_id"
+    t.index ["kleerer_id"], name: "index_percentages_on_kleerer_id"
+  end
+
+  create_table "saldos", force: :cascade do |t|
+    t.bigint "balance_id"
+    t.bigint "kleerer_id", null: false
+    t.decimal "amount", null: false
+    t.string "reference", null: false
+    t.string "concept", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["balance_id"], name: "index_saldos_on_balance_id"
+    t.index ["kleerer_id"], name: "index_saldos_on_kleerer_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -41,5 +91,4 @@ ActiveRecord::Schema.define(version: 20180512235221) do
     t.boolean "admin", default: false
   end
 
-  add_foreign_key "books", "kleerers"
 end

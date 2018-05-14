@@ -1,0 +1,903 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.3 (Debian 10.3-1.pgdg90+1)
+-- Dumped by pg_dump version 10.3 (Debian 10.3-1.pgdg90+1)
+
+-- Started on 2018-05-14 03:58:00 UTC
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 1 (class 3079 OID 12980)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2968 (class 0 OID 0)
+-- Dependencies: 1
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 197 (class 1259 OID 16395)
+-- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: masterdba
+--
+
+CREATE TABLE public.ar_internal_metadata (
+    key character varying NOT NULL,
+    value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.ar_internal_metadata OWNER TO masterdba;
+
+--
+-- TOC entry 199 (class 1259 OID 16405)
+-- Name: balances; Type: TABLE; Schema: public; Owner: masterdba
+--
+
+CREATE TABLE public.balances (
+    id bigint NOT NULL,
+    client character varying NOT NULL,
+    project character varying NOT NULL,
+    date date NOT NULL,
+    description character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    editable boolean DEFAULT true
+);
+
+
+ALTER TABLE public.balances OWNER TO masterdba;
+
+--
+-- TOC entry 198 (class 1259 OID 16403)
+-- Name: balances_id_seq; Type: SEQUENCE; Schema: public; Owner: masterdba
+--
+
+CREATE SEQUENCE public.balances_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.balances_id_seq OWNER TO masterdba;
+
+--
+-- TOC entry 2969 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: balances_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: masterdba
+--
+
+ALTER SEQUENCE public.balances_id_seq OWNED BY public.balances.id;
+
+
+--
+-- TOC entry 207 (class 1259 OID 16450)
+-- Name: distributions; Type: TABLE; Schema: public; Owner: masterdba
+--
+
+CREATE TABLE public.distributions (
+    id bigint NOT NULL,
+    balance_id bigint NOT NULL,
+    kleerer_id bigint NOT NULL,
+    amount numeric NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.distributions OWNER TO masterdba;
+
+--
+-- TOC entry 206 (class 1259 OID 16448)
+-- Name: distributions_id_seq; Type: SEQUENCE; Schema: public; Owner: masterdba
+--
+
+CREATE SEQUENCE public.distributions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.distributions_id_seq OWNER TO masterdba;
+
+--
+-- TOC entry 2970 (class 0 OID 0)
+-- Dependencies: 206
+-- Name: distributions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: masterdba
+--
+
+ALTER SEQUENCE public.distributions_id_seq OWNED BY public.distributions.id;
+
+
+--
+-- TOC entry 209 (class 1259 OID 16463)
+-- Name: expenses; Type: TABLE; Schema: public; Owner: masterdba
+--
+
+CREATE TABLE public.expenses (
+    id bigint NOT NULL,
+    balance_id bigint,
+    description character varying NOT NULL,
+    amount numeric NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.expenses OWNER TO masterdba;
+
+--
+-- TOC entry 208 (class 1259 OID 16461)
+-- Name: expenses_id_seq; Type: SEQUENCE; Schema: public; Owner: masterdba
+--
+
+CREATE SEQUENCE public.expenses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.expenses_id_seq OWNER TO masterdba;
+
+--
+-- TOC entry 2971 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: expenses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: masterdba
+--
+
+ALTER SEQUENCE public.expenses_id_seq OWNED BY public.expenses.id;
+
+
+--
+-- TOC entry 205 (class 1259 OID 16438)
+-- Name: incomes; Type: TABLE; Schema: public; Owner: masterdba
+--
+
+CREATE TABLE public.incomes (
+    id bigint NOT NULL,
+    balance_id bigint,
+    description character varying NOT NULL,
+    amount numeric NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.incomes OWNER TO masterdba;
+
+--
+-- TOC entry 204 (class 1259 OID 16436)
+-- Name: incomes_id_seq; Type: SEQUENCE; Schema: public; Owner: masterdba
+--
+
+CREATE SEQUENCE public.incomes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.incomes_id_seq OWNER TO masterdba;
+
+--
+-- TOC entry 2972 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: incomes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: masterdba
+--
+
+ALTER SEQUENCE public.incomes_id_seq OWNED BY public.incomes.id;
+
+
+--
+-- TOC entry 203 (class 1259 OID 16427)
+-- Name: kleerers; Type: TABLE; Schema: public; Owner: masterdba
+--
+
+CREATE TABLE public.kleerers (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    option character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.kleerers OWNER TO masterdba;
+
+--
+-- TOC entry 202 (class 1259 OID 16425)
+-- Name: kleerers_id_seq; Type: SEQUENCE; Schema: public; Owner: masterdba
+--
+
+CREATE SEQUENCE public.kleerers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.kleerers_id_seq OWNER TO masterdba;
+
+--
+-- TOC entry 2973 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: kleerers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: masterdba
+--
+
+ALTER SEQUENCE public.kleerers_id_seq OWNED BY public.kleerers.id;
+
+
+--
+-- TOC entry 211 (class 1259 OID 16475)
+-- Name: percentages; Type: TABLE; Schema: public; Owner: masterdba
+--
+
+CREATE TABLE public.percentages (
+    id bigint NOT NULL,
+    balance_id bigint NOT NULL,
+    kleerer_id bigint NOT NULL,
+    value numeric NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.percentages OWNER TO masterdba;
+
+--
+-- TOC entry 210 (class 1259 OID 16473)
+-- Name: percentages_id_seq; Type: SEQUENCE; Schema: public; Owner: masterdba
+--
+
+CREATE SEQUENCE public.percentages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.percentages_id_seq OWNER TO masterdba;
+
+--
+-- TOC entry 2974 (class 0 OID 0)
+-- Dependencies: 210
+-- Name: percentages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: masterdba
+--
+
+ALTER SEQUENCE public.percentages_id_seq OWNED BY public.percentages.id;
+
+
+--
+-- TOC entry 213 (class 1259 OID 16488)
+-- Name: saldos; Type: TABLE; Schema: public; Owner: masterdba
+--
+
+CREATE TABLE public.saldos (
+    id bigint NOT NULL,
+    balance_id bigint,
+    kleerer_id bigint NOT NULL,
+    amount numeric NOT NULL,
+    reference character varying NOT NULL,
+    concept character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.saldos OWNER TO masterdba;
+
+--
+-- TOC entry 212 (class 1259 OID 16486)
+-- Name: saldos_id_seq; Type: SEQUENCE; Schema: public; Owner: masterdba
+--
+
+CREATE SEQUENCE public.saldos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.saldos_id_seq OWNER TO masterdba;
+
+--
+-- TOC entry 2975 (class 0 OID 0)
+-- Dependencies: 212
+-- Name: saldos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: masterdba
+--
+
+ALTER SEQUENCE public.saldos_id_seq OWNED BY public.saldos.id;
+
+
+--
+-- TOC entry 196 (class 1259 OID 16387)
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: masterdba
+--
+
+CREATE TABLE public.schema_migrations (
+    version character varying NOT NULL
+);
+
+
+ALTER TABLE public.schema_migrations OWNER TO masterdba;
+
+--
+-- TOC entry 201 (class 1259 OID 16416)
+-- Name: users; Type: TABLE; Schema: public; Owner: masterdba
+--
+
+CREATE TABLE public.users (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    email character varying NOT NULL,
+    password_digest character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO masterdba;
+
+--
+-- TOC entry 200 (class 1259 OID 16414)
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: masterdba
+--
+
+CREATE SEQUENCE public.users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO masterdba;
+
+--
+-- TOC entry 2976 (class 0 OID 0)
+-- Dependencies: 200
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: masterdba
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- TOC entry 2786 (class 2604 OID 16515)
+-- Name: balances id; Type: DEFAULT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.balances ALTER COLUMN id SET DEFAULT nextval('public.balances_id_seq'::regclass);
+
+
+--
+-- TOC entry 2790 (class 2604 OID 16516)
+-- Name: distributions id; Type: DEFAULT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.distributions ALTER COLUMN id SET DEFAULT nextval('public.distributions_id_seq'::regclass);
+
+
+--
+-- TOC entry 2791 (class 2604 OID 16517)
+-- Name: expenses id; Type: DEFAULT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.expenses ALTER COLUMN id SET DEFAULT nextval('public.expenses_id_seq'::regclass);
+
+
+--
+-- TOC entry 2789 (class 2604 OID 16518)
+-- Name: incomes id; Type: DEFAULT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.incomes ALTER COLUMN id SET DEFAULT nextval('public.incomes_id_seq'::regclass);
+
+
+--
+-- TOC entry 2788 (class 2604 OID 16519)
+-- Name: kleerers id; Type: DEFAULT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.kleerers ALTER COLUMN id SET DEFAULT nextval('public.kleerers_id_seq'::regclass);
+
+
+--
+-- TOC entry 2792 (class 2604 OID 16520)
+-- Name: percentages id; Type: DEFAULT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.percentages ALTER COLUMN id SET DEFAULT nextval('public.percentages_id_seq'::regclass);
+
+
+--
+-- TOC entry 2793 (class 2604 OID 16491)
+-- Name: saldos id; Type: DEFAULT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.saldos ALTER COLUMN id SET DEFAULT nextval('public.saldos_id_seq'::regclass);
+
+
+--
+-- TOC entry 2787 (class 2604 OID 16521)
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- TOC entry 2944 (class 0 OID 16395)
+-- Dependencies: 197
+-- Data for Name: ar_internal_metadata; Type: TABLE DATA; Schema: public; Owner: masterdba
+--
+
+COPY public.ar_internal_metadata (key, value, created_at, updated_at) FROM stdin;
+environment	production	2018-05-12 19:50:05.056907	2018-05-12 19:50:05.056907
+\.
+
+
+--
+-- TOC entry 2946 (class 0 OID 16405)
+-- Dependencies: 199
+-- Data for Name: balances; Type: TABLE DATA; Schema: public; Owner: masterdba
+--
+
+COPY public.balances (id, client, project, date, description, created_at, updated_at, editable) FROM stdin;
+2	banco de Occidente	PAS	2018-02-01	Pas para banco de occidente	2018-02-08 14:55:49.687437	2018-02-08 14:55:49.687437	t
+3	ATF Abierto	ATF abierto Bogota Febrero	2018-02-17	Atf abierto en Bogotá	2018-02-20 20:45:10.267824	2018-02-20 20:45:10.267824	t
+5	Colpatria	Inception nuevo OnBoarding Tarjeta de Crédito	2018-03-05	Inception facilitado por Cami y Juli	2018-03-05 15:22:08.835734	2018-03-05 15:22:08.835734	t
+6	Hyland	PAS en Perú	2018-03-12	Este Taller sera en perú, cobramos en dolares 	2018-03-05 18:47:50.342372	2018-03-05 18:47:50.342372	t
+7	Hyland	PAS en Bogotá	2018-02-06	PAS en Bogotá	2018-03-05 19:01:20.729956	2018-03-05 19:01:20.729956	t
+8	Solati	Das incompany	2018-04-05	Das incompany con jader como participante.	2018-03-15 15:12:36.420027	2018-03-15 15:12:36.420027	t
+9	Corbeta	Pas	2018-03-12	pas para corbeta-alkosto, en el marco del redisenio de gestion de la demanda	2018-03-15 15:51:45.893067	2018-03-15 15:51:45.893067	t
+10	Sura AM	Sura AM  - Enero 2018	2018-03-20	Diseño del área de Desarrollo Corporativo	2018-03-20 20:21:51.134486	2018-03-20 20:21:51.134486	t
+11	Taller Abierto	Facilitación gráfica Medellín - 201803	2018-03-21	Balance del taller del 9 y 10 de marzo en Medellín.	2018-03-21 20:00:26.411376	2018-03-21 20:00:26.411376	t
+12	Bancolombia	Re-evolución Bancolombia - marzo	2018-03-23	Agile coaching en iniciativa transversal	2018-03-23 17:43:18.458113	2018-03-23 17:43:18.458113	t
+13	Sura AM	Desarrollo Corporativo - Febrero	2018-04-10	Acompañamiento a Desarrollo Corporativo en el mes de febrero	2018-04-10 13:38:21.588264	2018-04-10 13:38:21.588264	t
+\.
+
+
+--
+-- TOC entry 2954 (class 0 OID 16450)
+-- Dependencies: 207
+-- Data for Name: distributions; Type: TABLE DATA; Schema: public; Owner: masterdba
+--
+
+COPY public.distributions (id, balance_id, kleerer_id, amount, created_at, updated_at) FROM stdin;
+91	11	6	2547000.51	2018-03-21 20:12:15.383635	2018-03-21 20:12:15.383635
+92	11	3	3142051.95	2018-03-21 20:12:15.387606	2018-03-21 20:12:15.387606
+93	11	5	3326878.54	2018-03-21 20:12:15.391093	2018-03-21 20:12:15.391093
+94	9	6	1706507.63	2018-03-22 18:13:15.926435	2018-03-22 18:13:15.926435
+95	9	1	6015246.37	2018-03-22 18:13:15.93042	2018-03-22 18:13:15.93042
+34	3	6	2073396.14	2018-02-20 20:45:38.60314	2018-02-20 20:45:38.60314
+35	3	2	7308486.86	2018-02-20 20:45:38.607117	2018-02-20 20:45:38.607117
+47	5	6	5296323.97	2018-03-05 18:11:31.228238	2018-03-05 18:11:31.228238
+48	5	2	7873733.54	2018-03-05 18:11:31.231319	2018-03-05 18:11:31.231319
+49	5	3	7044919.48	2018-03-05 18:11:31.234485	2018-03-05 18:11:31.234485
+57	2	6	2631024.89	2018-03-16 15:36:13.748359	2018-03-16 15:36:13.748359
+58	2	1	4637032.56	2018-03-16 15:36:13.752096	2018-03-16 15:36:13.752096
+59	2	2	4637032.56	2018-03-16 15:36:13.755511	2018-03-16 15:36:13.755511
+60	7	6	2426421.32	2018-03-16 16:18:12.984767	2018-03-16 16:18:12.984767
+61	7	2	8552860.68	2018-03-16 16:18:12.988091	2018-03-16 16:18:12.988091
+70	10	6	1049332.22	2018-03-20 20:24:03.609534	2018-03-20 20:24:03.609534
+71	10	3	951360.17	2018-03-20 20:24:03.613153	2018-03-20 20:24:03.613153
+72	10	5	1790795.61	2018-03-20 20:24:03.616611	2018-03-20 20:24:03.616611
+\.
+
+
+--
+-- TOC entry 2956 (class 0 OID 16463)
+-- Dependencies: 209
+-- Data for Name: expenses; Type: TABLE DATA; Schema: public; Owner: masterdba
+--
+
+COPY public.expenses (id, balance_id, description, amount, created_at, updated_at) FROM stdin;
+6	5	Tiquete Juli	302990.0	2018-03-05 15:24:30.849234	2018-03-05 15:24:30.849234
+7	5	Viáticos Juli	420750.0	2018-03-05 15:25:47.034026	2018-03-05 15:25:47.034026
+8	5	Estadía Juli	756269.0	2018-03-05 15:27:30.865243	2018-03-05 15:27:30.865243
+9	5	Materiales	200000.0	2018-03-05 15:27:45.428581	2018-03-05 15:27:45.428581
+10	5	Cena	113400.0	2018-03-05 15:27:57.482196	2018-03-05 15:27:57.482196
+11	5	Transporte Cami	140000.0	2018-03-05 15:28:14.764143	2018-03-05 15:28:14.764143
+12	6	Tiquetes	1434460.0	2018-03-05 18:48:03.446829	2018-03-05 18:48:03.446829
+13	6	Recargo por Cambio de tiquete	220000.0	2018-03-05 18:48:24.215207	2018-03-05 18:48:24.215207
+14	6	Viáticos Camilo	287900.0	2018-03-05 18:51:39.526621	2018-03-05 18:51:39.526621
+15	6	libros	135000.0	2018-03-05 18:52:20.774694	2018-03-05 18:52:20.774694
+16	6	Workbooks	150000.0	2018-03-05 18:59:05.855088	2018-03-05 18:59:05.855088
+17	7	Materiales	200000.0	2018-03-05 19:01:34.352328	2018-03-05 19:01:34.352328
+18	7	Libros	120000.0	2018-03-05 19:01:53.341592	2018-03-05 19:01:53.341592
+19	7	Taxis Camilo	20000.0	2018-03-05 19:02:07.078934	2018-03-05 19:02:07.078934
+20	9	libros	220000.0	2018-03-15 16:00:47.948336	2018-03-15 16:00:47.948336
+21	9	materiales (workbooks, postits, isla)	200000.0	2018-03-15 16:19:54.996335	2018-03-15 16:19:54.996335
+22	2	hotel	1449300.0	2018-03-16 15:28:41.427632	2018-03-16 15:28:41.427632
+23	2	workbooks	102500.0	2018-03-16 15:30:48.315166	2018-03-16 15:30:48.315166
+24	2	tiquetes	924120.0	2018-03-16 15:30:57.600629	2018-03-16 15:30:57.600629
+25	2	viaticos yamit	280000.0	2018-03-16 15:31:12.352413	2018-03-16 15:31:12.352413
+26	2	viaticos Camilo	280000.0	2018-03-16 15:31:17.993789	2018-03-16 15:31:17.993789
+27	2	Materiales	350000.0	2018-03-16 15:32:26.293206	2018-03-16 15:32:26.293206
+28	2	Libros	375000.0	2018-03-16 15:32:50.556281	2018-03-16 15:32:50.556281
+29	2	rete iva	484500.0	2018-03-16 15:34:01.494059	2018-03-16 15:34:01.494059
+30	2	rete ica	16490.0	2018-03-16 15:34:10.989563	2018-03-16 15:34:10.989563
+31	2	rete fuente	833000.0	2018-03-16 15:34:28.556825	2018-03-16 15:34:28.556825
+32	2	iva	3230000.0	2018-03-16 15:34:50.339183	2018-03-16 15:34:50.339183
+33	9	salon	2439574.0	2018-03-19 14:17:30.172369	2018-03-19 14:17:30.172369
+35	9	iva	2352200.0	2018-03-19 14:19:58.792426	2018-03-19 14:19:58.792426
+36	11	Salón y alimentación	3214266.0	2018-03-21 20:02:35.104634	2018-03-21 20:02:35.104634
+37	11	Materiales	1056150.0	2018-03-21 20:02:46.985223	2018-03-21 20:02:46.985223
+39	11	IVA	2600158.0	2018-03-21 20:07:44.806387	2018-03-21 20:07:44.806387
+40	11	TPaga	398695.0	2018-03-21 20:08:08.138025	2018-03-21 20:08:08.138025
+41	9	reteiva	352830.0	2018-03-22 18:11:34.467352	2018-03-22 18:11:34.467352
+42	9	reteica	84042.0	2018-03-22 18:11:44.695209	2018-03-22 18:11:44.695209
+43	9	retefuente	1361800.0	2018-03-22 18:12:00.579153	2018-03-22 18:12:00.579153
+44	12	Tiquetes a Bogota	485000.0	2018-03-23 17:44:02.862561	2018-03-23 17:44:02.862561
+\.
+
+
+--
+-- TOC entry 2952 (class 0 OID 16438)
+-- Dependencies: 205
+-- Data for Name: incomes; Type: TABLE DATA; Schema: public; Owner: masterdba
+--
+
+COPY public.incomes (id, balance_id, description, amount, created_at, updated_at) FROM stdin;
+4	3	Ingreso neto	9381883.0	2018-02-20 20:45:34.129942	2018-02-20 20:45:34.129942
+7	5	Facilitación Inception	22148386.0	2018-03-05 17:27:40.852375	2018-03-05 17:27:40.852375
+10	9	fact 314	8700000.0	2018-03-15 15:58:24.363844	2018-03-15 15:58:24.363844
+11	9	fact 314 (salon)	3680000.0	2018-03-15 15:58:49.089399	2018-03-15 15:58:49.089399
+12	2	Factura 290 	20230000.0	2018-03-16 15:35:27.35979	2018-03-16 15:35:27.35979
+13	7	factura 304	11319282.0	2018-03-16 16:17:38.558654	2018-03-16 16:17:38.558654
+15	9	iva	2352200.0	2018-03-19 14:19:38.02507	2018-03-19 14:19:38.02507
+16	10	Facturado (11 horas)	3791488.0	2018-03-20 20:22:15.124041	2018-03-20 20:22:15.124041
+17	11	Facturado	16285200.0	2018-03-21 20:00:50.822915	2018-03-21 20:00:50.822915
+18	13	Ingreso	8922780.0	2018-04-10 13:38:55.16187	2018-04-10 13:38:55.16187
+\.
+
+
+--
+-- TOC entry 2950 (class 0 OID 16427)
+-- Dependencies: 203
+-- Data for Name: kleerers; Type: TABLE DATA; Schema: public; Owner: masterdba
+--
+
+COPY public.kleerers (id, name, option, created_at, updated_at) FROM stdin;
+1	Yamit	socio	2018-02-07 23:44:24.005192	2018-02-07 23:44:24.005192
+2	Camilo	socio	2018-02-07 23:44:24.009817	2018-02-07 23:44:24.009817
+3	Juli	full	2018-02-07 23:44:24.013654	2018-02-07 23:44:24.013654
+4	Jader	full	2018-02-07 23:44:24.017419	2018-02-07 23:44:24.017419
+5	Pablo	otro	2018-02-07 23:44:24.021173	2018-02-07 23:44:24.021173
+6	KleerCo	home	2018-02-07 23:44:24.025027	2018-02-07 23:44:24.025027
+\.
+
+
+--
+-- TOC entry 2958 (class 0 OID 16475)
+-- Dependencies: 211
+-- Data for Name: percentages; Type: TABLE DATA; Schema: public; Owner: masterdba
+--
+
+COPY public.percentages (id, balance_id, kleerer_id, value, created_at, updated_at) FROM stdin;
+59	3	2	100.0	2018-02-20 20:45:36.106614	2018-02-20 20:45:36.106614
+62	5	2	50.0	2018-03-05 15:28:54.977111	2018-03-05 15:28:54.977111
+63	5	3	50.0	2018-03-05 15:28:54.980684	2018-03-05 15:28:54.980684
+67	7	2	100.0	2018-03-09 16:20:58.33317	2018-03-09 16:20:58.33317
+68	8	1	100.0	2018-03-15 15:12:50.112768	2018-03-15 15:12:50.112768
+69	9	1	100.0	2018-03-15 16:00:49.334517	2018-03-15 16:00:49.334517
+70	2	1	50.0	2018-03-16 15:30:30.953924	2018-03-16 15:30:30.953924
+71	2	2	50.0	2018-03-16 15:30:30.957552	2018-03-16 15:30:30.957552
+75	10	3	36.0	2018-03-20 20:22:25.041432	2018-03-20 20:22:25.041432
+76	10	5	64.0	2018-03-20 20:22:25.045461	2018-03-20 20:22:25.045461
+78	11	3	50.0	2018-03-21 20:02:51.994114	2018-03-21 20:02:51.994114
+79	11	5	50.0	2018-03-21 20:02:51.997804	2018-03-21 20:02:51.997804
+81	12	3	50.0	2018-03-23 17:44:12.236824	2018-03-23 17:44:12.236824
+82	12	5	50.0	2018-03-23 17:44:12.241832	2018-03-23 17:44:12.241832
+\.
+
+
+--
+-- TOC entry 2960 (class 0 OID 16488)
+-- Dependencies: 213
+-- Data for Name: saldos; Type: TABLE DATA; Schema: public; Owner: masterdba
+--
+
+COPY public.saldos (id, balance_id, kleerer_id, amount, reference, concept, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2943 (class 0 OID 16387)
+-- Dependencies: 196
+-- Data for Name: schema_migrations; Type: TABLE DATA; Schema: public; Owner: masterdba
+--
+
+COPY public.schema_migrations (version) FROM stdin;
+20160912203715
+20160916202413
+20171025044412
+20171026212607
+20171114040407
+20171120001940
+20180109205211
+20180403202157
+20180421185257
+\.
+
+
+--
+-- TOC entry 2948 (class 0 OID 16416)
+-- Dependencies: 201
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: masterdba
+--
+
+COPY public.users (id, name, email, password_digest, created_at, updated_at) FROM stdin;
+1	Camilo Velasquez	camilo.velasquez@kleer.la	$2a$10$n43o99JjrBPHjFgBSnJFiehudb06bJmMuPz1yGsjvoEQnRkOy0Cjm	2018-02-07 23:44:23.81832	2018-02-07 23:44:23.81832
+2	Yamit Cardenas	yamit.cardenas@kleer.la	$2a$10$aAbsRF4vInSQirqjn3fMB.rmChcxe0RnDBPrwaZbVWFl5l85/sHW6	2018-02-07 23:44:23.90739	2018-02-07 23:44:23.90739
+3	Kleer.co	administracion.co@kleer.la	$2a$10$bHMqNGP0OVPCBHl.CyPFX.8Nr1hHO1jJun1UiLLZ8k5IJ4Tn08K4O	2018-02-07 23:44:23.991074	2018-02-07 23:44:23.991074
+\.
+
+
+--
+-- TOC entry 2977 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: balances_id_seq; Type: SEQUENCE SET; Schema: public; Owner: masterdba
+--
+
+SELECT pg_catalog.setval('public.balances_id_seq', 13, true);
+
+
+--
+-- TOC entry 2978 (class 0 OID 0)
+-- Dependencies: 206
+-- Name: distributions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: masterdba
+--
+
+SELECT pg_catalog.setval('public.distributions_id_seq', 97, true);
+
+
+--
+-- TOC entry 2979 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: expenses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: masterdba
+--
+
+SELECT pg_catalog.setval('public.expenses_id_seq', 44, true);
+
+
+--
+-- TOC entry 2980 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: incomes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: masterdba
+--
+
+SELECT pg_catalog.setval('public.incomes_id_seq', 18, true);
+
+
+--
+-- TOC entry 2981 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: kleerers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: masterdba
+--
+
+SELECT pg_catalog.setval('public.kleerers_id_seq', 6, true);
+
+
+--
+-- TOC entry 2982 (class 0 OID 0)
+-- Dependencies: 210
+-- Name: percentages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: masterdba
+--
+
+SELECT pg_catalog.setval('public.percentages_id_seq', 113, true);
+
+
+--
+-- TOC entry 2983 (class 0 OID 0)
+-- Dependencies: 212
+-- Name: saldos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: masterdba
+--
+
+SELECT pg_catalog.setval('public.saldos_id_seq', 1, false);
+
+
+--
+-- TOC entry 2984 (class 0 OID 0)
+-- Dependencies: 200
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: masterdba
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 3, true);
+
+
+--
+-- TOC entry 2797 (class 2606 OID 16402)
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.ar_internal_metadata
+    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- TOC entry 2799 (class 2606 OID 16413)
+-- Name: balances balances_pkey; Type: CONSTRAINT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.balances
+    ADD CONSTRAINT balances_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2808 (class 2606 OID 16458)
+-- Name: distributions distributions_pkey; Type: CONSTRAINT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.distributions
+    ADD CONSTRAINT distributions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2812 (class 2606 OID 16471)
+-- Name: expenses expenses_pkey; Type: CONSTRAINT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.expenses
+    ADD CONSTRAINT expenses_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2805 (class 2606 OID 16446)
+-- Name: incomes incomes_pkey; Type: CONSTRAINT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.incomes
+    ADD CONSTRAINT incomes_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2803 (class 2606 OID 16435)
+-- Name: kleerers kleerers_pkey; Type: CONSTRAINT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.kleerers
+    ADD CONSTRAINT kleerers_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2817 (class 2606 OID 16483)
+-- Name: percentages percentages_pkey; Type: CONSTRAINT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.percentages
+    ADD CONSTRAINT percentages_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2821 (class 2606 OID 16496)
+-- Name: saldos saldos_pkey; Type: CONSTRAINT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.saldos
+    ADD CONSTRAINT saldos_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2795 (class 2606 OID 16394)
+-- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.schema_migrations
+    ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- TOC entry 2801 (class 2606 OID 16424)
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: masterdba
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2809 (class 1259 OID 16459)
+-- Name: index_distributions_on_balance_id; Type: INDEX; Schema: public; Owner: masterdba
+--
+
+CREATE INDEX index_distributions_on_balance_id ON public.distributions USING btree (balance_id);
+
+
+--
+-- TOC entry 2810 (class 1259 OID 16460)
+-- Name: index_distributions_on_kleerer_id; Type: INDEX; Schema: public; Owner: masterdba
+--
+
+CREATE INDEX index_distributions_on_kleerer_id ON public.distributions USING btree (kleerer_id);
+
+
+--
+-- TOC entry 2813 (class 1259 OID 16472)
+-- Name: index_expenses_on_balance_id; Type: INDEX; Schema: public; Owner: masterdba
+--
+
+CREATE INDEX index_expenses_on_balance_id ON public.expenses USING btree (balance_id);
+
+
+--
+-- TOC entry 2806 (class 1259 OID 16447)
+-- Name: index_incomes_on_balance_id; Type: INDEX; Schema: public; Owner: masterdba
+--
+
+CREATE INDEX index_incomes_on_balance_id ON public.incomes USING btree (balance_id);
+
+
+--
+-- TOC entry 2814 (class 1259 OID 16484)
+-- Name: index_percentages_on_balance_id; Type: INDEX; Schema: public; Owner: masterdba
+--
+
+CREATE INDEX index_percentages_on_balance_id ON public.percentages USING btree (balance_id);
+
+
+--
+-- TOC entry 2815 (class 1259 OID 16485)
+-- Name: index_percentages_on_kleerer_id; Type: INDEX; Schema: public; Owner: masterdba
+--
+
+CREATE INDEX index_percentages_on_kleerer_id ON public.percentages USING btree (kleerer_id);
+
+
+--
+-- TOC entry 2818 (class 1259 OID 16497)
+-- Name: index_saldos_on_balance_id; Type: INDEX; Schema: public; Owner: masterdba
+--
+
+CREATE INDEX index_saldos_on_balance_id ON public.saldos USING btree (balance_id);
+
+
+--
+-- TOC entry 2819 (class 1259 OID 16498)
+-- Name: index_saldos_on_kleerer_id; Type: INDEX; Schema: public; Owner: masterdba
+--
+
+CREATE INDEX index_saldos_on_kleerer_id ON public.saldos USING btree (kleerer_id);
+
+
+-- Completed on 2018-05-14 03:58:01 UTC
+
+--
+-- PostgreSQL database dump complete
+--
+
