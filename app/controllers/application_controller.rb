@@ -1,7 +1,8 @@
-class ApplicationController < ActionController::API
+class ApplicationController < ActionController::Base
+  #protect_from_forgery with: :exception
+  include AdminAuthorizable
+  include TokenAuthenticatable
 
-    include TokenAuthenticatable
-    include AdminAuthorizable
 
-    rescue_from ActiveRecord::RecordNotFound, with: -> { render json: { error: 'Not found' }, status: :not_found }
+  rescue_from ActiveRecord::RecordNotFound, with: -> { render json: { error: 'Not found' }, status: :not_found }
 end
