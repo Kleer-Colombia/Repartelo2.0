@@ -41,6 +41,18 @@
 * Services (job queues, cache servers, search engines, etc.)
 
 * Deployment instructions
+    
+    backup db:
+        
+        heroku pg:backups:schedule DATABASE_URL --at '02:00 America/Los_Angeles' --app repartelo2
+        
+    to Restore:
+    
+        heroku pg:backups:restore 'https://www.dropbox.com/s/pbvjknn85j11ku6/repartelo20180513.backup' DATABASE_URL -a repartelo2
+        
+        or
+        
+        heroku pg:psql < db/repartelo20180513.backup
 
 * ...
 

@@ -17,11 +17,11 @@ export default {
     return this.baseUrl() + 'api/v1'
   },
   baseUrl () {
-      let url = ''
+      let url = window.location.protocol + '//' + window.location.hostname
       if (window.location.port != "") {
-          url = 'http://' + window.location.hostname + ':' + window.location.port + '/'
+          url = url + ':' + window.location.port + '/'
       }else {
-          url = 'http://' + window.location.hostname + '/'
+          url = url + '/'
       }
     return url
   },
