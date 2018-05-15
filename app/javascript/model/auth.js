@@ -9,7 +9,6 @@ export default {
 
   // Send a request to the login URL and save the returned JWT
   login (context, creds, redirect) {
-    console.log('URL:' + LOGIN_URL)
     axios({
       method: 'post',
       url: LOGIN_URL,

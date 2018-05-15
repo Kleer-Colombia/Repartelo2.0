@@ -2,7 +2,7 @@ class BalanceActions
 
   def initialize
     @accounter = Accounter.new
-    @saldos = SaldosCommands.new
+    @saldos =  SaldosActions.new
   end
 
   def distribute balanceId
@@ -23,7 +23,7 @@ class BalanceActions
   #TODO in add and remove, verify the response from db true or false
   def add_income_to_balance id,income
     balance = Balance.find(id)
-    balance.incomes.create!(income)
+    balance.incomes.create!(description: income[:description],amount: income[:amount])
     return {incomes: balance.incomes,
             total: @accounter.calculate_total_incomes(balance)}
   end
@@ -37,7 +37,7 @@ class BalanceActions
 
   def add_expense_to_balance id,expense
     balance = Balance.find(id)
-    balance.expenses.create!(expense)
+    balance.expenses.create!(description: expense[:description],amount: expense[:amount])
     return {expenses: balance.expenses,
             total: @accounter.calculate_total_expenses(balance)}
   end

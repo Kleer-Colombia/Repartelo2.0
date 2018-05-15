@@ -3,5 +3,5 @@ class Saldo < ApplicationRecord
   validates :reference, presence: true
   validates :concept, presence: true
   belongs_to :kleerer
-  belongs_to :balance
+  belongs_to :balance, optional: true
 end
