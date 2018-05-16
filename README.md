@@ -1,12 +1,13 @@
 # README
 
-* Ruby version
-    2.3
-* System dependencies
+* ### Ruby version
+    2.5.1
+    
+* ### System dependencies
     Docker for db
     Yarn
 
-* Configuration
+* ### Configuration
     
         docker-compose up
         docker-compose start
@@ -29,18 +30,33 @@
         - gem uninstall bcrypt-ruby
         - gem install bcrypt --platform=ruby
 
-* Database creation
+* ### Database creation
     bundle exec rails db:create
     bundle exec rails db:migrate
 
 
-* Database initialization
+* ### Database initialization
 
 * How to run the test suite
+    
+    - remember install ghekodriver and put it on PATH
+    
+    start app in test mode:
+   
+        rails s -e test
+       
+    start front app:
+            
+        ruby ./bin/webpack-dev-server
+       
+    run cucumber:
+    
+        rails cucumber
+        rails cucumber FEATURE=features/login.feature
 
-* Services (job queues, cache servers, search engines, etc.)
+* ### Services (job queues, cache servers, search engines, etc.)
 
-* Deployment instructions
+* ### Deployment instructions
     
     backup db:
         
@@ -54,12 +70,6 @@
         
         heroku pg:psql < db/repartelo20180513.backup
 
-* ...
+* more info on:
 
-
-https://mkdev.me/en/posts/rails-5-vue-js-how-to-stop-worrying-and-love-the-frontend
-
-
-parar prod en heroku:
-
-    bundle exec puma -t 5:5 -p ${PORT:-3000} -e ${RACK_ENV:-production}
+    https://mkdev.me/en/posts/rails-5-vue-js-how-to-stop-worrying-and-love-the-frontend

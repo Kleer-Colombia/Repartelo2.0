@@ -15,7 +15,7 @@ class DecodeAuthenticationCommand < BaseCommand
   
     def user
       @user ||= User.find_by(id: decoded_id)
-      @user || errors.add(:token, I18n.t('decode_authentication_command.token_invalid')) && nil
+      @user || errors.add(:token, 'token_invalid') && nil
     end
   
     def token_present?
@@ -24,7 +24,7 @@ class DecodeAuthenticationCommand < BaseCommand
   
     def token
       return authorization_header.split(' ').last if authorization_header.present?
-      errors.add(:token, I18n.t('decode_authentication_command.token_missing'))
+      errors.add(:token, 'token_missing')
       nil
     end
   
@@ -35,7 +35,7 @@ class DecodeAuthenticationCommand < BaseCommand
     def token_contents
       @token_contents ||= begin
         decoded = JwtService.decode(token)
-        errors.add(:token, I18n.t('decode_authentication_command.token_expired')) unless decoded
+        errors.add(:token, '.token_expired') unless decoded
         decoded
       end
     end

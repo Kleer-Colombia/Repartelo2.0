@@ -27,10 +27,12 @@ development: &development
   password: k4m4l30n
   host: localhost
 
-test:
+test: &test
   <<: *development
   database: repartelo2_0_test
 
 production:
   <<: *default
   url: <%= ENV['DATABASE_URL'] %>
+cucumber:
+  <<: *test
