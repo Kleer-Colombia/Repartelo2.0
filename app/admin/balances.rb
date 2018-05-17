@@ -11,5 +11,6 @@ ActiveAdmin.register Balance do
 #   permitted << :other if params[:action] == 'create' && current_user.admin?
 #   permitted
 # end
-
+#
+  permit_params :client, :project, :date, :description, :editable
 end

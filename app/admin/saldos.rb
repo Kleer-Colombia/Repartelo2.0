@@ -12,4 +12,6 @@ ActiveAdmin.register Saldo do
 #   permitted
 # end
 
+  permit_params :balance, :kleerer, :amount, :reference, :concept
+
 end
