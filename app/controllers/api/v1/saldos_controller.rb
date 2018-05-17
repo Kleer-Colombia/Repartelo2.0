@@ -1,6 +1,6 @@
 module Api
   module V1
-    class SaldosController < ApplicationController
+    class SaldosController < ApiController
 
       before_action :set_actions
 

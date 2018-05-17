@@ -21,7 +21,9 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'rack-cors'
 gem 'money-rails'
 gem 'jwt'
-
+# ActiveAdmin
+gem 'devise'
+gem 'activeadmin'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

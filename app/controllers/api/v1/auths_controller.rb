@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Api
     module V1
-      class AuthsController < ApplicationController
+      class AuthsController < ApiController
         skip_before_action :authenticate_user
 
         def login

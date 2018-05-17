@@ -1,6 +1,6 @@
 module Api
   module V1
-    class BalanceController < ApplicationController
+    class BalanceController < ApiController
 
       before_action :set_actions
 

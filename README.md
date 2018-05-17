@@ -53,6 +53,10 @@
     
         rails cucumber
         rails cucumber FEATURE=features/login.feature
+        
+    to run rspec:
+    
+        bundle exec rspec
 
 * ### Services (job queues, cache servers, search engines, etc.)
 

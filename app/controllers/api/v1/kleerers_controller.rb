@@ -1,6 +1,6 @@
 module Api
   module V1
-    class KleerersController < ApplicationController
+    class KleerersController < ApiController
 
       def find_all
         send_response Kleerer.all
