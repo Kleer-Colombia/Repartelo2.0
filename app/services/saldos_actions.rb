@@ -23,7 +23,7 @@ class SaldosActions
   def add_saldo_with_distribution distribution, balance
     saldo = Saldo.new(amount: distribution.amount, kleerer_id: distribution.kleerer_id,
                       balance_id: balance.id, reference: "/balance/#{balance.id}",
-                      concept: "Ingreso del proyecto: #{balance.project}")
+                      concept: "Ingreso del proyecto: #{balance.description}")
     saldo.save!
   end
 

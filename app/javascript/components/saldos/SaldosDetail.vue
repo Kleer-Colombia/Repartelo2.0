@@ -59,7 +59,7 @@
                     <el-button @click="routeTo(scope.row.referencia)" type="primary" icon="el-icon-zoom-in" round>Ver detalles</el-button>
                   </div>
                   <div v-else>
-                    <span>Referencia: {{scope.row.referencia}}</span>
+                      <span v-html="formatReference(scope.row.referencia)"></span>
                   </div>  
                 </template> 
             </el-table-column>
@@ -145,7 +145,14 @@
       },
       routeTo (route) {
         router.push(route)
-      }
+      },
+        formatReference (reference) {
+          if (util.validURL(reference)) {
+              return '<a href="' + reference + '"> aquí </a>'
+          } else {
+              return '<span>Referencia: reference</span>'
+          }
+        }
     }
   }
   </script>

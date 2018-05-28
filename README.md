@@ -37,7 +37,7 @@
 
 * ### Database initialization
 
-* How to run the test suite
+* ### How to run the test suite
     
     - remember install ghekodriver and put it on PATH
     

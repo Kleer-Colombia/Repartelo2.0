@@ -12,7 +12,8 @@
           :data="balances"
           border
           :default-sort = "{prop: 'date', order: 'descending'}"
-          style="width: 100%">
+          style="width: 100%"
+          :row-class-name="setClassName">
           <el-table-column
             prop="date"
             label="Fecha"
@@ -56,6 +57,16 @@
   </safe-body>
 </template>
 
+<style>
+    .el-table .normal-row {
+        background: white;
+    }
+
+    .el-table .success-row {
+        background: #f0f9eb;
+    }
+</style>
+
 <script>
 
 import router from '../../router'
@@ -80,7 +91,15 @@ export default {
     },
     viewBalance (id) {
       router.push('/balance/' + id)
-    }
+    },
+      setClassName({row, rowIndex}) {
+          if (row.editable) {
+              return 'normal-row';
+          } else {
+              return 'success-row';
+          }
+          return '';
+      }
   }
 }
 </script>

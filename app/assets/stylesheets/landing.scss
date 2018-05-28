@@ -1,3 +1,17 @@
 // Place all the styles related to the Landing controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.el-button {
+  text-shadow: none;
+}
+
+form input[type=submit]:not(.disabled):active, form input[type=button]:not(.disabled):active, form button:not(.disabled):active {
+  box-shadow: none;
+  background-color: #3a8ee6;
+  background-image: none;
+}
+
+form input[type=submit]:not(.disabled):hover, form input[type=button]:not(.disabled):hover, form button:not(.disabled):hover {
+  background-color:  #3a8ee6;
+  background-image: none;
+}
