@@ -3,6 +3,7 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 .el-button {
   text-shadow: none;
+  box-shadow: none;
 }
 
 form input[type=submit]:not(.disabled):active, form input[type=button]:not(.disabled):active, form button:not(.disabled):active {
@@ -13,5 +14,16 @@ form input[type=submit]:not(.disabled):active, form input[type=button]:not(.disa
 
 form input[type=submit]:not(.disabled):hover, form input[type=button]:not(.disabled):hover, form button:not(.disabled):hover {
   background-color:  #3a8ee6;
+  background-image: none;
+}
+
+a.button:not(.disabled):active, a:link.button:not(.disabled):active, a:visited.button:not(.disabled):active, input[type=submit]:not(.disabled):active, input[type=button]:not(.disabled):active, button:not(.disabled):active {
+  background-color: #3a8ee6;
+  background-image: none;
+}
+
+a.button:not(.disabled):hover, a:link.button:not(.disabled):hover, a:visited.button:not(.disabled):hover, input[type=submit]:not(.disabled):hover, input[type=button]:not(.disabled):hover, button:not(.disabled):hover {
+  box-shadow: none;
+  background-color: transparent;
   background-image: none;
 }

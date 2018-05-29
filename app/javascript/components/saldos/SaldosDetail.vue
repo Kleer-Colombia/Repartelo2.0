@@ -148,7 +148,7 @@
       },
         formatReference (reference) {
           if (util.validURL(reference)) {
-              return '<a href="' + reference + '"> aquí </a>'
+              return 'Referencia: <a target="_blank" href="' + reference + '"> aquí </a>'
           } else {
               return '<span>Referencia: reference</span>'
           }
