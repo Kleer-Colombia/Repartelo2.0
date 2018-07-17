@@ -78,7 +78,7 @@ class SaldosActions
     data.each do |saldo|
       detail = {ingreso: '',egreso: '',
                  referencia: saldo.reference,concepto: saldo.concept,
-                 fecha: saldo.created_at.strftime('%Y-%m-%d')}
+                 fecha: saldo.created_at.strftime('%d')}
       if saldo.amount < 0
         detail[:egreso] = saldo.amount
       else

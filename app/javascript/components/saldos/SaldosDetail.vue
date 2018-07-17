@@ -9,51 +9,57 @@
       </el-col>
       <el-col :span="6">
           <div class="grid-content">
-              <h3>Egresos: <span v-html="addColorToValue(saldo.egresos, 'egresos')"></span></h3>
+              <h3>Egresos: <br> <span v-html="addColorToValue(saldo.egresos, 'egresos')"></span></h3>
           </div>
       </el-col>
       <el-col :span="6">
           <div class="grid-content">
-              <h3>Ingresos: <span v-html="addColorToValue(saldo.ingresos, 'ingresos')"></span></h3>
+              <h3>Ingresos: <br> <span v-html="addColorToValue(saldo.ingresos, 'ingresos')"></span></h3>
           </div>
       </el-col>
-      </el-col>
-          <el-col :span="6">
+      <el-col :span="6">
           <div class="grid-content">
-              <h3>Total: <span v-html="addColorToValue(saldo.total, 'total')"></span></h3>
+              <h3>Total: <br> <span v-html="addColorToValue(saldo.total, 'total')"></span></h3>
           </div>
       </el-col>
-  </el-row>
+    </el-row>
   <el-row>
     <el-table
     :data="saldo.meses"
     style="width: 100%">
-    <el-table-column type="expand">
+    <el-table-column id="detail" type="expand">
       <template slot-scope="props">
           <el-table
             :show-header="false"
             :data="props.row.detalles"
             style="width: 100%">
             <el-table-column
-              prop="fecha">
+              prop="fecha"
+              min-width="30"
+            >
             </el-table-column>
             <el-table-column
-              prop="concepto">
+              prop="concepto"
+              min-width="130"
+            >
             </el-table-column>
             <el-table-column
-              prop="egreso">
+              prop="egreso"
+              min-width="70">
                 <template slot-scope="scope">
                   <span v-html="addColorToValue(scope.row.egreso, 'ID')"></span>
                 </template>
             </el-table-column>
             <el-table-column
-              prop="ingreso">
+              prop="ingreso"
+              min-width="70">
                 <template slot-scope="scope">
                   <span v-html="addColorToValue(scope.row.ingreso, 'ID')"></span>
                 </template>
             </el-table-column>
             <el-table-column
-              prop="referencia">
+              prop="referencia"
+              min-width="100">
               <template slot-scope="scope">
                   <div v-if="scope.row.referencia.includes('balance')">
                     <el-button @click="routeTo(scope.row.referencia)" type="primary" icon="el-icon-zoom-in" round>Ver detalles</el-button>
@@ -99,6 +105,14 @@
 </el-main>
 
 </template>
+
+<style>
+    .el-table, .el-table__expanded-cell {
+        padding-right: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+</style>
 
 <script>
 
@@ -150,7 +164,7 @@
           if (util.validURL(reference)) {
               return 'Referencia: <a target="_blank" href="' + reference + '"> aquí </a>'
           } else {
-              return '<span>Referencia: reference</span>'
+              return '<span>Ref: ' + reference + '</span>'
           }
         }
     }
