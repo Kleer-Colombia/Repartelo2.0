@@ -70,9 +70,13 @@
     
         heroku pg:backups:restore 'https://www.dropbox.com/s/pbvjknn85j11ku6/repartelo20180513.backup' DATABASE_URL -a repartelo2
         
-        or
+    or
         
         heroku pg:psql < db/repartelo20180513.backup
+        
+    on local machine:
+        
+        pg_restore --verbose --clean --no-acl --no-owner -h localhost -d repartelo2_0_development production.dump
 
 * more info on:
 

@@ -17,6 +17,7 @@
           <el-table-column
             prop="date"
             label="Fecha"
+            width="120"
           sortable>
             <template slot-scope="scope">
               <span :id="'date'+scope.row.id">
@@ -27,6 +28,7 @@
           <el-table-column
             prop="client"
             label="Cliente"
+            width="150"
             sortable>
             <template slot-scope="scope">
               <span :id="'client'+scope.row.id">
@@ -37,7 +39,7 @@
           <el-table-column
             prop="description"
             label="Descripción"
-            width="350"
+            width="650"
             >
             <template slot-scope="scope">
               <span :id="'description'+scope.row.id">
@@ -46,7 +48,8 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="Opciones">
+            label="Opciones"
+            width="120">
             <template slot-scope="scope">
               <el-button type="text" @click='viewBalance(scope.row.id)'>Editar</el-button>
             </template>
@@ -64,6 +67,10 @@
 
     .el-table .success-row {
         background: #f0f9eb;
+    }
+
+    .el-table__header {
+        margin-bottom: 0px;
     }
 </style>
 
