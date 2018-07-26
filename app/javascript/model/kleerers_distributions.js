@@ -35,6 +35,6 @@ export default {
         total += kleerers[i].value
       }
     }
-    return total === 100
+    return +total.toFixed(2) === 100
   }
 }
