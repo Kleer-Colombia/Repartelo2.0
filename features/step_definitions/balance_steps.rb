@@ -9,10 +9,11 @@ Given(/^I logged$/) do
   step 'i do login'
 end
 
-When(/^I create a new balance for client "([^"]*)"$/) do |client|
+When(/^I create a new standard balance for client "([^"]*)"$/) do |client|
   @actual_page = @actual_page.new_balance
   if client != ''
-    @actual_page.create_balance client, 'PAS', 'balance de prueba', Time.new(2017, 11, 23)
+    @actual_page.create_balance client: client, project: 'PAS',
+                                description: 'balance de prueba', date: Time.new(2017, 11, 23), type: :standard
   end
   @actual_page = @actual_page.save_balance
 end
@@ -129,7 +130,7 @@ And(/^I have (\d+) distributed balances$/) do |quantity_of_balances|
 
   @balances_data = BALANCE_DATA[quantity_of_balances]
   @balances_data[:input].each do |balance|
-    step 'I create a new balance for client "'+balance[:client]+'"'
+    step 'I create a new standard balance for client "'+balance[:client]+'"'
     step 'I add income for "'+balance[:income]+'"'
     step 'I calculate the balances with "' + balance[:kleerer].to_s+'" as a kleerer'
     step 'I distribute the profit'

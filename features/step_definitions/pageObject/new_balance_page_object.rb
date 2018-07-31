@@ -1,10 +1,10 @@
 class NewBalancePageObject < APageObject
 
-  def create_balance client, proyecto, description,date
-    fill_field('client', client)
-    fill_field('project', proyecto)
-    fill_date('date', "#{date.year}-#{date.month}-#{date.day}")
-    fill_field('description',description)
+  def create_balance params
+    fill_field('client', params[:client])
+    fill_field('project', params[:project])
+    fill_date('date', "#{params[:date].year}-#{params[:date].month}-#{params[:date].day}")
+    fill_field('description',params[:description])
   end
 
   def save_balance
