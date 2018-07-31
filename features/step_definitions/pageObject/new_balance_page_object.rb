@@ -5,6 +5,7 @@ class NewBalancePageObject < APageObject
     fill_field('project', params[:project])
     fill_date('date', "#{params[:date].year}-#{params[:date].month}-#{params[:date].day}")
     fill_field('description',params[:description])
+    @page.find_by_id(params[:type]).click
   end
 
   def save_balance

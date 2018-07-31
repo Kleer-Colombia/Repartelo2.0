@@ -13,7 +13,7 @@ When(/^I create a new standard balance for client "([^"]*)"$/) do |client|
   @actual_page = @actual_page.new_balance
   if client != ''
     @actual_page.create_balance client: client, project: 'PAS',
-                                description: 'balance de prueba', date: Time.new(2017, 11, 23), type: :standard
+                                description: 'balance de prueba', date: Time.new(2017, 11, 23), type: 'standard'
   end
   @actual_page = @actual_page.save_balance
 end

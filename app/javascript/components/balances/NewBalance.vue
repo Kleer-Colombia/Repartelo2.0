@@ -30,6 +30,10 @@
                         name="description"  
                         v-model="balance.description"></el-input>
             </el-form-item>
+            <el-form-item label="Tipo">
+                <el-radio id="standard" v-model="balance.type" label="standard">Estándar</el-radio>
+                <el-radio id="coaching" v-model="balance.type" label="coaching">Coaching</el-radio>
+            </el-form-item>
             <el-form-item>
             <el-button type="primary" @click="guardar()">Guardar</el-button>
             </el-form-item>
@@ -56,7 +60,8 @@ export default {
         client: '',
         project: '',
         description: '',
-        date: ''
+        date: '',
+        type: ''
       }
     }
   },
