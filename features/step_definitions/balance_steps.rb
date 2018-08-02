@@ -10,11 +10,21 @@ Given(/^I logged$/) do
 end
 
 When(/^I create a new standard balance for client "([^"]*)"$/) do |client|
+  create_balance client: client, project: 'PAS',
+                 description: 'balance de prueba', date: Time.new(2017, 11, 23),
+                 type: 'standard'
+end
+
+
+When(/^I create a new coaching balance for client "([^"]*)"$/) do |client|
+  create_balance client: client, project: 'PAS',
+                 description: 'balance de prueba', date: Time.new(2017, 11, 23),
+                 type: 'coaching'
+end
+
+def create_balance params
   @actual_page = @actual_page.new_balance
-  if client != ''
-    @actual_page.create_balance client: client, project: 'PAS',
-                                description: 'balance de prueba', date: Time.new(2017, 11, 23), type: 'standard'
-  end
+  @actual_page.create_balance params if params[:client] != ''
   @actual_page = @actual_page.save_balance
 end
 
@@ -27,6 +37,10 @@ Then(/^I should the principal page for the balance$/) do
   expect(@actual_page.find_project).to eq 'PAS'
   expect(@actual_page.find_date).to eq '2017-11-23'
   expect(@actual_page.find_description).to eq 'balance de prueba'
+end
+
+And(/^I should have an option to admin coaching sessions$/) do
+  expect(@actual_page.coaching_balance?).to eq true
 end
 
 Then(/^I should the an error message$/) do
@@ -158,3 +172,5 @@ Then(/^I could not edit the balance$/) do
   end
 
 end
+
+

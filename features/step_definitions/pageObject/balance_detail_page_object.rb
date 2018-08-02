@@ -80,6 +80,10 @@ class BalanceDetailPageObject < APageObject
     @page.click_button("Aceptar")
   end
 
+  def coaching_balance?
+    @page.has_selector?("#admin-coaching")
+  end
+
   def editable? key
     component = @page.find_by_id(key)
     value = component[:disabled]
