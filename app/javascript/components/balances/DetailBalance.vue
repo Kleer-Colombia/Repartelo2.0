@@ -18,8 +18,7 @@
                     <p>Project: <span id="project">{{balance.project}}</span></p>
                 </div>
             </el-col>
-            </el-col>
-                <el-col :span="4">
+            <el-col :span="4">
                 <div class="grid-content">
                     <p>Fecha: <span id="date">{{balance.date}}</span></p>
                 </div>
@@ -30,47 +29,11 @@
                 </div>
             </el-col> 
         </el-card> 
-  </el-row>
-  <el-row>
+      </el-row>
+  <el-row id="row-money">
       <el-col :span="6">
+          <admin-balance-incomes v-model="incomes.totalIncomes" :editable="balance.editable" :allIncomes="incomes.realIncomes"/>
         <el-card class="box-card" :span="6">
-            <div v-if="incomes.newIncome" slot="header" class="clearfix">
-
-                <el-form label-position="left" label-width="100px">
-      
-                    <el-form-item label="Descripción">
-                        <el-input name="incomeDescription" v-model="incomes.income.description"></el-input>
-                    </el-form-item>
-                    <el-form-item label="Monto">
-                        <input-money name="incomeAmount" v-model="incomes.income.amount"></input-money>  
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button-group>
-                            <el-button  :plain="true" type="danger" size="mini" icon="el-icon-error" @click="showIncome()"></el-button>
-                            <el-button  id="saveIncome" type="primary" size="mini" icon="el-icon-success" @click="addIncome()"></el-button>
-                        </el-button-group>
-                    </el-form-item>
-                </el-form>
-            </div>
-            <div v-else slot="header" class="clearfix">
-                <el-button type="primary" id="nuevo ingreso" @click="showIncome()" :disabled="!balance.editable" > nuevo ingreso</el-button>
-            </div>
-
-            <div v-for="income in incomes.realIncomes" :key="income.amount" class="text item">
-                <el-row>
-                    <div style="float: left">
-                        <el-button-group style="margin-right: 5px;" >
-                            <el-button v-bind:id="'removeIncome'+income.amount" :disabled="!balance.editable" 
-                            :plain="true" size="mini" type="text" icon="el-icon-remove-outline" @click="removeIncome(income.id)"></el-button>
-                        </el-button-group>
-                        <label>{{ income.description }}</label>
-                    </div>
-                    <label style="float: right;">{{ formatPrice(income.amount) }}</label>
-                </el-row>
-            </div>
-   
-        </el-card>
-         <el-card class="box-card" :span="6">
           <div v-if="expenses.newExpense" slot="header" class="clearfix">
             <el-form label-position="left" label-width="100px">
              <el-form-item label="Descripción">
@@ -108,8 +71,6 @@
         <el-card class="box-card">
           <el-row :gutter="10">
             <el-col :span="8" :offset="1">
-              <div class="grid-content"></div>
-              
               <el-table
                   :data="summary()"
                   border
@@ -131,7 +92,7 @@
                   </el-table-column>
                 </el-table>
             </el-col>
-          <el-col :span="12" :offset="1">
+            <el-col :span="12" :offset="1">
                 <br>
                     <el-row :gutter="10" v-for="kleerer in distribution.kleerers" :key="kleerer.id" :id="'percentage_' + kleerer.name">
                     <el-col :span="6">
@@ -159,7 +120,7 @@
                         </div>
                     </el-col>
                   </el-row>
-          </el-col>
+            </el-col>
         </el-row>
         <el-row>
           <el-col :offset="8">
@@ -223,9 +184,11 @@ import dealer from '../../model/kleerers_distributions'
 import util from '../../model/util'
 import SafeBody from '../base/SafeBody.vue'
 import InputMoney from '../base/InputMoney.vue'
+import AdminBalanceIncomes from "./AdminBalanceIncomes";
 
 export default {
   components: {
+    AdminBalanceIncomes,
     SafeBody,
     InputMoney
   },
@@ -246,12 +209,7 @@ export default {
       },
       incomes: {
         realIncomes: [],
-        totalIncomes: 0,
-        newIncome: false,
-        income: {
-          description: '',
-          amount: ''
-        }
+        totalIncomes: 0
       },
       expenses: {
         newExpense: false,
@@ -284,18 +242,7 @@ export default {
         }
       }
     },
-    showIncome () {
-      this.incomes.newIncome = !this.incomes.newIncome
-    },
-    addIncome () {
-      this.error = ''
-      balanceConnector.addIncome(this, this.$route.params.id)
-      this.incomes.newIncome = false
-    },
-    removeIncome (incomeId) {
-      this.error = ''
-      balanceConnector.removeIncome(this, this.$route.params.id, incomeId)
-    },
+
     showExpense () {
       this.expenses.newExpense = !this.expenses.newExpense
     },

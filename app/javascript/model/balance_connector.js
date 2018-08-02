@@ -112,14 +112,14 @@ export default {
     axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
     axios({
       method: 'post',
-      data: {income: context.incomes.income},
+      data: {income: context.income},
       url: BALANCE_URL + '/' + id + '/income'
     }).then(function (response) {
       var answer = response.data.response
-      context.incomes.realIncomes = answer.incomes
-      context.incomes.totalIncomes = answer.total
-      context.incomes.income.description = ''
-      context.incomes.income.amount = ''
+      context.realIncomes = answer.incomes
+      context.$emit('input', answer.total)
+      context.income.description = ''
+      context.income.amount = ''
     })
     .catch(function (error) {
       util.processErrorMsgs(error, context)
@@ -132,8 +132,8 @@ export default {
       url: BALANCE_URL + '/' + id + '/income/' + idIncome
     }).then(function (response) {
       var answer = response.data.response
-      context.incomes.realIncomes = answer.incomes
-      context.incomes.totalIncomes = answer.total
+      context.realIncomes = answer.incomes
+      context.$emit('input', answer.total)
     })
     .catch(function (error) {
       util.processErrorMsgs(error, context)
