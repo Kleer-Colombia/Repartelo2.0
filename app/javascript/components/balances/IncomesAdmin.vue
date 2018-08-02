@@ -46,7 +46,7 @@
 
     export default {
         components: {InputMoney},
-        name: "admin-balance-incomes",
+        name: "incomes-admin",
         props: {
             editable: {
                 type: [Boolean],

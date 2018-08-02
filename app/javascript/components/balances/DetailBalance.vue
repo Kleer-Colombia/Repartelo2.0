@@ -32,7 +32,7 @@
       </el-row>
   <el-row id="row-money">
       <el-col :span="6">
-          <admin-balance-incomes v-model="incomes.totalIncomes" :editable="balance.editable" :allIncomes="incomes.realIncomes"/>
+          <incomes-admin v-model="incomes.totalIncomes" :editable="balance.editable" :allIncomes="incomes.realIncomes"/>
         <el-card class="box-card" :span="6">
           <div v-if="expenses.newExpense" slot="header" class="clearfix">
             <el-form label-position="left" label-width="100px">
@@ -184,11 +184,11 @@ import dealer from '../../model/kleerers_distributions'
 import util from '../../model/util'
 import SafeBody from '../base/SafeBody.vue'
 import InputMoney from '../base/InputMoney.vue'
-import AdminBalanceIncomes from "./AdminBalanceIncomes";
+import IncomesAdmin from "./IncomesAdmin";
 
 export default {
   components: {
-    AdminBalanceIncomes,
+    IncomesAdmin,
     SafeBody,
     InputMoney
   },
