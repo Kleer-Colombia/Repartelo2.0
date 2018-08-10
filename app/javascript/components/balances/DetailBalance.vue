@@ -33,39 +33,8 @@
   <el-row id="row-money">
       <el-col :span="6">
           <incomes-admin v-model="incomes.totalIncomes" :editable="balance.editable" :allIncomes="incomes.realIncomes"/>
-        <el-card class="box-card" :span="6">
-          <div v-if="expenses.newExpense" slot="header" class="clearfix">
-            <el-form label-position="left" label-width="100px">
-             <el-form-item label="Descripción">
-                <el-input name="expenseDescription" v-model="expenses.expense.description"></el-input>
-              </el-form-item>
-              <el-form-item label="Monto">
-                <input-money name="expenseAmount" v-model="expenses.expense.amount"></input-money>  
-              </el-form-item>
-              <el-form-item>
-                  <el-button-group>
-                      <el-button :plain="true" type="danger" size="mini" icon="el-icon-error" @click="showExpense()"></el-button>
-                      <el-button id="saveExpense" type="primary" size="mini" icon="el-icon-success" @click="addExpense()"></el-button>
-                  </el-button-group>
-              </el-form-item>
-            </el-form>
-          </div>
-          <div v-else slot="header" class="clearfix">
-            <el-button type="primary" id="nuevo egreso" @click="showExpense()" :disabled="!balance.editable">nuevo egreso</el-button>
-          </div>
 
-          <div v-for="expense in expenses.realExpenses" :key="expense.amount" class="text item">
-            <el-row>
-                <div style="float: left">
-                    <el-button-group style="margin-right: 5px;" >
-                        <el-button v-bind:id="'removeExpense'+expense.amount" :disabled="!balance.editable" :plain="true" size="mini" type="text" icon="el-icon-remove-outline" @click="removeExpense(expense.id)"></el-button>
-                    </el-button-group>
-                    <label>{{ expense.description }}</label>
-                </div>
-                <label style="float: right;">{{ formatPrice(expense.amount) }}</label>
-              </el-row>
-          </div>
-        </el-card>
+          <expenses-admin v-model="expenses.totalExpenses" :editable="balance.editable" :allExpenses="expenses.realExpenses"/>
       </el-col>
       <el-col :span="18">
         <el-card class="box-card">
@@ -184,11 +153,13 @@ import dealer from '../../model/kleerers_distributions'
 import util from '../../model/util'
 import SafeBody from '../base/SafeBody.vue'
 import InputMoney from '../base/InputMoney.vue'
-import IncomesAdmin from "./IncomesAdmin";
+import IncomesAdmin from "./IncomesAdmin"
+import ExpensesAdmin from "./ExpensesAdmin"
 
 export default {
   components: {
     IncomesAdmin,
+    ExpensesAdmin,
     SafeBody,
     InputMoney
   },
@@ -212,11 +183,6 @@ export default {
         totalIncomes: 0
       },
       expenses: {
-        newExpense: false,
-        expense: {
-          description: '',
-          amount: ''
-        },
         realExpenses: [],
         totalExpenses: 0
       }
@@ -243,18 +209,6 @@ export default {
       }
     },
 
-    showExpense () {
-      this.expenses.newExpense = !this.expenses.newExpense
-    },
-    addExpense () {
-      this.error = ''
-      balanceConnector.addExpense(this, this.$route.params.id)
-      this.expenses.newExpense = false
-    },
-    removeExpense (expenseId) {
-      this.error = ''
-      balanceConnector.removeExpense(this, this.$route.params.id, expenseId)
-    },
     selectKleerer (kleerer) {
       dealer.setPercentage(this.distribution.kleerers)
       this.updateKleerersPercentages()
