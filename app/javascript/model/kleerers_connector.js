@@ -13,8 +13,7 @@ export default {
       url: KLEERERS_URL
     }).then(function (response) {
       context.kleerers = response.data.response
-    })
-    .catch(function (error) {
+    }).catch(function (error) {
       util.processErrorMsgs(error, context)
     })
   }

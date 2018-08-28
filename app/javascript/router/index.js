@@ -9,35 +9,35 @@ import Saldos from '../components/saldos/Saldos'
 Vue.use(Router)
 
 export default new Router({
-    routes: [
-        {
-            path: '/',
-            redirect: '/login'
-        },
-        {
-            path: '/login',
-            name: 'login',
-            component: Login
-        },
-        {
-            path: '/balance',
-            name: 'balance',
-            component: Balance
-        },
-        {
-            path: '/balance/new',
-            name: 'newBalance',
-            component: NewBalance
-        },
-        {
-            path: '/balance/:id',
-            name: 'detailBalance',
-            component: DetailBalance
-        },
-        {
-            path: '/saldos',
-            name: 'saldos',
-            component: Saldos
-        }
-    ]
+  routes: [
+    {
+      path: '/',
+      redirect: '/login'
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/balance',
+      name: 'balance',
+      component: Balance
+    },
+    {
+      path: '/balance/new',
+      name: 'newBalance',
+      component: NewBalance
+    },
+    {
+      path: '/balance/:id',
+      name: 'detailBalance',
+      component: DetailBalance
+    },
+    {
+      path: '/saldos',
+      name: 'saldos',
+      component: Saldos
+    }
+  ]
 })

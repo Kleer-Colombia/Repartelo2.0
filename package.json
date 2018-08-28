@@ -1,6 +1,12 @@
 {
-  "name": "repartelo",
   "private": true,
+  "name": "repartelo",
+  "version": "2.0.0",
+  "description": "a project in vue for Kleer.co",
+  "author": "yamit <yamit.cardenas@gmail.com>",
+  "scripts": {
+    "lint": "eslint --ext .js,.vue app/javascript"
+  },
   "dependencies": {
     "@rails/webpacker": "^3.2.1",
     "axios": "^0.16.2",
@@ -10,7 +16,15 @@
     "vue-loader": "^13.7.0",
     "vue-resource": "^1.5.0",
     "vue-router": "^3.0.1",
-    "vue-template-compiler": "^2.5.13"
+    "vue-template-compiler": "^2.5.13",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-friendly-formatter": "^2.0.7",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-html": "^2.0.0",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1",
+    "babel-eslint": "^7.1.1"
   },
   "devDependencies": {
     "webpack-dev-server": "^2.11.1"

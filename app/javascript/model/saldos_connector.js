@@ -13,8 +13,7 @@ export default {
       url: SALDOS_URL + kleererId
     }).then(function (response) {
       context.saldo = response.data.response
-    })
-    .catch(function (error) {
+    }).catch(function (error) {
       util.processErrorMsgs(error, context)
     })
   },
@@ -33,8 +32,7 @@ export default {
         })
         context.$emit('refresh')
       }
-    })
-    .catch(function (error) {
+    }).catch(function (error) {
       util.processErrorMsgs(error, context)
     })
   }

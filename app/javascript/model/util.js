@@ -2,10 +2,10 @@ import auth from './auth'
 
 export default {
   // The object to be passed as a header for authenticated requests
-  validURL(str) {
+  validURL (str) {
     var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
     return regex.test(str)
-},
+  },
   getAuthHeader () {
     return 'Bearer ' + this.checkAuth('access_token')
   },
@@ -21,12 +21,12 @@ export default {
     return this.baseUrl() + 'api/v1'
   },
   baseUrl () {
-      let url = window.location.protocol + '//' + window.location.hostname
-      if (window.location.port != "") {
-          url = url + ':' + window.location.port + '/'
-      }else {
-          url = url + '/'
-      }
+    let url = window.location.protocol + '//' + window.location.hostname
+    if (window.location.port !== '') {
+      url = url + ':' + window.location.port + '/'
+    } else {
+      url = url + '/'
+    }
     return url
   },
   processErrorMsgs (error, context) {
@@ -40,7 +40,7 @@ export default {
       } else {
         context.$message({
           type: 'error',
-          message: 'Error: ' +error.response.status + ':' +error.response.data.message,
+          message: 'Error: ' + error.response.status + ':' + error.response.data.message,
           duration: 6000
         })
       }
