@@ -10,22 +10,26 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button-group>
-                        <el-button :plain="true" type="danger" size="mini" icon="el-icon-error" @click="showExpense()"></el-button>
-                        <el-button id="saveExpense" type="primary" size="mini" icon="el-icon-success" @click="addExpense()"></el-button>
+                        <el-button :plain="true" type="danger" size="mini" icon="el-icon-error"
+                                   @click="showExpense()"></el-button>
+                        <el-button id="saveExpense" type="primary" size="mini" icon="el-icon-success"
+                                   @click="addExpense()"></el-button>
                     </el-button-group>
                 </el-form-item>
             </el-form>
         </div>
         <div v-else slot="header" class="clearfix">
-            <el-button type="primary" id="nuevo egreso" @click="showExpense()" :disabled="!editable">nuevo egreso</el-button>
+            <el-button type="primary" id="nuevo egreso" @click="showExpense()" :disabled="!editable">nuevo egreso
+            </el-button>
         </div>
 
         <div v-for="expense in realExpenses" :key="expense.amount" class="text item">
             <el-row>
                 <div style="float: left">
-                    <el-button-group style="margin-right: 5px;" >
+                    <el-button-group style="margin-right: 5px;">
                         <el-button v-bind:id="'removeExpense'+expense.amount" :disabled="!editable" :plain="true"
-                                   size="mini" type="text" icon="el-icon-remove-outline" @click="removeExpense(expense.id)"></el-button>
+                                   size="mini" type="text" icon="el-icon-remove-outline"
+                                   @click="removeExpense(expense.id)"></el-button>
                     </el-button-group>
                     <label>{{ expense.description }}</label>
                 </div>
@@ -36,60 +40,60 @@
 </template>
 
 <script>
-    import util from '../../model/util'
-    import InputMoney from "../base/InputMoney"
-    import balanceConnector from '../../model/balance_connector'
+  import util from '../../model/util'
+  import InputMoney from '../base/InputMoney'
+  import balanceConnector from '../../model/balance_connector'
 
-    export default {
-        components: {InputMoney},
-        name: "expenses-admin",
-        props: {
-            editable: {
-                type: [Boolean],
-                default: true
-            },
-            allExpenses: {
-                type: [Array],
-                default: []
-            },
-            value: {
-                type: [Number, String],
-                default: 0
-            }
-        },
-        data () {
-            return {
-                realExpenses: [],
-                newExpense: false,
-                expense: {
-                    description: '',
-                    amount: ''
-                }
-            }
-        },
-        watch: {
-            allExpenses: function(newVal) {
-                this.realExpenses = newVal
-            }
-        },
-        methods: {
-            showExpense () {
-                this.newExpense = !this.newExpense
-            },
-            addExpense () {
-                this.error = ''
-                balanceConnector.addExpense(this, this.$route.params.id)
-                this.newExpense = false
-            },
-            removeExpense (expenseId) {
-                this.error = ''
-                balanceConnector.removeExpense(this, this.$route.params.id, expenseId)
-            },
-            formatPrice (value) {
-                return util.formatPrice(value)
-            },
+  export default {
+    components: {InputMoney},
+    name: 'expenses-admin',
+    props: {
+      editable: {
+        type: [Boolean],
+        default: true
+      },
+      allExpenses: {
+        type: [Array],
+        default: []
+      },
+      value: {
+        type: [Number, String],
+        default: 0
+      }
+    },
+    data () {
+      return {
+        realExpenses: [],
+        newExpense: false,
+        expense: {
+          description: '',
+          amount: ''
         }
+      }
+    },
+    watch: {
+      allExpenses: function (newVal) {
+        this.realExpenses = newVal
+      }
+    },
+    methods: {
+      showExpense () {
+        this.newExpense = !this.newExpense
+      },
+      addExpense () {
+        this.error = ''
+        balanceConnector.addExpense(this, this.$route.params.id)
+        this.newExpense = false
+      },
+      removeExpense (expenseId) {
+        this.error = ''
+        balanceConnector.removeExpense(this, this.$route.params.id, expenseId)
+      },
+      formatPrice (value) {
+        return util.formatPrice(value)
+      }
     }
+  }
 </script>
 
 <style scoped>

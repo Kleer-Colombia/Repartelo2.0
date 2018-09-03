@@ -17,7 +17,7 @@ export default {
       url: BALANCE_URL,
       data: data
     }).then(function (response) {
-      context.distribution.result = response.data.response
+      context.$emit('input', response.data.response)
     })
     .catch(function (error) {
       util.processErrorMsgs(error, context)
@@ -86,11 +86,13 @@ export default {
       context.incomes.totalIncomes = balance.incomes.total
       context.expenses.realExpenses = balance.expenses.expenses
       context.expenses.totalExpenses = balance.expenses.total
-      context.distribution.percentageCached = balance.percentages
+      context.distribution.balancePercentages = balance.percentages
       if (balance.distributions.length > 0) {
         context.distribution.result = balance.distributions
       }
-      nextFunction(context)
+      if (nextFunction) {
+        nextFunction(context)
+      }
     })
     .catch(function (error) {
       util.processErrorMsgs(error, context)
@@ -194,7 +196,9 @@ export default {
         context.distribution.kleerers[i].selected = false
         context.distribution.kleerers[i].value = 0
       }
-      nextFunction(context)
+      if (nextFunction) {
+        nextFunction(context)
+      }
     })
     .catch(function (error) {
       util.processErrorMsgs(error, context)
