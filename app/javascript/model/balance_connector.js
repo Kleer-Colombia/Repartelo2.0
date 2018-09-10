@@ -82,6 +82,7 @@ export default {
     }).then(function (response) {
       var balance = response.data.response
       context.balance = balance.balance
+      console.log(balance.balance)
       context.incomes.realIncomes = balance.incomes.incomes
       context.incomes.totalIncomes = balance.incomes.total
       context.expenses.realExpenses = balance.expenses.expenses

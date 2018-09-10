@@ -24,9 +24,9 @@ module Api
         validate_parameters [:balanceId],params do
           begin
             @actions.close params[:balanceId]
-            send_response "Ok"
+            send_response 'Ok'
           rescue StandardError => error
-            halt_message 500,error.message
+            halt_message 500, error.message
           end
         end
       end
@@ -43,6 +43,7 @@ module Api
                 project: balance['project'],
                 client: balance['client'],
                 description: balance['description'],
+                balance_type: balance['balance_type'],
                 date: Date.strptime(balance['date'],'%Y-%m-%d'))
             send_response result.id
           rescue StandardError => e

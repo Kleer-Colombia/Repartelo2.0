@@ -1,6 +1,5 @@
 <template>
     <safe-body>
-
         <el-card class="box-card">
             <el-row>
                 <el-col :offset="2" :span="2">
@@ -29,7 +28,6 @@
                     </div>
                 </el-col>
                 <el-col :offset="1" :span="2">
-
                     <el-button type="danger" id="Borrar" @click="deleteBalance()"
                                :disabled="!balance.editable">
                         Borrar
@@ -70,8 +68,13 @@
                                 </el-table-column>
                             </el-table>
                         </el-col>
-                        <kleerers-distribution v-model="distribution.result" :editable="balance.editable"
-                                               :balancePercentages="distribution.balancePercentages"/>
+                        <div v-if="balance.balance_type === 'standard' ">
+                            <kleerers-distribution v-model="distribution.result" :editable="balance.editable"
+                                                   :balancePercentages="distribution.balancePercentages"/>
+                        </div>
+                        <div v-else>
+                            <coaching-distribution></coaching-distribution>
+                        </div>
                     </el-row>
 
                     <el-row v-if="distribution.result">
@@ -135,9 +138,11 @@
   import IncomesAdmin from './IncomesAdmin'
   import ExpensesAdmin from './ExpensesAdmin'
   import KleerersDistribution from './kleerersDistribution'
+  import CoachingDistribution from './CoachingDistribution'
 
   export default {
     components: {
+      CoachingDistribution,
       KleerersDistribution,
       IncomesAdmin,
       ExpensesAdmin,
@@ -151,7 +156,8 @@
           client: '',
           project: '',
           description: '',
-          editable: true
+          editable: true,
+          balance_type: ''
         },
         distribution: {
           result: '',
