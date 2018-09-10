@@ -1,6 +1,6 @@
 <template>
     <el-main>
-        <el-button  type="primary" @click="dialogFormVisible = true">Administrar log</el-button>
+        <el-button  type="primary" id='admin-coaching' @click="dialogFormVisible = true">Administrar log</el-button>
 
         <el-dialog title="Administrar log de coaching" :visible.sync="dialogFormVisible">
 

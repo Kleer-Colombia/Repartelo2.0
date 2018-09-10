@@ -81,7 +81,7 @@ class BalanceDetailPageObject < APageObject
   end
 
   def coaching_balance?
-    @page.has_selector?("#admin-coaching")
+    @page.has_selector?('#admin-coaching')
   end
 
   def editable? key
