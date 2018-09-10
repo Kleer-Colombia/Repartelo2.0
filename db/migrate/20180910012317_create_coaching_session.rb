@@ -1,4 +1,4 @@
-class CreateCoachingSession < ActiveRecord::Migration[5.1]
+class CreateCoachingSessions < ActiveRecord::Migration[5.1]
   def change
     create_table :coaching_sessions do |t|
       t.belongs_to :balance, index: true
