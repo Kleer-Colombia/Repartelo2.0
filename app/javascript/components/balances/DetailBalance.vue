@@ -73,7 +73,7 @@
                                                    :balancePercentages="distribution.balancePercentages"/>
                         </div>
                         <div v-else>
-                            <coaching-distribution></coaching-distribution>
+                            <admin-coaching-log :balanceId="balance.id"></admin-coaching-log>
                         </div>
                     </el-row>
 
@@ -138,11 +138,11 @@
   import IncomesAdmin from './IncomesAdmin'
   import ExpensesAdmin from './ExpensesAdmin'
   import KleerersDistribution from './kleerersDistribution'
-  import CoachingDistribution from './CoachingDistribution'
+  import AdminCoachingLog from '../coachingLog/AdminCoachingLogButton'
 
   export default {
     components: {
-      CoachingDistribution,
+      AdminCoachingLog,
       KleerersDistribution,
       IncomesAdmin,
       ExpensesAdmin,

@@ -1,5 +1,6 @@
 module Api
   module V1
+    #TODO cached this service
     class KleerersController < ApiController
 
       def find_all

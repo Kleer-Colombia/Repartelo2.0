@@ -1,41 +1,62 @@
 <template>
     <el-main>
-        <el-button id="admin-coaching" type="primary" @click="dialogFormVisible = true">Registrar sesiones</el-button>
+        <el-button type="primary" id='admin-coaching' @click="adminVisible = true">Administrar sessiones de coaching
+        </el-button>
 
-        <el-dialog :title="'Agregando registro para ' + kleerer.name" :visible.sync="dialogFormVisible">
+        <el-dialog title="Administrar log de coaching" :visible.sync="adminVisible">
+            <el-row>
+                <el-button type="primary" id='newCoachingSession' @click="formVisible = true">Nueva</el-button>
+
+                <el-dialog tittle="Sesión de coaching" :visible.sync="formVisible" append-to-body>
+                    <coaching-log-form :balance-id="balanceId"></coaching-log-form>
+                </el-dialog>
+
+            </el-row>
+
+            <el-row>
+                <el-table :data="sessions">
+                    <el-table-column property="date" label="Fecha" width="150"></el-table-column>
+                    <el-table-column property="kleerers" label="Kleerers" width="200"></el-table-column>
+                    <el-table-column property="description" label="Descripción"></el-table-column>
+                </el-table>
+            </el-row>
 
             <span slot="footer" class="dialog-footer">
-            <el-button @click="closeDialog(false)">Cancelar</el-button>
-            <el-button type="primary" @click="addSaldo()">Guardar</el-button>
-        </span>
+                <el-button @click="closeDialog(false)">Cerrar</el-button>
+            </span>
         </el-dialog>
     </el-main>
 </template>
 
 <script>
+  import CoachingLogForm from './CoachingLogForm'
 
-    export default {
-        name: "admin-coaching-log-button",
-        props: {
-            kleerer: {
-                type: Object,
-                default: ''
-            }
-        },
-        data () {
-            return {
-                dialogFormVisible: false
-            }
-        },
-        methods: {
-            addSaldo () {
-
-            },
-            closeDialog (format) {
-                this.dialogFormVisible = false
-            }
-        }
+  export default {
+    components: {CoachingLogForm},
+    name: 'admin-coaching-log',
+    props: {
+      balanceId: {
+        type: [String, Number]
+      }
+    },
+    data () {
+      return {
+        adminVisible: false,
+        formVisible: false,
+        sessions: [{
+          date: '',
+          kleerers: 'Yamit',
+          description: 'prueba de log'
+        }]
+      }
+    },
+    methods: {
+      closeDialog (format) {
+        this.dialogFormVisible = false
+      }
     }
+  }
+
 </script>
 
 <style scoped>

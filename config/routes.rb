@@ -29,6 +29,8 @@ Rails.application.routes.draw do
       delete '/balance/:id/expense/:idExpense', to: 'balance#delete_expense'
       post '/balance/:id/percentages', to: 'balance#update_percentages'
 
+      post '/balance/:id/coachingSessions/new', to: 'coaching_sessions#create'
+
     end
   end
 end

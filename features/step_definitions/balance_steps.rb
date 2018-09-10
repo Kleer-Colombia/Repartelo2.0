@@ -174,3 +174,22 @@ Then(/^I could not edit the balance$/) do
 end
 
 
+When(/^I open the coaching sessions admin$/) do
+  @actual_page = @actual_page.open_coaching_sessions_admin
+end
+
+
+And(/^I add a new session with "([^"]*)" and the kleerers "([^"]*)"$/) do |description, kleerers|
+  @actual_page.new_coaching_session
+  @actual_page.fill_coaching_session description, kleerers
+  @actual_page.create_coaching_session
+end
+
+Then(/^I should see the coaching session table with (\d+) registry$/) do |numberOfRegisters|
+
+  pending
+end
+
+And(/^I should the coaching sessions summary$/) do
+  pending
+end

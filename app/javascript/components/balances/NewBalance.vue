@@ -1,6 +1,6 @@
 <template>
   <safe-body tittle='Nuevo balance'>
-      <el-row :gutter="20">
+    <el-row :gutter="20">
     <el-col :span="10" :offset="7">
        
       <el-card class="box-card">

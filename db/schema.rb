@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180907220438) do
+ActiveRecord::Schema.define(version: 20180910012910) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,6 +57,16 @@ ActiveRecord::Schema.define(version: 20180907220438) do
     t.string "balance_type", default: "standard", null: false
   end
 
+  create_table "coaching_sessions", force: :cascade do |t|
+    t.bigint "balance_id"
+    t.date "date", null: false
+    t.string "description", null: false
+    t.string "complementary", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["balance_id"], name: "index_coaching_sessions_on_balance_id"
+  end
+
   create_table "distributions", force: :cascade do |t|
     t.bigint "balance_id", null: false
     t.bigint "kleerer_id", null: false
@@ -83,6 +93,13 @@ ActiveRecord::Schema.define(version: 20180907220438) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["balance_id"], name: "index_incomes_on_balance_id"
+  end
+
+  create_table "kleerer_on_coaching_sessions", id: false, force: :cascade do |t|
+    t.bigint "kleerers_id"
+    t.bigint "coaching_sessions_id"
+    t.index ["coaching_sessions_id"], name: "index_kleerer_on_coaching_sessions_on_coaching_sessions_id"
+    t.index ["kleerers_id"], name: "index_kleerer_on_coaching_sessions_on_kleerers_id"
   end
 
   create_table "kleerers", force: :cascade do |t|
