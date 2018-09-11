@@ -1,4 +1,4 @@
-class CreateKleererOnCoachingSessions < ActiveRecord::Migration[5.1]
+class CreateKleererOnCoachingSessions  < ActiveRecord::Migration[5.1]
   def change
     create_table :kleerer_on_coaching_sessions, id: false do |t|
       t.belongs_to :kleerers, index: true

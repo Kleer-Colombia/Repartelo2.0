@@ -4,14 +4,25 @@ module Api
       before_action only: [:update, :destroy, :index, :create]
 
       def create
-        begin
-          data = coaching_session_params
-          @coaching_session = CoachingSession.new(data)
-          @coaching_session.save!
-          send_response @coaching_session.id
-        rescue StandardError => e
-          puts e
-          halt_message 500, "Invalid parameters creating balance #{e}"
+
+        validate_parameters [:balanceId, :coaching_session], params do
+          begin
+            @coaching_session = CoachingSession.new(
+                complementary: params[:coaching_session][:complementary],
+                description: params[:coaching_session][:description],
+                date: Date.strptime(params[:coaching_session][:date],'%Y-%m-%d')
+            )
+            @coaching_session.balance_id = params[:balanceId]
+            puts params[:coaching_session][:kleerers]
+            params[:coaching_session][:kleerers].each do |kleerer_id|
+              @coaching_session.kleerers << Kleerer.find(kleerer_id)
+            end
+
+            @coaching_session.save!
+            send_response @coaching_session.id
+          rescue StandardError => error
+            halt_message 500, "Invalid parameters creating coaching session #{error}"
+          end
         end
       end
 
@@ -36,10 +47,7 @@ module Api
         @coaching_session = CoachingSession.find(params[:id])
       end
 
-      # Only allow a trusted parameter "white list" through.
-      def coaching_session_params
-        params.fetch(:coaching_session, {})
-      end
+
     end
   end
 end

@@ -6,6 +6,7 @@ class ApiController < ActionController::API
   rescue_from ActiveRecord::RecordNotFound, with: -> { render json: { error: 'Not found' }, status: :not_found }
 
   #TODO what happen when the parameter is and object?
+  # TODO REFACTOR this please
   def validate parameter
     parameter and !parameter.to_s.empty?
   end
