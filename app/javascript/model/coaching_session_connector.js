@@ -13,7 +13,7 @@ export default {
     axios({
       method: 'post',
       url: SERVICE_URL + balanceId + CREATE_URL,
-      data: { coaching_session: coachingSession, balanceId:balanceId }
+      data: { coaching_session: coachingSession, balanceId: balanceId }
     }).then(function (response) {
       console.log(response.data.response)
     })
@@ -22,6 +22,3 @@ export default {
       })
   }
 }
-
-
-

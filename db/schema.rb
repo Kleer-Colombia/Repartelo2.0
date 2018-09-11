@@ -67,6 +67,13 @@ ActiveRecord::Schema.define(version: 20180910012910) do
     t.index ["balance_id"], name: "index_coaching_sessions_on_balance_id"
   end
 
+  create_table "coaching_sessions_kleerers", id: false, force: :cascade do |t|
+    t.bigint "kleerer_id", null: false
+    t.bigint "coaching_session_id", null: false
+    t.index ["coaching_session_id"], name: "index_coaching_sessions_kleerers_on_coaching_session_id"
+    t.index ["kleerer_id"], name: "index_coaching_sessions_kleerers_on_kleerer_id"
+  end
+
   create_table "distributions", force: :cascade do |t|
     t.bigint "balance_id", null: false
     t.bigint "kleerer_id", null: false
@@ -93,13 +100,6 @@ ActiveRecord::Schema.define(version: 20180910012910) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["balance_id"], name: "index_incomes_on_balance_id"
-  end
-
-  create_table "kleerer_on_coaching_sessions", id: false, force: :cascade do |t|
-    t.bigint "kleerers_id"
-    t.bigint "coaching_sessions_id"
-    t.index ["coaching_sessions_id"], name: "index_kleerer_on_coaching_sessions_on_coaching_sessions_id"
-    t.index ["kleerers_id"], name: "index_kleerer_on_coaching_sessions_on_kleerers_id"
   end
 
   create_table "kleerers", force: :cascade do |t|

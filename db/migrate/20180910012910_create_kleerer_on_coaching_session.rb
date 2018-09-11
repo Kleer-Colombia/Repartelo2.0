@@ -1,9 +1,10 @@
-class CreateKleererOnCoachingSessions  < ActiveRecord::Migration[5.1]
+class CreateKleererOnCoachingSession  < ActiveRecord::Migration[5.1]
   def change
-    create_table :kleerer_on_coaching_sessions, id: false do |t|
-      t.belongs_to :kleerers, index: true
-      t.belongs_to :coaching_sessions, index: true
+    create_join_table :kleerers, :coaching_sessions do |t|
+      t.index :kleerer_id
+      t.index :coaching_session_id
     end
 
   end
+
 end

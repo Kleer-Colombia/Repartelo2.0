@@ -10,7 +10,7 @@ module Api
             @coaching_session = CoachingSession.new(
                 complementary: params[:coaching_session][:complementary],
                 description: params[:coaching_session][:description],
-                date: Date.strptime(params[:coaching_session][:date],'%Y-%m-%d')
+                date: Date.strptime(params[:coaching_session][:date], '%Y-%m-%d')
             )
             @coaching_session.balance_id = params[:balanceId]
             puts params[:coaching_session][:kleerers]
@@ -21,6 +21,7 @@ module Api
             @coaching_session.save!
             send_response @coaching_session.id
           rescue StandardError => error
+            puts error
             halt_message 500, "Invalid parameters creating coaching session #{error}"
           end
         end
