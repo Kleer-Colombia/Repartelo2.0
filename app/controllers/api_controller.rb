@@ -29,4 +29,14 @@ class ApiController < ActionController::API
     render json: { response: object }, status: status
   end
 
+  class PersistenceResponse < SimpleDelegator
+    def halt_message(message, error_code = 500)
+      render json: { message: message }, status: error_code
+    end
+
+    def send_response(object, status = 200)
+      render json: { response: object }, status: status
+    end
+  end
+
 end

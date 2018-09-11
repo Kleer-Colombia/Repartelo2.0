@@ -20,5 +20,6 @@ module Repartelo
     config.middleware.use ActionDispatch::Flash
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
+    config.autoload_paths += Dir["#{config.root}/app/services/**/"]
   end
 end
