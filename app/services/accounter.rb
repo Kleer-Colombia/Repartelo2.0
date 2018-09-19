@@ -1,8 +1,8 @@
 class Accounter
 
   #TODO this must be in the db
-  OPTION_KLEER_CO = 0.18
-  OPTION_KLEERER = 0.82
+  OPTION_KLEER_CO = 0.16
+  OPTION_KLEERER = 0.84
 
   OPTIONS = {socio: 0.05,full:0.15,parcial: 0.25,otro: 0.10}
 
