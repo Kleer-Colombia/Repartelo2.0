@@ -15,7 +15,13 @@ export default {
       url: SERVICE_URL + balanceId + CREATE_URL,
       data: { coaching_session: coachingSession, balanceId: balanceId }
     }).then(function (response) {
-      console.log(response.data.response)
+      if (response.status === 200) {
+        context.$message({
+          type: 'success',
+          message: 'Registro de coaching guardado'
+        })
+        context.visible = false
+      }
     })
       .catch(function (error) {
         util.processErrorMsgs(error, context)

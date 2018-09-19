@@ -5,12 +5,7 @@
 
         <el-dialog title="Administrar log de coaching" :visible.sync="adminVisible">
             <el-row>
-                <el-button type="primary" id='newCoachingSession' @click="formVisible = true">Nueva</el-button>
-
-                <el-dialog tittle="Sesión de coaching" :visible.sync="formVisible" append-to-body>
-                    <coaching-log-form :balance-id="balanceId"></coaching-log-form>
-                </el-dialog>
-
+                <coaching-log-form :balance-id="balanceId"></coaching-log-form>
             </el-row>
 
             <el-row>
@@ -42,7 +37,6 @@
     data () {
       return {
         adminVisible: false,
-        formVisible: false,
         sessions: [{
           date: '',
           kleerers: 'Yamit',
