@@ -1,4 +1,4 @@
-class AddTypeToBalance < ActiveRecord::Migration[5.1]
+class AddTypeToBalance < ActiveRecord::Migration::Current
   def change
     add_column :balances, :balance_type, :string, default: 'standard', null: false
   end
