@@ -1,4 +1,4 @@
-class CreateKleererOnCoachingSession < ActiveRecord::Migration::Current
+class CreateKleererOnCoachingSession < ActiveRecord::Migration[5.2]
   def change
     create_join_table :kleerers, :coaching_sessions do |t|
       t.index :kleerer_id
