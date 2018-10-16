@@ -30,6 +30,7 @@ Rails.application.routes.draw do
       post '/balance/:id/percentages', to: 'balance#update_percentages'
 
       post '/balance/:id/coachingSessions/new', to: 'coaching_sessions#create'
+      get '/balance/:id/coachingSessions/', to: 'coaching_sessions#find'
 
     end
   end

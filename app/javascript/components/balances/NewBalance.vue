@@ -32,7 +32,7 @@
             </el-form-item>
             <el-form-item label="Tipo">
                 <el-radio id="standard" v-model="balance.balance_type" label="standard">Estándar</el-radio>
-                <el-radio id="coaching" v-model="balance.balance_type" label="coaching" disabled>Coaching</el-radio>
+                <el-radio id="coaching" v-model="balance.balance_type" label="coaching">Coaching</el-radio>
             </el-form-item>
             <el-form-item>
             <el-button type="primary" @click="guardar()">Guardar</el-button>

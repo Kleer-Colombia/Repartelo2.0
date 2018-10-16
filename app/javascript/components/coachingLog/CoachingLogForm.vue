@@ -80,6 +80,15 @@
     methods: {
       save () {
         coachingSessionConnector.create(this, this.coachingSession, this.balanceId)
+      },
+      updateData () {
+        this.coachingSession = {
+          date: '',
+          description: '',
+          complementary: '',
+          kleerers: []
+        }
+        this.$emit('update')
       }
     }
   }

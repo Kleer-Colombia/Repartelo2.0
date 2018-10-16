@@ -160,13 +160,13 @@
       routeTo (route) {
         router.push(route)
       },
-        formatReference (reference) {
-          if (util.validURL(reference)) {
-              return 'Referencia: <a target="_blank" href="' + reference + '"> aquí </a>'
-          } else {
-              return '<span>Ref: ' + reference + '</span>'
-          }
+      formatReference (reference) {
+        if (util.validURL(reference)) {
+          return 'Referencia: <a target="_blank" href="' + reference + '"> aquí </a>'
+        } else {
+          return '<span>Ref: ' + reference + '</span>'
         }
+      }
     }
   }
   </script>

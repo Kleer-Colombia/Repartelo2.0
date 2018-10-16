@@ -68,9 +68,13 @@
                                 </el-table-column>
                             </el-table>
                         </el-col>
-                           <kleerers-distribution v-model="distribution.result" :editable="balance.editable"
+                        <div v-if="balance.balance_type === 'standard' ">
+                            <kleerers-distribution v-model="distribution.result" :editable="balance.editable"
                                                    :balancePercentages="distribution.balancePercentages"/>
-
+                        </div>
+                        <div v-else>
+                            <admin-coaching-log :balanceId="balance.id"></admin-coaching-log>
+                        </div>
                     </el-row>
 
                     <el-row v-if="distribution.result">
