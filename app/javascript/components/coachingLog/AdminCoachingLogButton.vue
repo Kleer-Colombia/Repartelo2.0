@@ -13,6 +13,11 @@
                     <el-table-column property="date" label="Fecha" width="150"></el-table-column>
                     <el-table-column property="kleerers" label="Kleerers" width="200"></el-table-column>
                     <el-table-column property="description" label="Descripción"></el-table-column>
+                    <el-table-column label="opciones">
+                        <template slot-scope="scope">
+                            <el-button type="text" @click='deleteCoachingSession(scope.row.id)' icon="el-icon-error">Eliminar</el-button>
+                        </template>
+                    </el-table-column>
                 </el-table>
             </el-row>
 
@@ -39,6 +44,7 @@
       return {
         adminVisible: false,
         sessions: [{
+          id: '',
           date: '',
           kleerers: 'Yamit',
           description: 'prueba de log'
@@ -50,11 +56,14 @@
         this.adminVisible = false
       },
       openDialog () {
-        coachingSessionConnector.find(this, this.balanceId)
+        this.updateList()
         this.adminVisible = true
       },
       updateList () {
         coachingSessionConnector.find(this, this.balanceId)
+      },
+      deleteCoachingSession (id) {
+        coachingSessionConnector.delete(this, this.balanceId, id)
       }
     }
   }

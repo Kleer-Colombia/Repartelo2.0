@@ -6,6 +6,7 @@ const API_URL = util.apiUrl()
 const SERVICE_URL = API_URL + '/balance/'
 const CREATE_URL = '/coachingSessions/new'
 const FIND_URL = '/coachingSessions/'
+const DELETE_URL = '/coachingSessions/'
 
 export default {
 
@@ -40,6 +41,24 @@ export default {
           response.data.response[i].kleerers = response.data.response[i].kleerers.join(', ')
         }
         context.sessions = response.data.response
+      }
+    })
+      .catch(function (error) {
+        util.processErrorMsgs(error, context)
+      })
+  },
+  delete (context, balanceId, csId) {
+    axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
+    axios({
+      method: 'delete',
+      url: SERVICE_URL + balanceId + DELETE_URL + csId
+    }).then(function (response) {
+      if (response.status === 200) {
+        context.$message({
+          type: 'success',
+          message: 'Eliminación exitosa'
+        })
+        context.updateList()
       }
     })
       .catch(function (error) {

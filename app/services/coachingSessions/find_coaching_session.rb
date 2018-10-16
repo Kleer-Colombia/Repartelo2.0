@@ -16,6 +16,7 @@ class FindCoachingSession < Publisher
     data = []
     coaching_sessions.each do|cs|
       registry = {}
+      registry[:id] = cs.id
       registry[:date] = cs.date
       registry[:description] = cs.description
       registry[:complementary] = cs.complementary

@@ -18,6 +18,13 @@ module Api
         end
       end
 
+      def delete
+        validate_parameters [:id, :csId], params do
+          delete = DeleteCoachingSession.new
+          delete.add_subscriber(self)
+          delete.call params[:csId]
+        end
+      end
     end
   end
 end
