@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       post '/balance/:id/coachingSessions/new', to: 'coaching_sessions#create'
       get '/balance/:id/coachingSessions/', to: 'coaching_sessions#find'
       delete '/balance/:id/coachingSessions/:csId', to: 'coaching_sessions#delete'
+      get '/balance/:id/coachingSessions/summary', to: 'coaching_sessions#summary'
 
     end
   end

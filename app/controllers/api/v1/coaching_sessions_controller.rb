@@ -25,6 +25,14 @@ module Api
           delete.call params[:csId]
         end
       end
+
+      def summary
+        validate_parameters [:id], params do
+          summary = SummaryCoachingSession.new
+          summary.add_subscriber(self)
+          summary.call params[:id]
+        end
+      end
     end
   end
 end

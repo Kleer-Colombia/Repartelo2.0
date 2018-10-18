@@ -1,5 +1,7 @@
 class CreateCoachingSession < Publisher
 
+  attr_reader :coaching_session
+
   def call(balance_id, data)
     instance_coaching_session data
     add_kleerers data[:kleerers]
@@ -11,8 +13,6 @@ class CreateCoachingSession < Publisher
     publish(:halt_message,
             "Invalid parameters creating coaching session #{error}")
   end
-
-  private
 
   def add_kleerers(kleerers)
     kleerers.each do |kleerer_id|

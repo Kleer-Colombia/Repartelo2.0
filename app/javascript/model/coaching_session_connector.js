@@ -7,6 +7,7 @@ const SERVICE_URL = API_URL + '/balance/'
 const CREATE_URL = '/coachingSessions/new'
 const FIND_URL = '/coachingSessions/'
 const DELETE_URL = '/coachingSessions/'
+const SUMMARY_URL = '/coachingSessions/summary'
 
 export default {
 
@@ -59,6 +60,20 @@ export default {
           message: 'Eliminación exitosa'
         })
         context.updateList()
+      }
+    })
+      .catch(function (error) {
+        util.processErrorMsgs(error, context)
+      })
+  },
+  summary (context, balanceId) {
+    axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
+    axios({
+      method: 'get',
+      url: SERVICE_URL + balanceId + SUMMARY_URL
+    }).then(function (response) {
+      if (response.status === 200) {
+        context.summary = response.data.response
       }
     })
       .catch(function (error) {

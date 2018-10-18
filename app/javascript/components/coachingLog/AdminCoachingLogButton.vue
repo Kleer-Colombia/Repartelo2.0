@@ -1,7 +1,33 @@
 <template>
     <el-main>
-        <el-button type="primary" id='admin-coaching' @click="openDialog()">Administrar sessiones de coaching
-        </el-button>
+        <el-container>
+            <el-main>
+                <el-row>
+                    <h3 class="center">Total de sessiones {{summary.totalcs}}</h3>
+                </el-row>
+                <el-row>
+                    <el-table :data="summary.distribution">
+                        <el-table-column property="kleerer" label="Kleerer"></el-table-column>
+                        <el-table-column property="sessions" label="Sesiones"></el-table-column>
+                        <el-table-column property="percentage" label="Porcentaje">
+                            <template slot-scope="scope">
+                                <b>{{scope.row.percentage}}%</b>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-row>
+            </el-main>
+            <el-footer>
+                <el-row>
+                    <el-col :span="8" :offset="8">
+                        <el-button class="center" type="primary" id='admin-coaching' @click="openDialog()">Administrar sessiones de coaching
+                        </el-button>
+                    </el-col>
+                </el-row>
+
+            </el-footer>
+        </el-container>
+
 
         <el-dialog title="Administrar log de coaching" :visible.sync="adminVisible">
             <el-row>
@@ -46,13 +72,21 @@
         sessions: [{
           id: '',
           date: '',
-          kleerers: 'Yamit',
-          description: 'prueba de log'
-        }]
+          kleerers: '',
+          description: ''
+        }],
+        summary: {
+          totalcs: 0,
+          distribution: [{kleerer: '', sessions: 0, percentage: 0}, {kleerer: '', sessions: 0, percentage: 0}]
+        }
       }
+    },
+    created: function () {
+      this.summarize()
     },
     methods: {
       closeDialog () {
+        this.summarize()
         this.adminVisible = false
       },
       openDialog () {
@@ -64,6 +98,9 @@
       },
       deleteCoachingSession (id) {
         coachingSessionConnector.delete(this, this.balanceId, id)
+      },
+      summarize () {
+        coachingSessionConnector.summary(this, this.$route.params.id)
       }
     }
   }
@@ -71,5 +108,8 @@
 </script>
 
 <style scoped>
+    .center {
+        text-align: center;
+    }
 
 </style>
