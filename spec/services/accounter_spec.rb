@@ -4,6 +4,8 @@ describe Accounter do
 
   before(:each) do
     @accounter = Accounter.new(Kleerer.new(name: 'KleerCo', option: :home, id: 100000000))
+    @accounter.option_kleer_co = 0.18
+    @accounter.option_kleerer = 0.82
 
     allow_any_instance_of(Balance).to receive(:save!).and_return(true)
     @balance = Balance.new(project: 'project',

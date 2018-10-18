@@ -1,13 +1,14 @@
 class Accounter
 
-  #TODO this must be in the db
-  OPTION_KLEER_CO = 0.16
-  OPTION_KLEERER = 0.84
+ attr_accessor :option_kleer_co, :option_kleerer
 
   OPTIONS = {socio: 0.05,full:0.15,parcial: 0.25,otro: 0.10}
 
   def initialize kleerCo = Kleerer.find_by(name: "KleerCo")
     @kleerCo = kleerCo
+    #TODO this must be in the db
+    @option_kleer_co = 0.16
+    @option_kleerer = 0.84
   end
 
   def distribute balanceId
@@ -15,8 +16,8 @@ class Accounter
     balance = Balance.find(balanceId)
     if !balance.percentages.empty?
       profit = calculate_profit balance
-      forKleerCo = profit*OPTION_KLEER_CO
-      for_percentage_distrbution = profit*OPTION_KLEERER
+      forKleerCo = profit*@option_kleer_co
+      for_percentage_distrbution = profit*@option_kleerer
 
       distributions = {@kleerCo.id => forKleerCo}
 
