@@ -114,7 +114,7 @@
       },
       distribute () {
         if (dealer.areValidPercentage(this.distribution.kleerers)) {
-          var data = {
+          let data = {
             balanceId: this.$route.params.id
           }
           balanceConnector.distribute(this, data)

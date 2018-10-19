@@ -11,17 +11,14 @@ module Api
 
       def distribute
         validate_parameters [:balanceId], params do
-          begin
-            balance = @actions.distribute params[:balanceId]
-            send_response balance
-          rescue StandardError => error
-            halt_message 500,error.message
-          end
+          distribute = DistributeBalance.new
+          distribute.add_subscriber(self)
+          distribute.call params[:balanceId]
         end
       end
 
       def close
-        validate_parameters [:balanceId],params do
+        validate_parameters [:balanceId], params do
           begin
             @actions.close params[:balanceId]
             send_response 'Ok'
@@ -44,10 +41,10 @@ module Api
                 client: balance['client'],
                 description: balance['description'],
                 balance_type: balance['balance_type'],
-                date: Date.strptime(balance['date'],'%Y-%m-%d'))
+                date: Date.strptime(balance['date'], '%Y-%m-%d'))
             send_response result.id
           rescue StandardError => e
-            halt_message 500,"Invalid parameters creating balance #{e}"
+            halt_message 500, "Invalid parameters creating balance #{e}"
           end
         end
 
@@ -58,7 +55,7 @@ module Api
           begin
             send_response @actions.find_complete_balance params[:id]
           rescue
-            halt_message 500,'Balance not exist'
+            halt_message 500, 'Balance not exist'
           end
         end
       end
@@ -68,62 +65,59 @@ module Api
           begin
             send_response @actions.delete_balance(params[:id])
           rescue ActiveRecord::RecordInvalid => e
-            halt_message 500,"We can't delete balance: #{e.message}"
+            halt_message 500, "We can't delete balance: #{e.message}"
           end
         end
       end
 
       def add_income
-        validate_parameters [:id,:income], params do
+        validate_parameters [:id, :income], params do
           begin
             income = params[:income]
-            send_response @actions.add_income_to_balance(params[:id],income)
+            send_response @actions.add_income_to_balance(params[:id], income)
           rescue => e
             puts e
-            halt_message 500,"We can't add income"
+            halt_message 500, "We can't add income"
           end
         end
       end
 
       def delete_income
-        validate_parameters [:id,:idIncome], params do
+        validate_parameters [:id, :idIncome], params do
           begin
-            send_response @actions.remove_income_to_balance(params[:id],params[:idIncome])
+            send_response @actions.remove_income_to_balance(params[:id], params[:idIncome])
           rescue
-            halt_message 500,"We can't remove income"
+            halt_message 500, "We can't remove income"
           end
         end
       end
 
       def add_expense
-        validate_parameters [:id,:expense], params do
+        validate_parameters [:id, :expense], params do
           begin
             income = params[:expense]
-            send_response @actions.add_expense_to_balance(params[:id],income)
+            send_response @actions.add_expense_to_balance(params[:id], income)
           rescue
-            halt_message 500,"We can't add expense"
+            halt_message 500, "We can't add expense"
           end
         end
       end
 
       def delete_expense
-        validate_parameters [:id,:idExpense], params do
+        validate_parameters [:id, :idExpense], params do
           begin
-            send_response @actions.remove_expense_to_balance(params[:id],params[:idExpense])
+            send_response @actions.remove_expense_to_balance(params[:id], params[:idExpense])
           rescue
-            halt_message 500,"We can't remove expense"
+            halt_message 500, "We can't remove expense"
           end
         end
       end
 
       def update_percentages
-        validate_parameters [:id,:kleerers], params do
-          begin
-            kleerers = params[:kleerers]
-            send_response @actions.update_kleerers_percentages(params[:id],kleerers)
-          rescue StandardError => e
-            halt_message 500,"We can't update the kleerers distribution: #{e.message}"
-          end
+        validate_parameters [:id, :kleerers], params do
+          update_percentages = UpdatePercentage.new
+          update_percentages.add_subscriber(self)
+          update_percentages.call(params[:id], params[:kleerers])
         end
       end
     end

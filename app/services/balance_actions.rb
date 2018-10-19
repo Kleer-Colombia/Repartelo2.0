@@ -5,11 +5,6 @@ class BalanceActions
     @saldos =  SaldosActions.new
   end
 
-  def distribute balanceId
-    distributions = @accounter.distribute balanceId
-    return prepare_distributions distributions
-  end
-
   def close balanceId
     balance = Balance.find(balanceId)
     distributions = balance.distributions
@@ -80,17 +75,5 @@ class BalanceActions
       Balance.where(id: balance_id).destroy_all
     end
   end
-
-  private
-
-  def prepare_distributions distributions
-    data = []
-    distributions.each do |distribution|
-      data.push({kleerer: distribution.kleerer.name,
-                 amount: distribution.amount})
-    end
-    return data
-  end
-
 
 end

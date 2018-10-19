@@ -1,3 +1,9 @@
+TODO:
+    extraer botton de distribuir como componente, actualmente en KleerersDistribution y AdminCoachingLogButton
+
+Version 2.1
+    - balances de tipo coaching con calculo y distribuccion.
+
 Version 2.0
 
     - Migracion a rails 5.1 con Vue.js 

@@ -3,7 +3,13 @@
         <el-container>
             <el-main>
                 <el-row>
-                    <h3 class="center">Total de sessiones {{summary.totalcs}}</h3>
+                    <el-col :span="12">
+                        <h3 class="center">Total de sessiones {{summary.totalcs}}</h3>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-button class="center" type="primary" id='admin-coaching' @click="openDialog()">Administrar sessiones de coaching
+                        </el-button>
+                    </el-col>
                 </el-row>
                 <el-row>
                     <el-table :data="summary.distribution">
@@ -20,7 +26,8 @@
             <el-footer>
                 <el-row>
                     <el-col :span="8" :offset="8">
-                        <el-button class="center" type="primary" id='admin-coaching' @click="openDialog()">Administrar sessiones de coaching
+                        <el-button type="success" id="Distribuir" @click="distribute()"
+                                   :disabled="!editable">Distribuir
                         </el-button>
                     </el-col>
                 </el-row>
@@ -31,7 +38,7 @@
 
         <el-dialog title="Administrar log de coaching" :visible.sync="adminVisible">
             <el-row>
-                <coaching-log-form v-on:update="updateList" :balance-id="balanceId"></coaching-log-form>
+                <coaching-log-form :editable="editable" v-on:update="updateList" :balance-id="balanceId"></coaching-log-form>
             </el-row>
 
             <el-row>
@@ -41,7 +48,7 @@
                     <el-table-column property="description" label="Descripción"></el-table-column>
                     <el-table-column label="opciones">
                         <template slot-scope="scope">
-                            <el-button type="text" @click='deleteCoachingSession(scope.row.id)' icon="el-icon-error">Eliminar</el-button>
+                            <el-button :disabled="!editable" type="text" @click='deleteCoachingSession(scope.row.id)' icon="el-icon-error">Eliminar</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -57,6 +64,7 @@
 <script>
   import CoachingLogForm from './CoachingLogForm'
   import coachingSessionConnector from '../../model/coaching_session_connector'
+  import balanceConnector from '../../model/balance_connector'
 
   export default {
     components: {CoachingLogForm},
@@ -64,6 +72,10 @@
     props: {
       balanceId: {
         type: [String, Number]
+      },
+      editable: {
+        type: [Boolean],
+        default: true
       }
     },
     data () {
@@ -101,6 +113,12 @@
       },
       summarize () {
         coachingSessionConnector.summary(this, this.$route.params.id)
+      },
+      distribute () {
+        let data = {
+          balanceId: this.$route.params.id
+        }
+        balanceConnector.distribute(this, data)
       }
     }
   }

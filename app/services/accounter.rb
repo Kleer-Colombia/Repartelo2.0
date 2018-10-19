@@ -1,8 +1,8 @@
 class Accounter
 
- attr_accessor :option_kleer_co, :option_kleerer
+  attr_accessor :option_kleer_co, :option_kleerer
 
-  OPTIONS = {socio: 0.05,full:0.15,parcial: 0.25,otro: 0.10}
+  OPTIONS = {socio: 0.05, full: 0.15, parcial: 0.25, otro: 0.10}
 
   def initialize kleerCo = Kleerer.find_by(name: "KleerCo")
     @kleerCo = kleerCo
@@ -11,29 +11,28 @@ class Accounter
     @option_kleerer = 0.84
   end
 
-  def distribute balanceId
-
+  def distribute(balanceId)
     balance = Balance.find(balanceId)
-    if !balance.percentages.empty?
-      profit = calculate_profit balance
-      forKleerCo = profit*@option_kleer_co
-      for_percentage_distrbution = profit*@option_kleerer
+    if (!balance.percentages.empty?)
+      profit = calculate_profit(balance)
+      forKleerCo = profit * @option_kleer_co
+      for_percentage_distrbution = profit * @option_kleerer
 
       distributions = {@kleerCo.id => forKleerCo}
 
       balance.percentages.each do |percentage|
         kleerer = percentage.kleerer
-        forKleerer = (for_percentage_distrbution * percentage.value)/100
-        re_entry = forKleerer*OPTIONS[kleerer.option.to_sym]
+        forKleerer = (for_percentage_distrbution * percentage.value) / 100
+        re_entry = forKleerer * OPTIONS[kleerer.option.to_sym]
 
         distributions[@kleerCo.id] += re_entry
         distributions[kleerer.id] = forKleerer - re_entry
       end
 
-      save_distributions(balance,distributions)
+      save_distributions(balance, distributions)
       balance.distributions
     else
-      raise StandardError,'How to distribute?'
+      raise StandardError, 'How to distribute?'
     end
 
   end
@@ -48,8 +47,8 @@ class Accounter
 
   def calculate_profit balance
     profit = calculate_total_incomes(balance) - calculate_total_expenses(balance)
-    if profit < 0
-      raise StandardError,'Nothing to distribute!'
+    if(profit < 0)
+      raise StandardError, 'Nothing to distribute!'
     end
     profit
   end
@@ -68,14 +67,13 @@ class Accounter
     total
   end
 
-  def save_distributions balance,distributions
+  def save_distributions balance, distributions
     clean_distributions(balance)
-    distributions.each do |id,amount|
+    distributions.each do |id, amount|
       balance.distributions.push(Distribution.new(amount: amount.round(2), kleerer_id: id))
     end
     balance.save!
   end
-
 
 
 end

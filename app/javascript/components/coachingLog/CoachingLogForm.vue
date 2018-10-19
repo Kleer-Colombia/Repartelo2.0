@@ -1,6 +1,6 @@
 <template>
     <el-main>
-        <el-button type="primary" id='newCoachingSession' @click="visible = true">Nueva</el-button>
+        <el-button :disabled="!editable" type="primary" id='newCoachingSession' @click="visible = true">Nueva</el-button>
 
         <el-dialog tittle="Sesión de coaching" :visible.sync="visible" append-to-body>
             <el-form label-width="200px" id="form-coaching-session">
@@ -60,6 +60,10 @@
     props: {
       balanceId: {
         type: [String, Number]
+      },
+      editable: {
+        type: [Boolean],
+        default: true
       }
     },
     data () {

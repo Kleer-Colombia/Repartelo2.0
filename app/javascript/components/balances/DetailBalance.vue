@@ -73,7 +73,8 @@
                                                    :balancePercentages="distribution.balancePercentages"/>
                         </div>
                         <div v-else>
-                            <admin-coaching-log :balanceId="balance.id"></admin-coaching-log>
+                            <admin-coaching-log v-model="distribution.result" :balanceId="balance.id"
+                                                :editable="balance.editable"></admin-coaching-log>
                         </div>
                     </el-row>
 
@@ -188,16 +189,16 @@
             type: 'warning',
             center: true
           }).then(() => {
-          var data = {
-            balanceId: this.$route.params.id
-          }
-          balanceConnector.close(this, data)
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'verificalo bien ;-)'
+            let data = {
+              balanceId: this.$route.params.id
+            }
+            balanceConnector.close(this, data)
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: 'verificalo bien ;-)'
+            })
           })
-        })
       },
       deleteBalance () {
         this.$confirm('Esto borrara permanentemente todos los datos asociados a este balance, ¿Desea continuar?',
