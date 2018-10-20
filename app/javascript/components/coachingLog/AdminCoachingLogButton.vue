@@ -3,7 +3,7 @@
         <el-container>
             <el-main>
                 <el-row>
-                    <el-col :span="12">
+                    <el-col :span="10">
                         <h3 class="center">Total de sessiones {{summary.totalcs}}</h3>
                     </el-col>
                     <el-col :span="12">
@@ -12,7 +12,7 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-table :data="summary.distribution">
+                    <el-table :data="summary.distribution" size="small">
                         <el-table-column property="kleerer" label="Kleerer"></el-table-column>
                         <el-table-column property="sessions" label="Sesiones"></el-table-column>
                         <el-table-column property="percentage" label="Porcentaje">
@@ -42,7 +42,7 @@
             </el-row>
 
             <el-row>
-                <el-table :data="sessions" height="350">
+                <el-table :data="sessions" height="250" size="small">
                     <el-table-column property="date" label="Fecha" width="150"></el-table-column>
                     <el-table-column property="kleerers" label="Kleerers" width="200"></el-table-column>
                     <el-table-column property="description" label="Descripción"></el-table-column>

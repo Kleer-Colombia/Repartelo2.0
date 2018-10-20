@@ -21,7 +21,8 @@ class ApiController < ActionController::API
     yield
   end
 
-  def halt_message error_code, message
+  #TODO validar codigos de errores
+  def halt_message  message, error_code = 400
     render json: { message: message }, status: error_code
   end
 

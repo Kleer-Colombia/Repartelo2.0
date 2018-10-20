@@ -30,8 +30,6 @@ export default {
     return url
   },
   processErrorMsgs (error, context) {
-    console.log(error)
-    console.log('---->' + error.response)
     if (error.response) {
       if (error.response.status === 401) {
         this.manageAuthError(error, context)

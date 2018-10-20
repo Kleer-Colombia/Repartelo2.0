@@ -196,7 +196,7 @@ export default {
         context.distribution.kleerers[i].selected = false
         context.distribution.kleerers[i].value = 0
       }
-      if (nextFunction) {
+     if (nextFunction) {
         nextFunction(context)
       }
     })

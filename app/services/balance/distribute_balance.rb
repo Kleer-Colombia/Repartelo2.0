@@ -5,7 +5,8 @@ class DistributeBalance < Publisher
   end
 
   def call(balance_id)
-    publish(:send_response, distribute(balance_id))
+    distributions = distribute(balance_id)
+    publish(:send_response, distributions)
   rescue StandardError => error
     publish(:halt_message,
             "error on distribution balance: #{error.message} ")

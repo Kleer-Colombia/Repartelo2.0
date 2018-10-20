@@ -4,14 +4,14 @@ class UpdatePercentage < Publisher
     publish(:send_response, update_kleerers_percentages(balance_id,kleerers))
   rescue StandardError => error
     publish(:halt_message,
-            "We can't update the kleerers distribution: #{e.message}")
+            "We can't update the kleerers distribution: #{error.message}")
   end
 
 
   def update_percentage_for_coaching_balance(balance_id, summary)
     kleerers = []
     summary[:distribution].each do |distribution|
-      kleerer = { value: distribution[:percentaje],kleerer_id: distribution[:kleerer_id] }
+      kleerer = { value: distribution[:percentage],kleerer_id: distribution[:kleerer_id] }
       kleerers << kleerer
     end
 
@@ -24,9 +24,10 @@ class UpdatePercentage < Publisher
     balance = Balance.find(balance_id)
     balance.percentages.clear
     kleerers.each do |kleerer|
-      balance.percentages.push(Percentage.new(value: kleerer[:value], kleerer_id: kleerer[:id]))
+      balance.percentages.push(Percentage.new(value: kleerer[:value], kleerer_id: kleerer[:kleerer_id]))
     end
-    @accounter.clean_distributions balance
+    #TODO actions for distributions on accounter:56
+    balance.distributions.clear
     balance.save!
 
   end

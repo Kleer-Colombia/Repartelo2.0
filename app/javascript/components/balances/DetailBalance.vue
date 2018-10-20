@@ -189,7 +189,7 @@
             type: 'warning',
             center: true
           }).then(() => {
-            let data = {
+            var data = {
               balanceId: this.$route.params.id
             }
             balanceConnector.close(this, data)

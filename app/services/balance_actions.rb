@@ -55,6 +55,16 @@ class BalanceActions
             percentages: balance.percentages }
   end
 
+  #TODO refactor, this method was duplicated on distribute_balance
+  def prepare_distributions distributions
+    data = []
+    distributions.each do |distribution|
+      data.push({kleerer: distribution.kleerer.name,
+                 amount: distribution.amount})
+    end
+    return data
+  end
+
   def update_kleerers_percentages(id, kleerers)
     balance = Balance.find(id)
     balance.percentages.clear

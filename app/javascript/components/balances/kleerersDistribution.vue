@@ -65,16 +65,16 @@
       }
     },
     created: function () {
-      balanceConnector.getKleerers(this)
-    },
-    watch: {
-      balancePercentages: function (newVal) {
-        this.distribution.percentageCached = newVal
-        this.updateKleerersSelecteds(this)
-        this.$forceUpdate()
-      }
+      balanceConnector.getKleerers(this,function(context){
+        context.initPercentages();
+      })
     },
     methods: {
+      initPercentages (){
+        this.distribution.percentageCached = this.balancePercentages
+        this.updateKleerersSelecteds(this)
+        this.$forceUpdate()
+      },
       updateKleerersSelecteds (context) {
         var percentages = context.distribution.percentageCached
         var kleerers = context.distribution.kleerers
@@ -114,7 +114,7 @@
       },
       distribute () {
         if (dealer.areValidPercentage(this.distribution.kleerers)) {
-          let data = {
+          var data = {
             balanceId: this.$route.params.id
           }
           balanceConnector.distribute(this, data)

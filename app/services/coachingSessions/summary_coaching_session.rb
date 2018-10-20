@@ -3,8 +3,8 @@ class SummaryCoachingSession < Publisher
   def call(balance_id)
 
     summary = summary(CoachingSession.where(balance_id: balance_id))
-
-    #UpdatePercentage.new.update_percentage_for_coaching_balance(balance_id, summary)
+    #TODO on charge page not to be called and clean distribution table if it changes.
+    UpdatePercentage.new.update_percentage_for_coaching_balance(balance_id, summary)
 
     publish(:send_response, summary)
   rescue StandardError => error
