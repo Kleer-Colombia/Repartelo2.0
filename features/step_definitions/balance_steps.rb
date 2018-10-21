@@ -92,7 +92,7 @@ end
 
 
 Then(/^I should the an invalid profit distribution error$/) do
-  expect(@actual_page.find_error).to eq 'Error: 500:Nothing to distribute!'
+  expect(@actual_page.find_error).to eq 'Error: 406:error on distribution balance: Nothing to distribute!'
 end
 
 Then(/^I should see the balances table$/) do

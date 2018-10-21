@@ -15,8 +15,7 @@ class BalanceActions
     balance.save!
   end
 
-  #TODO in add and remove, verify the response from db true or false
-  def add_income_to_balance id,income
+ def add_income_to_balance id,income
     balance = Balance.find(id)
     balance.incomes.create!(description: income[:description],amount: income[:amount])
     return {incomes: balance.incomes,
