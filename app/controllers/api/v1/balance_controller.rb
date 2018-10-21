@@ -21,15 +21,15 @@ module Api
         validate_parameters [:balanceId], params do
           begin
             @actions.close params[:balanceId]
-            send_response 'Ok'
+            send_response ('Ok', :ok)
           rescue StandardError => error
-            halt_message 500, error.message
+            halt_message("can't close balance: #{error.message}", :internal_server_error)
           end
         end
       end
 
       def find_all
-        send_response Balance.all
+        send_response(Balance.all, :ok)
       end
 
       def create
@@ -44,7 +44,7 @@ module Api
                 date: Date.strptime(balance['date'], '%Y-%m-%d'))
             send_response result.id
           rescue StandardError => e
-            halt_message 500, "Invalid parameters creating balance #{e}"
+            halt_message("Invalid parameters creating balance #{e}", :internal_server_error)
           end
         end
 
@@ -55,7 +55,7 @@ module Api
           begin
             send_response @actions.find_complete_balance params[:id]
           rescue
-            halt_message 500, 'Balance not exist'
+            halt_message("Balance not exist", :no_content)
           end
         end
       end
@@ -65,7 +65,7 @@ module Api
           begin
             send_response @actions.delete_balance(params[:id])
           rescue ActiveRecord::RecordInvalid => e
-            halt_message 500, "We can't delete balance: #{e.message}"
+            halt_message("We can't delete balance: #{e.message}", :internal_server_error)
           end
         end
       end
@@ -76,8 +76,7 @@ module Api
             income = params[:income]
             send_response @actions.add_income_to_balance(params[:id], income)
           rescue => e
-            puts e
-            halt_message 500, "We can't add income"
+            halt_message("We can't add income #{e.message}", :internal_server_error)
           end
         end
       end
@@ -87,7 +86,7 @@ module Api
           begin
             send_response @actions.remove_income_to_balance(params[:id], params[:idIncome])
           rescue
-            halt_message 500, "We can't remove income"
+            halt_message("We can't remove income: #{e.message}", :internal_server_error)
           end
         end
       end
@@ -98,7 +97,7 @@ module Api
             income = params[:expense]
             send_response @actions.add_expense_to_balance(params[:id], income)
           rescue
-            halt_message 500, "We can't add expense"
+            halt_message("We can't add expense: #{e.message}", :internal_server_error)
           end
         end
       end
@@ -108,7 +107,7 @@ module Api
           begin
             send_response @actions.remove_expense_to_balance(params[:id], params[:idExpense])
           rescue
-            halt_message 500, "We can't remove expense"
+            halt_message("We can't remove expense: #{e.message}", :internal_server_error)
           end
         end
       end

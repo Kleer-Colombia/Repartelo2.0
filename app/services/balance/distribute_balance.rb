@@ -9,7 +9,7 @@ class DistributeBalance < Publisher
     publish(:send_response, distributions)
   rescue StandardError => error
     publish(:halt_message,
-            "error on distribution balance: #{error.message} ")
+            "error on distribution balance: #{error.message}")
   end
 
   def distribute balanceId

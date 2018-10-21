@@ -14,7 +14,7 @@ export default {
       url: LOGIN_URL,
       data: creds
     }).then(function (response) {
-      localStorage.setItem('access_token', response.data.token)
+      localStorage.setItem('access_token', response.data.response.token)
       // Redirect to a specified route
       if (redirect) {
         router.push(redirect)

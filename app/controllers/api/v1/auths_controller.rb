@@ -8,9 +8,10 @@ module Api
           validate_parameters [:username,:password], params do
             token_command = AuthenticateUserCommand.call(*params.slice(:username, :password).values)
             if token_command.success?
-              render json: { token: token_command.result }
+              send_response({ token: token_command.result }, :ok)
             else
-              render json: { message: token_command.errors[:base][0] }, status: :unauthorized
+              halt_message( token_command.errors[:base][0] , :unauthorized)
+
             end
           end
         end

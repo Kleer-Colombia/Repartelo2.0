@@ -14,7 +14,7 @@ module Api
               response = @actions.find_saldos params[:kleerer_id]
               send_response response
             rescue StandardError => error
-              halt_message 500,error.message
+              halt_message("can't find saldos: #{error.message}", :internal_server_error)
             end
         end
       end
@@ -25,7 +25,7 @@ module Api
               response = @actions.add_saldo saldo: params[:saldo]
               send_response response
             rescue StandardError => error
-              halt_message 500,error.message
+              halt_message("can't add saldo: #{error.message}", :internal_server_error)
             end
         end
       end

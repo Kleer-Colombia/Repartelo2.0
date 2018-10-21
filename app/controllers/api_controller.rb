@@ -15,18 +15,17 @@ class ApiController < ActionController::API
     yield
   end
 
-  #TODO validar codigos de errores
-  def halt_message  message, error_code = 400
+  def halt_message  message, error_code = :internal_server_error
     render json: { message: message }, status: error_code
   end
 
-  def send_response object, status = 200
+  def send_response object, status = :ok
     render json: { response: object }, status: status
   end
 
   private
 
-  #TODO inspeccionar los has y los arrays y hacerlos recursivos?
+  #TODO inspeccionar los hash y los arrays y hacerlos recursivos?
   def validate(parameter)
     if(parameter)
       return ((parameter.is_a?(Hash) and !parameter.empty?) or
