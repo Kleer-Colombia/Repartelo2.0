@@ -81,6 +81,7 @@
     data () {
       return {
         adminVisible: false,
+        isNeededUpdatePercentage: false,
         sessions: [{
           id: '',
           date: '',
@@ -94,11 +95,11 @@
       }
     },
     created: function () {
-      this.summarize()
+      this.summarize(false)
     },
     methods: {
       closeDialog () {
-        this.summarize()
+        this.summarize(this.isNeededUpdatePercentage)
         this.adminVisible = false
       },
       openDialog () {
@@ -106,13 +107,16 @@
         this.adminVisible = true
       },
       updateList () {
+        this.isNeededUpdatePercentage = true
         coachingSessionConnector.find(this, this.balanceId)
       },
       deleteCoachingSession (id) {
         coachingSessionConnector.delete(this, this.balanceId, id)
       },
-      summarize () {
-        coachingSessionConnector.summary(this, this.$route.params.id)
+      summarize (isNeededUpdatePercentage) {
+        if (isNeededUpdatePercentage){
+          coachingSessionConnector.summary(this, this.$route.params.id,isNeededUpdatePercentage)
+        }
       },
       distribute () {
         let data = {

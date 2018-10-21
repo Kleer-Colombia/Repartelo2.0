@@ -27,10 +27,11 @@ module Api
       end
 
       def summary
-        validate_parameters [:id], params do
+        puts params
+        validate_parameters [:id, :updatePercentage], params do
           summary = SummaryCoachingSession.new
           summary.add_subscriber(self)
-          summary.call params[:id]
+          summary.call(params[:id],params[:updatePercentage])
         end
       end
     end

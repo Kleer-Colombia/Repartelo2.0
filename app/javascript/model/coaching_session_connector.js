@@ -66,11 +66,12 @@ export default {
         util.processErrorMsgs(error, context)
       })
   },
-  summary (context, balanceId) {
+  summary (context, balanceId, isNeededUpdatePercentage) {
     axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
     axios({
-      method: 'get',
-      url: SERVICE_URL + balanceId + SUMMARY_URL
+      method: 'post',
+      url: SERVICE_URL + balanceId + SUMMARY_URL,
+      data: { updatePercentage: isNeededUpdatePercentage }
     }).then(function (response) {
       if (response.status === 200) {
         context.summary = response.data.response

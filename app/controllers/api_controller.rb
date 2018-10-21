@@ -5,11 +5,11 @@ class ApiController < ActionController::API
 
   rescue_from ActiveRecord::RecordNotFound, with: -> { render json: { error: 'Not found' }, status: :not_found }
 
-  def validate_parameters parameters, array
+  def validate_parameters(parameters, array)
     for parameter in parameters
       param = array[parameter]
-      if !validate(param)
-        halt_message :unauthorized,"Invalid parameters: #{parameter}" and return
+      if(!validate(param))
+        halt_message "Invalid parameters: #{parameter}" , :internal_server_error and return
       end
     end
     yield
@@ -27,7 +27,7 @@ class ApiController < ActionController::API
 
   #TODO inspeccionar los hash y los arrays y hacerlos recursivos?
   def validate(parameter)
-    if(parameter)
+   if(!parameter.nil?)
       return ((parameter.is_a?(Hash) and !parameter.empty?) or
           (parameter.is_a?(Array) and !parameter.empty?) or
           !parameter.to_s.empty?)

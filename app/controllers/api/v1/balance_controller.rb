@@ -21,7 +21,7 @@ module Api
         validate_parameters [:balanceId], params do
           begin
             @actions.close params[:balanceId]
-            send_response ('Ok', :ok)
+            send_response('Ok')
           rescue StandardError => error
             halt_message("can't close balance: #{error.message}", :internal_server_error)
           end
