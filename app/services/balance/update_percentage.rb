@@ -11,7 +11,7 @@ class UpdatePercentage < Publisher
   def update_percentage_for_coaching_balance(balance_id, summary)
     kleerers = []
     summary[:distribution].each do |distribution|
-      kleerer = { value: distribution[:percentage],kleerer_id: distribution[:kleerer_id] }
+      kleerer = { value: distribution[:percentage],id: distribution[:kleerer_id] }
       kleerers << kleerer
     end
 
@@ -24,7 +24,7 @@ class UpdatePercentage < Publisher
     balance = Balance.find(balance_id)
     balance.percentages.clear
     kleerers.each do |kleerer|
-      balance.percentages.push(Percentage.new(value: kleerer[:value], kleerer_id: kleerer[:kleerer_id]))
+      balance.percentages.push(Percentage.new(value: kleerer[:value], kleerer_id: kleerer[:id]))
     end
     #TODO actions for distributions on accounter:56
     balance.distributions.clear

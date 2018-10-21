@@ -1,119 +1,131 @@
 <template>
     <safe-body>
-        <el-card class="box-card">
-            <el-row>
-                <el-col :offset="2" :span="2">
-                    <div class="grid-content">
-                        <p>ID: {{balance.id}}</p>
-                    </div>
-                </el-col>
-                <el-col :span="4">
-                    <div class="grid-content">
-                        <p>Cliente: <span id="client">{{balance.client}}</span></p>
-                    </div>
-                </el-col>
-                <el-col :span="4">
-                    <div class="grid-content">
-                        <p>Project: <span id="project">{{balance.project}}</span></p>
-                    </div>
-                </el-col>
-                <el-col :span="4">
-                    <div class="grid-content">
-                        <p>Fecha: <span id="date">{{balance.date}}</span></p>
-                    </div>
-                </el-col>
-                <el-col :span="4">
-                    <div class="grid-content">
-                        <p>Description: <span id="description">{{balance.description}}</span></p>
-                    </div>
-                </el-col>
-                <el-col :offset="1" :span="2">
-                    <el-button type="danger" id="Borrar" @click="deleteBalance()"
-                               :disabled="!balance.editable">
-                        Borrar
-                    </el-button>
-                </el-col>
 
-            </el-row>
-        </el-card>
-        <el-row id="row-money">
-            <el-col :span="6">
-                <incomes-admin v-model="incomes.totalIncomes" :editable="balance.editable"
-                               :allIncomes="incomes.realIncomes"/>
-                <expenses-admin v-model="expenses.totalExpenses" :editable="balance.editable"
-                                :allExpenses="expenses.realExpenses"/>
-            </el-col>
-            <el-col :span="18">
-                <el-card class="box-card">
-                    <el-row :gutter="10">
-                        <el-col :span="8" :offset="1">
-                            <el-table
-                                    :data="summary()"
-                                    border
-                                    style="width: 100%">
-                                <el-table-column
-                                        prop="title"
-                                        label="">
-                                </el-table-column>
-                                <el-table-column
-                                        prop="total"
-                                        label="Totales">
-                                    <template slot-scope="scope">
-                                        <b>
+        <div v-if="!loaded">
+            <h1> Cargando ... </h1>
+        </div>
+        <div v-else>
+            <el-card class="box-card">
+                <el-row>
+                    <el-col :offset="2" :span="2">
+                        <div class="grid-content">
+                            <p>ID: {{balance.id}}</p>
+                        </div>
+                    </el-col>
+                    <el-col :span="4">
+                        <div class="grid-content">
+                            <p>Cliente: <span id="client">{{balance.client}}</span></p>
+                        </div>
+                    </el-col>
+                    <el-col :span="4">
+                        <div class="grid-content">
+                            <p>Project: <span id="project">{{balance.project}}</span></p>
+                        </div>
+                    </el-col>
+                    <el-col :span="4">
+                        <div class="grid-content">
+                            <p>Fecha: <span id="date">{{balance.date}}</span></p>
+                        </div>
+                    </el-col>
+                    <el-col :span="4">
+                        <div class="grid-content">
+                            <p>Description: <span id="description">{{balance.description}}</span></p>
+                        </div>
+                    </el-col>
+                    <el-col :offset="1" :span="2">
+                        <el-button type="danger" id="Borrar" @click="deleteBalance()"
+                                   :disabled="!balance.editable">
+                            Borrar
+                        </el-button>
+                    </el-col>
+
+                </el-row>
+            </el-card>
+            <el-row id="row-money">
+                <el-col :span="6">
+                    <incomes-admin v-model="incomes.totalIncomes" :editable="balance.editable"
+                                   :allIncomes="incomes.realIncomes"/>
+                    <expenses-admin v-model="expenses.totalExpenses" :editable="balance.editable"
+                                    :allExpenses="expenses.realExpenses"/>
+                </el-col>
+                <el-col :span="18">
+                    <el-card class="box-card">
+                        <el-row :gutter="10">
+                            <el-col :span="8" :offset="1">
+                                <el-table
+                                        :data="summary()"
+                                        border
+                                        style="width: 100%">
+                                    <el-table-column
+                                            prop="title"
+                                            label="">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="total"
+                                            label="Totales">
+                                        <template slot-scope="scope">
+                                            <b>
                         <span :id="scope.row.id">
                           {{ formatPrice(scope.row.total) }}
                         </span>
-                                        </b>
-                                    </template>
-                                </el-table-column>
-                            </el-table>
-                        </el-col>
-                        <div v-if="balance.balance_type === 'standard' ">
-                            <kleerers-distribution v-model="distribution.result" :editable="balance.editable"
-                                                   :balancePercentages="distribution.balancePercentages"/>
-                        </div>
-                        <div v-else>
-                            <admin-coaching-log v-model="distribution.result" :balanceId="balance.id"
-                                                :editable="balance.editable"></admin-coaching-log>
-                        </div>
-                    </el-row>
-
-                    <el-row v-if="distribution.result">
-                        <el-row>
-                            <el-col :offset="2" :span="20">
-                                <el-table
-                                        :data="distribution.result"
-                                        border
-                                        :default-sort="{prop: 'date', order: 'descending'}"
-                                        style="width: 100%">
-                                    <el-table-column
-                                            prop="kleerer"
-                                            label="Nombre"
-                                            sortable>
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="amount"
-                                            label="Monto">
-                                        <template slot-scope="scope">
-                  <span :id="'money'+scope.row.kleerer">
-                    {{ formatPrice(scope.row.amount) }}
-                  </span>
+                                            </b>
                                         </template>
                                     </el-table-column>
                                 </el-table>
                             </el-col>
+
+                            <div v-if="balance.balance_type === 'standard' ">
+                                <kleerers-distribution v-model="distribution.result" :editable="balance.editable"
+                                                       :balancePercentages="distribution.balancePercentages"
+                                                       key="kleerers-distribution"/>
+                            </div>
+                            <div v-else>
+                                <admin-coaching-log v-model="distribution.result" :balanceId="balance.id"
+                                                    :editable="balance.editable"
+                                                    key="admin-coaching-log"></admin-coaching-log>
+                            </div>
+
                         </el-row>
-                        <el-row>
-                            <el-col :offset="8">
-                                <el-button type="success" id="Enviar a saldos" @click="close()"
-                                           :disabled="!balance.editable">Enviar a saldos
-                                </el-button>
-                            </el-col>
+
+                        <el-row v-if="distribution.result">
+                            <el-row>
+                                <el-col :offset="2" :span="20">
+                                    <el-table
+                                            :data="distribution.result"
+                                            border
+                                            :default-sort="{prop: 'date', order: 'descending'}"
+                                            style="width: 100%">
+                                        <el-table-column
+                                                prop="kleerer"
+                                                label="Nombre"
+                                                sortable>
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="amount"
+                                                label="Monto">
+                                            <template slot-scope="scope">
+                  <span :id="'money'+scope.row.kleerer">
+                    {{ formatPrice(scope.row.amount) }}
+                  </span>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :offset="8">
+                                    <el-button type="success" id="Enviar a saldos" @click="close()"
+                                               :disabled="!balance.editable">Enviar a saldos
+                                    </el-button>
+                                </el-col>
+                            </el-row>
                         </el-row>
-                    </el-row>
-                </el-card>
-            </el-col>
-        </el-row>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </div>
+
+
     </safe-body>
 </template>
 <style>
@@ -152,6 +164,7 @@
     name: 'detailBalance',
     data () {
       return {
+        loaded : false,
         balance: {
           id: '',
           client: '',
@@ -174,8 +187,10 @@
         }
       }
     },
-    created: function () {
-      balanceConnector.findBalance(this)
+    beforeCreate: function () {
+      balanceConnector.findBalance(this, function(context){
+        context.loaded = true
+      })
     },
     methods: {
       formatPrice (value) {
