@@ -5,12 +5,6 @@ class ApiController < ActionController::API
 
   rescue_from ActiveRecord::RecordNotFound, with: -> { render json: { error: 'Not found' }, status: :not_found }
 
-  #TODO what happen when the parameter is and object?
-  # TODO REFACTOR this please
-  def validate parameter
-    parameter and !parameter.to_s.empty?
-  end
-
   def validate_parameters parameters, array
     for parameter in parameters
       param = array[parameter]
@@ -30,14 +24,14 @@ class ApiController < ActionController::API
     render json: { response: object }, status: status
   end
 
-  class PersistenceResponse < SimpleDelegator
-    def halt_message(message, error_code = 500)
-      render json: { message: message }, status: error_code
-    end
+  private
 
-    def send_response(object, status = 200)
-      render json: { response: object }, status: status
+  #TODO inspeccionar los has y los arrays y hacerlos recursivos?
+  def validate(parameter)
+    if(parameter)
+      return ((parameter.is_a?(Hash) and !parameter.empty?) or
+          (parameter.is_a?(Array) and !parameter.empty?) or
+          !parameter.to_s.empty?)
     end
   end
-
 end
