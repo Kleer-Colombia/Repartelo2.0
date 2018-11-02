@@ -19,4 +19,13 @@ class CoachingSessionAdminPageObject < APageObject
     @page.click_button('Guardar')
   end
 
+  def count_sessions
+    @page.find(:css, '#tableCoachingSessions > div.el-table__body-wrapper.is-scrolling-none > table').all(:css, 'tr').size
+  end
+
+  def close
+    @page.click_button('Cerrar')
+    return BalanceDetailPageObject.new @page
+  end
+
 end

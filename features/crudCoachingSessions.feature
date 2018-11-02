@@ -12,3 +12,5 @@ Feature:
     And I add a new session with "some description" and the kleerers "Socio"
     Then I should see the coaching session table with 1 registry
     And I should the coaching sessions summary
+    |kleerer|sessions|percentage|
+    |Socio  | 1      |  100     |

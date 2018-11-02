@@ -14,10 +14,14 @@
                 <el-row>
                     <el-table :data="summary.distribution" size="small">
                         <el-table-column property="kleerer" label="Kleerer"></el-table-column>
-                        <el-table-column property="sessions" label="Sesiones"></el-table-column>
+                        <el-table-column property="sessions" label="Sesiones">
+                            <template slot-scope="scope">
+                                <span :id="scope.row.kleerer+'_sessions'">{{scope.row.sessions}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column property="percentage" label="Porcentaje">
                             <template slot-scope="scope">
-                                <b>{{scope.row.percentage}}%</b>
+                                <b :id="scope.row.kleerer+'_percentage'">{{scope.row.percentage}}%</b>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -42,7 +46,7 @@
             </el-row>
 
             <el-row>
-                <el-table :data="sessions" height="250" size="small">
+                <el-table id='tableCoachingSessions' :data="sessions" height="250" size="small">
                     <el-table-column property="date" label="Fecha" width="150"></el-table-column>
                     <el-table-column property="kleerers" label="Kleerers" width="200"></el-table-column>
                     <el-table-column property="description" label="Descripción"></el-table-column>

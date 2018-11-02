@@ -186,10 +186,15 @@ And(/^I add a new session with "([^"]*)" and the kleerers "([^"]*)"$/) do |descr
 end
 
 Then(/^I should see the coaching session table with (\d+) registry$/) do |numberOfRegisters|
-
-  pending
+  expect(@actual_page.count_sessions).to eq numberOfRegisters
+  @actual_page = @actual_page.close
 end
 
-And(/^I should the coaching sessions summary$/) do
-  pending
+
+And(/^I should the coaching sessions summary$/) do |data|
+  data.hashes.each do |row|
+    expect(@actual_page.find_summary_sessions(row[:kleerer])).to eq row[:sessions]
+    expect(@actual_page.find_summary_percentage(row[:kleerer])).to eq "#{row[:percentage]}%"
+  end
+
 end

@@ -89,6 +89,14 @@ class BalanceDetailPageObject < APageObject
     return CoachingSessionAdminPageObject.new @page
   end
 
+  def find_summary_sessions(kleerer)
+    @page.find_by_id("#{kleerer}_sessions").text
+  end
+
+  def find_summary_percentage(kleerer)
+    @page.find_by_id("#{kleerer}_percentage").text
+  end
+
   def editable? key
     component = @page.find_by_id(key)
     value = component[:disabled]
