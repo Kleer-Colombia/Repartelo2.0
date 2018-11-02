@@ -1,5 +1,7 @@
 class CoachingSessionAdminPageObject < APageObject
 
+  TABLE = '#tableCoachingSessions > div.el-table__body-wrapper.is-scrolling-none > table'
+
   def initialize page
     super
   end
@@ -12,7 +14,10 @@ class CoachingSessionAdminPageObject < APageObject
     fill_date('date-coaching-session', "#{Time.now.year}-#{Time.now.month}-#{Time.now.day}",'form-coaching-session')
     fill_field('description-coaching-session', description)
     fill_field('complementary-coaching-session', description.reverse)
-    @page.find_by_id("check-coaching-session#{kleerers}").click
+    kleerers.each do |kleerer|
+      @page.find_by_id("check-coaching-session#{kleerer}").click
+    end
+
   end
 
   def create_coaching_session
@@ -20,7 +25,18 @@ class CoachingSessionAdminPageObject < APageObject
   end
 
   def count_sessions
-    @page.find(:css, '#tableCoachingSessions > div.el-table__body-wrapper.is-scrolling-none > table').all(:css, 'tr').size
+    @page.find(:css, TABLE).all(:css, 'tr').size
+  end
+
+  def delete_coaching_session(number)
+    counter = 1
+    @page.find(:css, TABLE).all(:css, 'tr').each do |item|
+      if(counter == number)
+        item.find(:css,'button').click
+        break
+      end
+      counter += 1
+    end
   end
 
   def close

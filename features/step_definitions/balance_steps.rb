@@ -181,8 +181,12 @@ end
 
 And(/^I add a new session with "([^"]*)" and the kleerers "([^"]*)"$/) do |description, kleerers|
   @actual_page.new_coaching_session
-  @actual_page.fill_coaching_session description, kleerers
+  @actual_page.fill_coaching_session description, kleerers.split(",")
   @actual_page.create_coaching_session
+end
+
+And(/^I delete the (\d+) session$/) do |session_number|
+  @actual_page.delete_coaching_session(session_number)
 end
 
 Then(/^I should see the coaching session table with (\d+) registry$/) do |numberOfRegisters|
@@ -198,3 +202,4 @@ And(/^I should the coaching sessions summary$/) do |data|
   end
 
 end
+
