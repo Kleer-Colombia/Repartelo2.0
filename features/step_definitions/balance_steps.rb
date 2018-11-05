@@ -203,3 +203,10 @@ And(/^I should the coaching sessions summary$/) do |data|
 
 end
 
+
+And(/^I add many new sessions$/) do |table|
+  # table is a table.hashes.keys # => [:description, :kleerers]
+  table.hashes.each do |row|
+    step('I add a new session with "' + row[:description] + '" and the kleerers "'+ row[:kleerers] + '"')
+  end
+end
