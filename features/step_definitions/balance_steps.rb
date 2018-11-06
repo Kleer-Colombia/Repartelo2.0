@@ -131,13 +131,13 @@ end
 
 
 BALANCE_DATA = {1 => {:input =>[{:client => 'sparkta',:income => '100000.00',:kleerer => :Full}],
-                :output => {:KleerCo =>{ingresos: "$30.300,00", egresos: '0',total: '$30.300,00'},
-                            :Full => {ingresos: "$69.700,00", egresos: '0',total: "$69.700,00"}} },
+                :output => {:KleerCo =>{ingresos: "$28.600,00", egresos: '0',total: '$28.600,00'},
+                            :Full => {ingresos: "$71.400,00", egresos: '0',total: "$71.400,00"}} },
                 3 => {:input =>[{:client => 'sparkta',:income => '100000.00',:kleerer => :Socio},
                                   {:client => 'SAP corp',:income => '100000.00',:kleerer => :Socio},
                                   {:client => 'mi banco',:income => '100000.00',:kleerer => :Socio}],
-                :output => {:KleerCo =>{ingresos: "$66.300,00", egresos: '0',total: '$66.300,00'},
-                            :Socio => {ingresos: "$233.700,00", egresos: '0',total: "$233.700,00"}} }
+                :output => {:KleerCo =>{ingresos: "$60.600,00", egresos: '0',total: '$60.600,00'},
+                            :Socio => {ingresos: "$239.400,00", egresos: '0',total: "$239.400,00"}} }
                }
 
 And(/^I have (\d+) distributed balances$/) do |quantity_of_balances|
@@ -164,7 +164,7 @@ When(/^I have (\d+) distributed coaching balance$/) do |quantity_of_balances|
     step 'I add income for "'+balance[:income]+'"'
     step('I open the coaching sessions admin')
     step('I add a new session with "description" and the kleerers "' + balance[:kleerer].to_s + '"')
-    close_crud_coaching_session
+    step('I close the coaching sessions admin')
     step 'I distribute the profit'
     step 'I close the balance'
 
@@ -172,10 +172,6 @@ When(/^I have (\d+) distributed coaching balance$/) do |quantity_of_balances|
       @actual_page = @actual_page.go_for('Balances')
     end
   end
-end
-
-def close_crud_coaching_session
-  @actual_page = @actual_page.close
 end
 
 Then(/^I could not edit the balance$/) do
@@ -221,7 +217,6 @@ end
 
 Then(/^I should see the coaching session table with (\d+) registry$/) do |numberOfRegisters|
   expect(@actual_page.count_sessions).to eq numberOfRegisters
-  close_crud_coaching_session
 end
 
 
@@ -238,10 +233,13 @@ And(/^I add many new sessions$/) do |table|
   table.hashes.each do |row|
     step('I add a new session with "' + row[:description] + '" and the kleerers "'+ row[:kleerers] + '"')
   end
-  close_crud_coaching_session
 end
 
 
 When(/^I select de edit option$/) do
   @actual_page = @actual_page.edit_balance
+end
+
+And(/^I close the coaching sessions admin$/) do
+  @actual_page = @actual_page.close
 end

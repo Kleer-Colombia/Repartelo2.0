@@ -11,6 +11,7 @@ Feature:
     When I open the coaching sessions admin
     And I add a new session with "some description" and the kleerers "Socio"
     Then I should see the coaching session table with 1 registry
+    And I close the coaching sessions admin
     And I should the coaching sessions summary
     |kleerer|sessions|percentage|
     |Socio  | 1      |  100     |
@@ -24,6 +25,7 @@ Feature:
     When I open the coaching sessions admin
     And I add a new session with "some description" and the kleerers "Socio,Full"
     Then I should see the coaching session table with 1 registry
+    And I close the coaching sessions admin
     And I should the coaching sessions summary
     |kleerer|sessions|percentage|
     |Socio  | 0.5    |  50      |
@@ -44,6 +46,7 @@ Feature:
     |Some description|Socio,Full|
     |Some description|Socio,Full|
     Then I should see the coaching session table with 6 registry
+    And I close the coaching sessions admin
     And I should the coaching sessions summary
       |kleerer|sessions|percentage|
       |Socio  | 2.5    |  41.67   |
@@ -65,6 +68,7 @@ Feature:
     And I delete the 4 session
     And I add a new session with "some description" and the kleerers "Socio,Full"
     Then I should see the coaching session table with 4 registry
+    And I close the coaching sessions admin
     And I should the coaching sessions summary
       |kleerer|sessions|percentage|
       |Socio  | 2      |  50      |

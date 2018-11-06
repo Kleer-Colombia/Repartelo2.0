@@ -12,6 +12,7 @@ Feature:
     And I add many new sessions
       |description     | kleerers |
       |Some description|Socio     |
+    And I close the coaching sessions admin
     And I add income for "1100.00"
     And I add expense for "100.00"
     And I distribute the profit
@@ -27,6 +28,7 @@ Feature:
     And I add many new sessions
       |description     | kleerers |
       |Some description|Full      |
+    And I close the coaching sessions admin
     And I add income for "100.00"
     And I add expense for "1100.00"
     And I distribute the profit
@@ -42,6 +44,7 @@ Feature:
       |description     | kleerers |
       |Some description|Full      |
       |Some description|Socio     |
+    And I close the coaching sessions admin
     And I add income for "1100.00"
     And I add expense for "200.00"
     When I distribute the profit
@@ -67,6 +70,7 @@ Feature:
       |Some description|Socio     |
       |Some description|Socio     |
       |Some description|Socio     |
+    And I close the coaching sessions admin
     And I add income for "1100.00"
     And I add expense for "200.00"
     When I distribute the profit
@@ -92,6 +96,7 @@ Feature:
       |Some description|Socio     |
       |Some description|Socio     |
       |Some description|Socio     |
+    And I close the coaching sessions admin
     And I add income for "1000.00"
     When I distribute the profit
     Then I should see "$357,00" for "Full"

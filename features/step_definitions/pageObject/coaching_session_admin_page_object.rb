@@ -11,7 +11,8 @@ class CoachingSessionAdminPageObject < APageObject
   end
 
   def fill_coaching_session description, kleerers
-    fill_date('date-coaching-session', "#{Time.now.year}-#{Time.now.month}-#{Time.now.day}",'form-coaching-session')
+    fill_date('date-coaching-session', "#{Time.now.year}-#{Time.now.month}-#{Time.now.day}",
+              'form-coaching-session')
     fill_field('description-coaching-session', description)
     fill_field('complementary-coaching-session', description.reverse)
     kleerers.each do |kleerer|

@@ -12,8 +12,8 @@ Feature:
     And I add expense for "100.00"
     When I select "Socio" as a kleerer
     And I distribute the profit
-    Then I should see "$221,00" for "KleerCo"
-    And I should see "$779,00" for "Socio"
+    Then I should see "$202,00" for "KleerCo"
+    And I should see "$798,00" for "Socio"
 
   @javascript
   Scenario: calculate balance with negative profit
@@ -36,9 +36,9 @@ Feature:
     And I select "Full" as a kleerer
     And I select "Socio" as a kleerer
     When I distribute the profit
-    Then I should see "$313,65" for "Full"
-    And I should see "$350,55" for "Socio"
-    And I should see "$235,80" for "KleerCo"
+    Then I should see "$321,30" for "Full"
+    And I should see "$359,10" for "Socio"
+    And I should see "$219,60" for "KleerCo"
 
   @javascript
   Scenario: calculate distributions with Full and Socio on 70/30
@@ -52,9 +52,9 @@ Feature:
     And the percentage for "Full" is "70"
     And the percentage for "Socio" is "30"
     When I distribute the profit
-    Then I should see "$439,11" for "Full"
-    And I should see "$210,33" for "Socio"
-    And I should see "$250,56" for "KleerCo"
+    Then I should see "$449,82" for "Full"
+    And I should see "$215,46" for "Socio"
+    And I should see "$234,72" for "KleerCo"
 
   @javascript
   Scenario: calculate distributions with Full, Socio and Partial
@@ -69,10 +69,10 @@ Feature:
     And the percentage for "Socio" is "25"
     And the percentage for "Parcial" is "25"
     When I distribute the profit
-    Then I should see "$348,50" for "Full"
-    And I should see "$194,75" for "Socio"
-    And I should see "$153,75" for "Parcial"
-    And I should see "$303,00" for "KleerCo"
+    Then I should see "$357,00" for "Full"
+    And I should see "$199,50" for "Socio"
+    And I should see "$157,50" for "Parcial"
+    And I should see "$286,00" for "KleerCo"
 
   @javascript
   Scenario: calculate distributions with Full, Socio and Partial with  custom values
@@ -87,8 +87,8 @@ Feature:
     And the percentage for "Socio" is "40"
     And the percentage for "Parcial" is "10"
     When I distribute the profit
-    Then I should see "$348,50" for "Full"
-    And I should see "$311,60" for "Socio"
-    And I should see "$61,50" for "Parcial"
-    And I should see "$278,40" for "KleerCo"
+    Then I should see "$357,00" for "Full"
+    And I should see "$319,20" for "Socio"
+    And I should see "$63,00" for "Parcial"
+    And I should see "$260,80" for "KleerCo"
 

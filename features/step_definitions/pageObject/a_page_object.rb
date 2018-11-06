@@ -7,10 +7,15 @@ class APageObject
     @page.fill_in(name,{:name => name, :with => value})
   end
 
-  def fill_date id, value,focus_on="titulo"
-    @page.find("##{id}").set(value)
+  def fill_date(id, value, parent=nil)
+    element = @page.find("##{id}")
+    element.set(value)
     #to get focus
-    @page.find("##{focus_on}").click
+    if parent
+      @page.find_by_id(parent).click
+    else
+      @page.find('#titulo').click
+    end
   end
 
   def go_for option
