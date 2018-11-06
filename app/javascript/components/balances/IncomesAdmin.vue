@@ -71,10 +71,8 @@
         }
       }
     },
-    watch: {
-      allIncomes: function (newVal) {
-        this.realIncomes = newVal
-      }
+    created: function () {
+      this.realIncomes = this.allIncomes
     },
     methods: {
       showIncome () {

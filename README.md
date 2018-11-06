@@ -81,3 +81,7 @@
 * more info on:
 
     https://mkdev.me/en/posts/rails-5-vue-js-how-to-stop-worrying-and-love-the-frontend
+    
+    to migrate the DB on heroku:
+    
+        heroku run rails --trace db:migrate

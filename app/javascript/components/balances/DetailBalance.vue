@@ -164,7 +164,7 @@
     name: 'detailBalance',
     data () {
       return {
-        loaded : false,
+        loaded: false,
         balance: {
           id: '',
           client: '',
@@ -188,7 +188,7 @@
       }
     },
     beforeCreate: function () {
-      balanceConnector.findBalance(this, function(context){
+      balanceConnector.findBalance(this, function (context) {
         context.loaded = true
       })
     },

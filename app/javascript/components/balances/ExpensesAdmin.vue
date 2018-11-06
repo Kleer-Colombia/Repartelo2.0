@@ -71,10 +71,8 @@
         }
       }
     },
-    watch: {
-      allExpenses: function (newVal) {
-        this.realExpenses = newVal
-      }
+    created: function () {
+      this.realExpenses = this.allExpenses
     },
     methods: {
       showExpense () {
