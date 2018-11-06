@@ -74,8 +74,8 @@ Then(/^I should see "([^"]*)" for total "([^"]*)"$/) do |total, operation|
   expect(real_value).to eq total
 end
 
-When(/^I calculate the balances with "([^"]*)" as a kleerer$/) do |kleerer|
-  @actual_page.calculate_balance kleerer
+When(/^I select "([^"]*)" as a kleerer$/) do |kleerer|
+  @actual_page.select_kleerer kleerer
 end
 
 And(/^the percentage for "([^"]*)" is "([^"]*)"$/) do |kleerer, amount|
@@ -146,7 +146,7 @@ And(/^I have (\d+) distributed balances$/) do |quantity_of_balances|
   @balances_data[:input].each do |balance|
     step 'I create a new standard balance for client "'+balance[:client]+'"'
     step 'I add income for "'+balance[:income]+'"'
-    step 'I calculate the balances with "' + balance[:kleerer].to_s+'" as a kleerer'
+    step 'I select "' + balance[:kleerer].to_s+'" as a kleerer'
     step 'I distribute the profit'
     step 'I close the balance'
 
@@ -157,21 +157,51 @@ And(/^I have (\d+) distributed balances$/) do |quantity_of_balances|
   end
 end
 
+When(/^I have (\d+) distributed coaching balance$/) do |quantity_of_balances|
+  @balances_data = BALANCE_DATA[quantity_of_balances]
+  @balances_data[:input].each do |balance|
+    step 'I create a new coaching balance for client "'+balance[:client]+'"'
+    step 'I add income for "'+balance[:income]+'"'
+    step('I open the coaching sessions admin')
+    step('I add a new session with "description" and the kleerers "' + balance[:kleerer].to_s + '"')
+    close_crud_coaching_session
+    step 'I distribute the profit'
+    step 'I close the balance'
+
+    if quantity_of_balances != 1
+      @actual_page = @actual_page.go_for('Balances')
+    end
+  end
+end
+
+def close_crud_coaching_session
+  @actual_page = @actual_page.close
+end
+
 Then(/^I could not edit the balance$/) do
   expect(@actual_page.editable? 'nuevo ingreso').to eq false
   expect(@actual_page.editable? 'nuevo egreso').to eq false
   expect(@actual_page.editable? 'Distribuir').to eq false
   expect(@actual_page.editable? 'Borrar').to eq false
   expect(@actual_page.editable? 'Enviar a saldos').to eq false
-  expect(@actual_page.editable? 'Enviar a saldos').to eq false
-  expect(@actual_page.editable? 'Enviar a saldos').to eq false
   Kleerer.all.each do |kleerer|
     unless kleerer.name == "KleerCo"
       expect(@actual_page.editable?("check#{kleerer.name}")).to eq false
     end
   end
-
 end
+
+Then(/^I could not edit the coaching balance$/) do
+  expect(@actual_page.editable? 'nuevo ingreso').to eq false
+  expect(@actual_page.editable? 'nuevo egreso').to eq false
+  expect(@actual_page.editable? 'Distribuir').to eq false
+  expect(@actual_page.editable? 'Borrar').to eq false
+  expect(@actual_page.editable? 'Enviar a saldos').to eq false
+  @actual_page = @actual_page.open_coaching_sessions_admin
+  expect(@actual_page.editable? 'newCoachingSession').to eq false
+  expect(@actual_page.editable?('eliminar')).to eq false
+end
+
 
 
 When(/^I open the coaching sessions admin$/) do
@@ -191,7 +221,7 @@ end
 
 Then(/^I should see the coaching session table with (\d+) registry$/) do |numberOfRegisters|
   expect(@actual_page.count_sessions).to eq numberOfRegisters
-  @actual_page = @actual_page.close
+  close_crud_coaching_session
 end
 
 
@@ -200,7 +230,6 @@ And(/^I should the coaching sessions summary$/) do |data|
     expect(@actual_page.find_summary_sessions(row[:kleerer])).to eq row[:sessions]
     expect(@actual_page.find_summary_percentage(row[:kleerer])).to eq "#{row[:percentage]}%"
   end
-
 end
 
 
@@ -209,4 +238,7 @@ And(/^I add many new sessions$/) do |table|
   table.hashes.each do |row|
     step('I add a new session with "' + row[:description] + '" and the kleerers "'+ row[:kleerers] + '"')
   end
+  close_crud_coaching_session
 end
+
+

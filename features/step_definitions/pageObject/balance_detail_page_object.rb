@@ -49,7 +49,7 @@ class BalanceDetailPageObject < APageObject
     @page.click_button("removeExpense#{expense}")
   end
 
-  def calculate_balance kleerer
+  def select_kleerer kleerer
     @page.find_by_id("check#{kleerer}").click
   end
 
@@ -97,13 +97,4 @@ class BalanceDetailPageObject < APageObject
     @page.find_by_id("#{kleerer}_percentage").text
   end
 
-  def editable? key
-    component = @page.find_by_id(key)
-    value = component[:disabled]
-    #for check-box
-    if !value
-      value = component['aria-disabled']
-    end
-    !value
-  end
 end

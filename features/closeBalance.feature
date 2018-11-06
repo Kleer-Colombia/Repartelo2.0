@@ -9,3 +9,10 @@ Feature:
     And I logged
     When I have 1 distributed balances
     Then I could not edit the balance
+
+  @javascript
+  Scenario: not editable coaching balance
+    Given I have kleerers
+    And I logged
+    When I have 1 distributed coaching balance
+    Then I could not edit the coaching balance

@@ -52,7 +52,8 @@
                     <el-table-column property="description" label="Descripción"></el-table-column>
                     <el-table-column label="opciones">
                         <template slot-scope="scope">
-                            <el-button :disabled="!editable" type="text" @click='deleteCoachingSession(scope.row.id)' icon="el-icon-error">Eliminar</el-button>
+                            <el-button id="eliminar" :disabled="!editable" type="text"
+                                       @click='deleteCoachingSession(scope.row.id)' icon="el-icon-error">Eliminar</el-button>
                         </template>
                     </el-table-column>
                 </el-table>

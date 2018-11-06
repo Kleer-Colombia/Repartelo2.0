@@ -26,4 +26,14 @@ class APageObject
     @page.find("#titulo").text
   end
 
+  def editable?(key)
+    component = @page.find_by_id(key)
+    value = component[:disabled]
+    #for check-box
+    if !value
+      value = component['aria-disabled']
+    end
+    !value
+  end
+
 end

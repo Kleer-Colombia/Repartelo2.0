@@ -10,7 +10,7 @@ Feature:
     And I create a new standard balance for client "Sparkta"
     And I add income for "1100.00"
     And I add expense for "100.00"
-    When I calculate the balances with "Socio" as a kleerer
+    When I select "Socio" as a kleerer
     And I distribute the profit
     Then I should see "$221,00" for "KleerCo"
     And I should see "$779,00" for "Socio"
@@ -22,7 +22,7 @@ Feature:
     And I create a new standard balance for client "Sparkta"
     And I add income for "100.00"
     And I add expense for "1100.00"
-    When I calculate the balances with "Full" as a kleerer
+    When I select "Full" as a kleerer
     And I distribute the profit
     Then I should the an invalid profit distribution error
 
@@ -33,8 +33,8 @@ Feature:
     And I create a new standard balance for client "Corbeta"
     And I add income for "1100.00"
     And I add expense for "200.00"
-    And I calculate the balances with "Full" as a kleerer
-    And I calculate the balances with "Socio" as a kleerer
+    And I select "Full" as a kleerer
+    And I select "Socio" as a kleerer
     When I distribute the profit
     Then I should see "$313,65" for "Full"
     And I should see "$350,55" for "Socio"
@@ -47,8 +47,8 @@ Feature:
     And I create a new standard balance for client "Corbeta"
     And I add income for "1100.00"
     And I add expense for "200.00"
-    And I calculate the balances with "Full" as a kleerer
-    And I calculate the balances with "Socio" as a kleerer
+    And I select "Full" as a kleerer
+    And I select "Socio" as a kleerer
     And the percentage for "Full" is "70"
     And the percentage for "Socio" is "30"
     When I distribute the profit
@@ -62,9 +62,9 @@ Feature:
     And I have kleerers
     And I create a new standard balance for client "Corbeta"
     And I add income for "1000.00"
-    And I calculate the balances with "Full" as a kleerer
-    And I calculate the balances with "Socio" as a kleerer
-    And I calculate the balances with "Parcial" as a kleerer
+    And I select "Full" as a kleerer
+    And I select "Socio" as a kleerer
+    And I select "Parcial" as a kleerer
     And the percentage for "Full" is "50"
     And the percentage for "Socio" is "25"
     And the percentage for "Parcial" is "25"
@@ -80,9 +80,9 @@ Feature:
     And I have kleerers
     And I create a new standard balance for client "Test"
     And I add income for "1000.00"
-    And I calculate the balances with "Full" as a kleerer
-    And I calculate the balances with "Socio" as a kleerer
-    And I calculate the balances with "Parcial" as a kleerer
+    And I select "Full" as a kleerer
+    And I select "Socio" as a kleerer
+    And I select "Parcial" as a kleerer
     And the percentage for "Full" is "50"
     And the percentage for "Socio" is "40"
     And the percentage for "Parcial" is "10"
