@@ -1,4 +1,5 @@
 class BalanceDetailPageObject < APageObject
+
   def find_project
     @page.find("#project").text
   end

@@ -119,9 +119,7 @@
         coachingSessionConnector.delete(this, this.balanceId, id)
       },
       summarize (isNeededUpdatePercentage) {
-        if (isNeededUpdatePercentage){
-          coachingSessionConnector.summary(this, this.$route.params.id,isNeededUpdatePercentage)
-        }
+        coachingSessionConnector.summary(this, this.$route.params.id, isNeededUpdatePercentage)
       },
       distribute () {
         let data = {

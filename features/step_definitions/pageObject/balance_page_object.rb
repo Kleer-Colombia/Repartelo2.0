@@ -29,4 +29,9 @@ class BalancePageObject < APageObject
     @page.click_button("Nuevo")
     NewBalancePageObject.new @page
   end
+
+  def edit_balance
+    @page.click_button("Editar")
+    BalanceDetailPageObject.new(@page)
+  end
 end

@@ -242,3 +242,6 @@ And(/^I add many new sessions$/) do |table|
 end
 
 
+When(/^I select de edit option$/) do
+  @actual_page = @actual_page.edit_balance
+end
