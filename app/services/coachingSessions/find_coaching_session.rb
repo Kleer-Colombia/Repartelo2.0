@@ -1,13 +1,15 @@
-class FindCoachingSession < Publisher
+class FindCoachingSession
+  prepend SimpleCommand
 
-  def call(balance_id)
+  def initialize(balance_id)
+    @balance_id = balance_id
+  end
 
-    coaching_sessions = CoachingSession.where(balance_id: balance_id)
-
-    publish(:send_response, prepare_data(coaching_sessions))
+  def call
+    coaching_sessions = CoachingSession.where(balance_id: @balance_id).order(:date)
+    return prepare_data(coaching_sessions)
   rescue StandardError => error
-    publish(:halt_message,
-            "Error looking the coaching sessions")
+    errors.add(:messages, "Error looking the coaching sessions")
   end
 
   private
@@ -29,4 +31,5 @@ class FindCoachingSession < Publisher
 
     return data
   end
+
 end

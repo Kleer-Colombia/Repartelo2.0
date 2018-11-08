@@ -1,11 +1,15 @@
-class DeleteCoachingSession< Publisher
+class DeleteCoachingSession
+  prepend SimpleCommand
 
-  def call(csId)
-    CoachingSession.destroy(csId)
-    publish(:send_response, true)
+  def initialize (cs_id)
+    @cs_id = cs_id
+  end
+
+  def call
+    CoachingSession.destroy(@cs_id)
+    return true
   rescue StandardError => error
-    publish(:halt_message,
-            'Error deleting registry of coaching session')
+    errors.add(:messages, 'Error deleting registry of coaching session')
   end
 
 end
