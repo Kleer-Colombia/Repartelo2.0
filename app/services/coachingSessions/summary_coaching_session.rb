@@ -1,23 +1,23 @@
-class SummaryCoachingSession < Publisher
+class SummaryCoachingSession
+ prepend SimpleCommand
 
-  def call(balance_id, updatePercentage)
+ def initialize(balance_id, update_percentage)
+   @balance_id = balance_id
+   @update_percentage = update_percentage
+ end
 
-    puts balance_id
-    puts updatePercentage
-
-    summary = summary(CoachingSession.where(balance_id: balance_id))
-
-    if(updatePercentage)
-      UpdatePercentage.new.update_percentage_for_coaching_balance(balance_id, summary)
+  def call
+    summary = summary(CoachingSession.where(balance_id: @balance_id))
+    if(@updatePercentage)
+      UpdatePercentage.new.update_percentage_for_coaching_balance(@balance_id, summary)
     end
+    return summary
 
-    publish(:send_response, summary)
   rescue StandardError => error
-    publish(:halt_message,
-            "Error summarying the coaching sessions #{error.message}")
+    errors.add(:messages, "Error summarying the coaching sessions #{error.message}")
   end
 
-  def summary(coaching_sessions)
+ def summary(coaching_sessions)
     summary = {}
     summary[:totalcs] = coaching_sessions.size
     summary[:distribution] = []

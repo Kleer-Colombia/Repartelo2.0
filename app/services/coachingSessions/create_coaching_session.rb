@@ -1,18 +1,25 @@
-class CreateCoachingSession < Publisher
+class CreateCoachingSession
+  prepend SimpleCommand
 
   attr_reader :coaching_session
 
-  def call(balance_id, data)
-    instance_coaching_session data
-    add_kleerers data[:kleerers]
-    @coaching_session.balance_id = balance_id
+  def initialize(balance_id, data)
+    @balance_id = balance_id
+    @data = data
+  end
+
+  def call
+    instance_coaching_session(@data)
+    add_kleerers(@data[:kleerers])
+    @coaching_session.balance_id = @balance_id
     @coaching_session.save!
 
-    publish(:send_response, true)
+    return true
   rescue StandardError => error
-    publish(:halt_message,
-            "Invalid parameters creating coaching session #{error}")
+    errors.add(:messages, "Invalid parameters creating coaching session #{error}")
   end
+
+  private
 
   def add_kleerers(kleerers)
     kleerers.each do |kleerer_id|
