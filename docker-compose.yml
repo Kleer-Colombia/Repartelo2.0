@@ -1,9 +1,32 @@
-postgresql:
-  image: postgres:9.6
-  ports:
-    - 5432:5432
-  environment:
-    - PGDATA=/postgresql
-    - PG_PASSWORD=password
-  volumes:
-    - ./tmp/data/postgresql:/postgresql
+version: '3'
+
+services:
+  postgres:
+    image: 'postgres:10.3-alpine'
+    volumes:
+    - 'postgres:/var/lib/postgresql/data'
+    env_file:
+    - '.env'
+    ports:
+    - '6543:5432'
+  repartelo:
+    depends_on:
+    - 'postgres'
+    - 'webpacker'
+    build: .
+    ports:
+    - '3000:3000'
+    volumes:
+    - '.:/app'
+    env_file:
+    - '.env'
+  webpacker:
+    build: .
+    command: ruby bin/webpack-dev-server
+    volumes:
+    - .:/app
+    ports:
+    - "3035:3035"
+
+volumes:
+  postgres:

@@ -31,6 +31,9 @@ test: &test
   <<: *development
   database: repartelo2_0_test
 
+acceptance_test:
+  url: <%= ENV['DATABASE_URL'].gsub('?', '_test?') %>
+
 production:
   <<: *default
   url: <%= ENV['DATABASE_URL'] %>
