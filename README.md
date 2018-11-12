@@ -47,7 +47,7 @@
         
     visit 
      
-        Running Docker natively? http://localhost:3000
+        Running Docker natively? http://localhost:4000
     
     Stop the app
     
@@ -64,7 +64,9 @@
      more reference on: https://docs.docker.com/compose/rails/#stop-the-application
       
 
-* ### How to run the test suite
+* ## How to run the test suite
+    
+    ### for standalone execution:
     
     - remember install ghekodriver and put it on PATH
     
@@ -84,9 +86,26 @@
     to run rspec:
     
         bundle exec rspec
+        
+     ### Runing acceptance test with docker and selenium grid:
+     
+    start docker environment
+     
+        docker-compose up
+    
+    run the test with:
+    
+         rails cucumber RAILS_ENV='acceptance_test' REPARTELO_HOME='http://localhost:4000/#/login'
+         
+    **make sure that the DB config be the same in `.env` and `config/database.yml``**
+ 
 
 
-* ### Deployment instructions
+* ## Deployment instructions (Production)
+
+    - **push to Heroku and run migrations.**
+    
+    - to care the DB:
     
     backup db:
         
@@ -113,5 +132,5 @@
         heroku run rails --trace db:migrate
         
         
-### Runing acceptance test with docker and selenium grid
+
 

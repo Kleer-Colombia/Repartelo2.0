@@ -27,15 +27,20 @@ development: &development
   password: k4m4l30n
   host: localhost
 
-test: &test
+test:
   <<: *development
   database: repartelo2_0_test
 
-acceptance_test:
-  url: <%= ENV['DATABASE_URL'].gsub('?', '_test?') %>
 
 production:
   <<: *default
   url: <%= ENV['DATABASE_URL'] %>
-cucumber:
-  <<: *test
+
+acceptance_test:
+  <<: *default
+  password: k4m4l30n
+  database: dockerized_app
+  username: postgres
+  host: localhost
+  port: 6543
+

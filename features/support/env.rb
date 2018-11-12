@@ -6,6 +6,24 @@
 
 require 'cucumber/rails'
 require "selenium-webdriver"
+require 'capybara'
+require 'capybara/cucumber'
+
+
+#TODO try on firefox, without volumenes....
+# TODO look for the screenshot
+# TODO adjust this for ENV validation, test or acceptance test...
+# TODO adjust this for browser validation
+
+caps = Selenium::WebDriver::Remote::Capabilities.chrome
+Capybara.default_driver = :selenium
+Capybara.register_driver :selenium do |app|
+  Capybara::Selenium::Driver.new(app,
+                                 :browser => :remote,
+                                 :url => "http://localhost:4444/wd/hub",
+                                 :desired_capabilities => caps)
+end
+
 
 # Capybara defaults to CSS3 selectors rather than XPath.
 # If you'd prefer to use XPath, just uncomment this line and adjust any

@@ -15,7 +15,7 @@ services:
     - 'webpacker'
     build: .
     ports:
-    - '3000:3000'
+    - '4000:3000'
     volumes:
     - '.:/app'
     env_file:
@@ -26,7 +26,23 @@ services:
     volumes:
     - .:/app
     ports:
-    - "3035:3035"
+    - "4035:3035"
+  chrome:
+    image: selenium/node-chrome:3.14
+    depends_on:
+    - hub
+    environment:
+      HUB_HOST: hub
+  firefox:
+    image: selenium/node-firefox
+    depends_on:
+    - hub
+    environment:
+      HUB_HOST: hub
+  hub:
+    image: selenium/hub
+    ports:
+    - "4444:4444"
 
 volumes:
   postgres:

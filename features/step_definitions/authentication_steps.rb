@@ -2,6 +2,13 @@
 require 'faker'
 #TODO use faker?
 
+After do |scenario|
+  if scenario.failed?
+    @actual_page.print_page
+    @actual_page.take_screenshot(scenario)
+  end
+end
+
 Given(/^i have a user in the db$/) do
     @user_for_login=DataFactory.create_one_user
 end

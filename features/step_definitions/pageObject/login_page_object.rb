@@ -4,7 +4,9 @@ class LoginPageObject < APageObject
       super
     end
   def login user
-    @page.visit 'http://localhost:3000/#/login'
+    ENV["REPARTELO_HOME"] ||= 'http://localhost:3000/#/login'
+    puts ENV["REPARTELO_HOME"]
+    @page.visit(ENV["REPARTELO_HOME"])
     @page.fill_in('email',{:name => 'email', :with => user.email})
     @page.fill_in("password", {:name => 'password', :with => user.password})
     @page.click_button("Entrar")
