@@ -4,7 +4,6 @@ require 'faker'
 
 After do |scenario|
   if scenario.failed?
-    @actual_page.print_page
     @actual_page.take_screenshot(scenario)
   end
 end

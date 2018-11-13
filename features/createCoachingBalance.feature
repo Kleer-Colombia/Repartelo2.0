@@ -20,6 +20,7 @@ Feature:
       |description     | kleerers |
       |Some description|Socio     |
       |Some description|Full      |
+    And I close the coaching sessions admin
     And I go to the "Balances" option
     When I select de edit option
     Then I should the coaching sessions summary

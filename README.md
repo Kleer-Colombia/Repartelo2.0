@@ -94,9 +94,13 @@
         docker-compose up
     
     run the test with:
+        
+        rails cucumber RAILS_ENV='acceptance_test' REPARTELO_HOME='http://repartelo:3000/#/login'
+        
+    or, for a specific scenario:
     
-         rails cucumber RAILS_ENV='acceptance_test' REPARTELO_HOME='http://localhost:4000/#/login'
-         
+         rails cucumber FEATURE=features/calculateBalance.feature:7 RAILS_ENV='acceptance_test' REPARTELO_HOME='http://repartelo:3000/#/login'   
+                 
     **make sure that the DB config be the same in `.env` and `config/database.yml``**
  
 

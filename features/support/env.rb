@@ -9,21 +9,45 @@ require "selenium-webdriver"
 require 'capybara'
 require 'capybara/cucumber'
 
-
-#TODO try on firefox, without volumenes....
-# TODO look for the screenshot
-# TODO adjust this for ENV validation, test or acceptance test...
-# TODO adjust this for browser validation
-
-caps = Selenium::WebDriver::Remote::Capabilities.chrome
-Capybara.default_driver = :selenium
-Capybara.register_driver :selenium do |app|
-  Capybara::Selenium::Driver.new(app,
-                                 :browser => :remote,
-                                 :url => "http://localhost:4444/wd/hub",
-                                 :desired_capabilities => caps)
+def chrome
+  caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {"args" => [ "--start-maximized" ]})
+  Capybara.register_driver :chrome do |app|
+    Capybara::Selenium::Driver.new(app,
+                                   :browser => :chrome,
+                                   :desired_capabilities => caps)
+  end
+  Capybara.javascript_driver = :chrome
 end
 
+def headless_chrome
+  Capybara.register_driver(:headless_chrome) do |app|
+    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+        chromeOptions: { args: %w[headless disable-gpu start-maximized] }
+    )
+    Capybara::Selenium::Driver.new(
+        app,
+        browser: :chrome,
+        desired_capabilities: capabilities
+    )
+  end
+  Capybara.javascript_driver = :headless_chrome
+end
+
+# TODO adjust this for browser validation
+
+if(ENV['RAILS_ENV']=='acceptance_test')
+  caps = Selenium::WebDriver::Remote::Capabilities.firefox
+  Capybara.default_driver = :selenium
+  Capybara.default_max_wait_time = 5
+  Capybara.register_driver :selenium do |app|
+    Capybara::Selenium::Driver.new(app,
+                                   :browser => :remote,
+                                   :url => "http://localhost:4444/wd/hub",
+                                   :desired_capabilities => caps)
+  end
+else
+  headless_chrome
+end
 
 # Capybara defaults to CSS3 selectors rather than XPath.
 # If you'd prefer to use XPath, just uncomment this line and adjust any
