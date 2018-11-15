@@ -19,14 +19,7 @@ class CreateCoachingSession
     errors.add(:messages, "Invalid parameters creating coaching session #{error}")
   end
 
-  private
-
-  def add_kleerers(kleerers)
-    kleerers.each do |kleerer_id|
-      @coaching_session.kleerers << Kleerer.find(kleerer_id)
-    end
-  end
-
+  #TODO onlye one public method .... rspec
   def instance_coaching_session(data)
     @coaching_session = CoachingSession.new(
         complementary: data[:complementary],
@@ -34,5 +27,13 @@ class CreateCoachingSession
         date: Date.strptime(data[:date], '%Y-%m-%d')
     )
   end
+
+  def add_kleerers(kleerers)
+    kleerers.each do |kleerer_id|
+      @coaching_session.kleerers << Kleerer.find(kleerer_id)
+    end
+  end
+
+
 
 end

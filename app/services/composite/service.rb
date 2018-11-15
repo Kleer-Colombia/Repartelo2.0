@@ -1,12 +1,12 @@
-class Service
+module Service
   prepend SimpleCommand
 
+  attr_reader :errors
   attr_accessor :parent
-  def initialize
+
+  def initialize(*args)
     @parent = nil
+    super
   end
 
-  def call
-    puts self.class
-  end
 end

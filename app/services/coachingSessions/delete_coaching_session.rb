@@ -1,7 +1,7 @@
 class DeleteCoachingSession
   prepend SimpleCommand
 
-  def initialize (cs_id)
+  def initialize(cs_id)
     @cs_id = cs_id
   end
 

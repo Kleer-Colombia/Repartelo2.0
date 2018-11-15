@@ -11,7 +11,7 @@ describe SummaryCoachingSession do
     allow(Kleerer).to receive(:find).with(@full.id).and_return(@full)
     allow(Kleerer).to receive(:find).with(@partial.id).and_return(@partial)
 
-    @create = CreateCoachingSession.new
+    @create = CreateCoachingSession.new(nil,nil)
 
     @session_data_dummy = {complementary: 'some complementary info',description: 'description session', date: Time.now.to_s}
 
@@ -23,7 +23,7 @@ describe SummaryCoachingSession do
     @create.add_kleerers([1000])
     coaching_sessions << @create.coaching_session
 
-    summarizer = SummaryCoachingSession.new
+    summarizer = SummaryCoachingSession.new(nil,nil)
     result = summarizer.summary(coaching_sessions)
 
     expect(result[:totalcs]).to eq 1
@@ -40,7 +40,7 @@ describe SummaryCoachingSession do
     @create.add_kleerers([1000,1002])
     coaching_sessions << @create.coaching_session
 
-    summarizer = SummaryCoachingSession.new
+    summarizer = SummaryCoachingSession.new(nil,nil)
     result = summarizer.summary(coaching_sessions)
 
     expect(result[:totalcs]).to eq 1
@@ -61,7 +61,7 @@ describe SummaryCoachingSession do
     @create.add_kleerers([1000,1002,1003])
     coaching_sessions << @create.coaching_session
 
-    summarizer = SummaryCoachingSession.new
+    summarizer = SummaryCoachingSession.new(nil,nil)
     result = summarizer.summary(coaching_sessions)
 
     expect(result[:totalcs]).to eq 1
@@ -94,7 +94,7 @@ describe SummaryCoachingSession do
     @create.add_kleerers([1003])
     coaching_sessions << @create.coaching_session
 
-    summarizer = SummaryCoachingSession.new
+    summarizer = SummaryCoachingSession.new(nil,nil)
     result = summarizer.summary(coaching_sessions)
 
     expect(result[:totalcs]).to eq 3
@@ -131,7 +131,7 @@ describe SummaryCoachingSession do
     @create.add_kleerers([1002])
     coaching_sessions << @create.coaching_session
 
-    summarizer = SummaryCoachingSession.new
+    summarizer = SummaryCoachingSession.new(nil,nil)
     result = summarizer.summary(coaching_sessions)
 
     expect(result[:totalcs]).to eq 4
