@@ -1,43 +1,72 @@
 # README
 
-* ### Ruby version
+* ## Ruby version
     2.5.1
     
-* ### System dependencies
-    Docker for db
-    Yarn
+* ## System dependencies
+    * Docker 
+    * Yarn
 
-* ### Configuration
-    
-        docker-compose up
-        docker-compose start
-    
-        bundle install
-        bundle exec rails db:create
-        bundle exec rails db:migrate
-        bundle exec bin/setup
+* ## Configuration
         
-        bin/rails webpacker:install
-        bin/rails webpacker:install:vue
-        
+    #### for standalone config
+        - install  and configure Db postgres
+        - bundle install
+        - bundle exec bin/setup
+        - bundle exec rails db:create
+        - bundle exec rails db:migrate
+                
     para instalar dependencias de package.json
     
         bin/yarn install
         
-    for windows:
+    para windows:
         
         - gem uninstall bcrypt
         - gem uninstall bcrypt-ruby
         - gem install bcrypt --platform=ruby
 
-* ### Database creation
-    bundle exec rails db:create
-    bundle exec rails db:migrate
+    iniciar la base de datos
+        
+        bundle exec rails db:create
+        bundle exec rails db:migrate
 
+    ### for docker environment
+        
+    open carefully read and edit the `.env` file
+    
+    run:
+    
+        docker-compose up
+        docker-compose up --build
+    
+    If is necessary:    
+        
+        docker-compose run repartelo rake db:create
+        docker-compose run repartelo rake db:migrate
+        
+    visit 
+     
+        Running Docker natively? http://localhost:4000
+    
+    Stop the app
+    
+         docker-compose down
+         
+    Rebuild the application
+     
+     If you make changes to the Gemfile or the Compose file to try out some different
+      configurations, you need to rebuild. Some changes require only
+       `docker-compose up --build`, but a full rebuild requires a re-run of
+        `docker-compose run web bundle install` to sync changes in the `Gemfile.lock`
+         to the host, followed by `docker-compose up --build.`
+        
+     more reference on: https://docs.docker.com/compose/rails/#stop-the-application
+      
 
-* ### Database initialization
-
-* ### How to run the test suite
+* ## How to run the test suite
+    
+    ### for standalone execution:
     
     - remember install ghekodriver and put it on PATH
     
@@ -57,10 +86,30 @@
     to run rspec:
     
         bundle exec rspec
+        
+     ### Runing acceptance test with docker and selenium grid:
+     
+    start docker environment
+     
+        docker-compose up
+    
+    run the test with:
+        
+        rails cucumber RAILS_ENV='acceptance_test' REPARTELO_HOME='http://repartelo:3000/#/login'
+        
+    or, for a specific scenario:
+    
+         rails cucumber FEATURE=features/calculateBalance.feature:7 RAILS_ENV='acceptance_test' REPARTELO_HOME='http://repartelo:3000/#/login'   
+                 
+    **make sure that the DB config be the same in `.env` and `config/database.yml``**
+ 
 
-* ### Services (job queues, cache servers, search engines, etc.)
 
-* ### Deployment instructions
+* ## Deployment instructions (Production)
+
+    - **push to Heroku and run migrations.**
+    
+    - to care the DB:
     
     backup db:
         
@@ -85,3 +134,7 @@
     to migrate the DB on heroku:
     
         heroku run rails --trace db:migrate
+        
+        
+
+

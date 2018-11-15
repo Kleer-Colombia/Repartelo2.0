@@ -10,13 +10,14 @@ class APageObject
   def fill_date(id, value, parent=nil)
     element = @page.find("##{id}")
     element.set(value)
+    element.native.send_keys(:return)
     #to get focus
     if parent
       @page.find_by_id(parent).click
     else
       @page.find('#titulo').click
     end
-  end
+    end
 
   def go_for option
     @page.find("##{option}").click
@@ -39,6 +40,15 @@ class APageObject
       value = component['aria-disabled']
     end
     !value
+  end
+
+  def take_screenshot(scenario)
+    path = "features/screenshots/#{scenario.__id__}.png"
+    @page.driver.browser.save_screenshot(path)
+  end
+
+  def print_page
+    puts @page.body
   end
 
 end

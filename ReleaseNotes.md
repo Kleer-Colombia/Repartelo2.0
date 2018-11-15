@@ -2,6 +2,11 @@ TODO:
     
     extraer botton de distribuir como componente, actualmente en KleerersDistribution y AdminCoachingLogButton
 
+Version 2.2
+   
+    - Dockerized app for acceptance test
+    - Service layer refactors
+
 Version 2.1
     
     - Balances de tipo coaching con calculo y distribucion.
