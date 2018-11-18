@@ -25,7 +25,6 @@ module Service
   def up_parameter(key, value)
     if(@parent)
       @parent.params[key] = value
-      puts "upped parameter #{key}: #{value}"
     end
   end
 

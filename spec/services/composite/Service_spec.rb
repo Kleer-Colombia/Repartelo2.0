@@ -51,11 +51,11 @@ describe Service do
     it 'must call successful with shared parameters' do
       service = ServiceExamples::SuccessfulSharedparametersComposedService.new('yamit')
       service.call
-      expect(service.log.size).to eq 3
-      puts service.log
+      expect(service.log.size).to eq 2
       expect(service.log[0]).to eq "called service #{ServiceExamples::SuccessfulPushParameterService}"
-      expect(service.log[1]).to eq "TIMAY"
-      expect(service.log[2]).to eq "called service #{ServiceExamples::SuccessfulUsedPushParameterService}"
+      expect(service.log[1]).to eq "called service #{ServiceExamples::SuccessfulUsedPushParameterService}"
+
+      expect(service.result).to eq "TIMAY"
 
     end
 

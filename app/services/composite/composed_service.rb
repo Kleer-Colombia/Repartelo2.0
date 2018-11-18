@@ -2,9 +2,11 @@ module ComposedService
   prepend Service
 
   attr_reader :sub_services
+  attr_reader :results
 
   def initialize(*args)
     super(*args)
+    @results = {}
   end
 
   def add_service(service)
@@ -18,15 +20,17 @@ module ComposedService
   end
 
   def call
-    #TODO called super if exists
     @sub_services.each do |sub_services|
       sub_services.call
       write_log("called service #{sub_services.class}")
-      unless(sub_services.success?)
+      if (sub_services.success?)
+        @results[sub_services.class] = sub_services.result
+      else
         errors.add_multiple_errors(sub_services.errors)
         write_log("errors on #{sub_services.class}: #{sub_services.errors}")
         break
       end
     end
+    super
   end
 end

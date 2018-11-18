@@ -29,9 +29,12 @@ module ServiceExamples
     prepend ComposedService
 
     def initialize
-      super
       add_service(SuccessfulService.new)
       add_service(SuccessfulServiceWithParameters.new('1','2'))
+    end
+
+    def call
+      true
     end
   end
 
@@ -43,6 +46,7 @@ module ServiceExamples
     end
     def call
       up_parameter(:name, @param.reverse)
+      @param.reverse
     end
   end
 
@@ -50,10 +54,10 @@ module ServiceExamples
     prepend Service
     attr_accessor :name
     def initialize(name)
-      @name= name
+      @name = name
     end
     def call
-      write_log(@name.upcase!)
+      @name.upcase!
     end
   end
 
@@ -61,28 +65,36 @@ module ServiceExamples
     prepend ComposedService
 
     def initialize parameter
-      super
       add_service(SuccessfulPushParameterService.new(parameter))
       add_service(SuccessfulUsedPushParameterService.new(Service::INSPECT))
+    end
+
+    def call
+      @results[SuccessfulUsedPushParameterService]
     end
   end
 
   class FailureComposedService
     prepend ComposedService
     def initialize
-      super
       add_service(SuccessfulService.new)
       add_service(FailureService.new)
       add_service(SuccessfulServiceWithParameters.new('1','2'))
+    end
+
+    def call
+      true
     end
   end
 
   class TreeComposedService
     prepend ComposedService
     def initialize
-      super
       add_service(SuccessfulComposedService.new)
       add_service(FailureComposedService.new)
+    end
+    def call
+      true
     end
   end
 
