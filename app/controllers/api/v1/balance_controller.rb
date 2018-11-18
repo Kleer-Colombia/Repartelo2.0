@@ -114,9 +114,7 @@ module Api
 
       def update_percentages
         validate_parameters [:id, :kleerers], params do
-          update_percentages = UpdatePercentage.new
-          update_percentages.add_subscriber(self)
-          update_percentages.call(params[:id], params[:kleerers])
+          execute_command(UpdatePercentage.new(params[:id], kleerers: params[:kleerers]))
         end
       end
     end

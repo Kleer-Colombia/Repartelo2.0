@@ -1,5 +1,7 @@
 class FindCoachingSession
-  prepend SimpleCommand
+  prepend Service
+
+  attr_accessor :balance_id
 
   def initialize(balance_id)
     @balance_id = balance_id

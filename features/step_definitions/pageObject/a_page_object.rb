@@ -11,13 +11,8 @@ class APageObject
     element = @page.find("##{id}")
     element.set(value)
     element.native.send_keys(:return)
-    #to get focus
-    if parent
-      @page.find_by_id(parent).click
-    else
-      @page.find('#titulo').click
-    end
-    end
+
+  end
 
   def go_for option
     @page.find("##{option}").click

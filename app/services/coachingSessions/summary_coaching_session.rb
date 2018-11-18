@@ -1,25 +1,23 @@
 class SummaryCoachingSession
- prepend SimpleCommand
+ prepend Service
+
+ attr_accessor :balance_id
 
  #TODO delete distribution if update percentage inclusive in the front
- def initialize(balance_id, update_percentage)
+ def initialize(balance_id)
    @balance_id = balance_id
-   @update_percentage = update_percentage
  end
 
  def call
    summary = summary(CoachingSession.where(balance_id: @balance_id))
-   if @update_percentage
-     UpdatePercentage.new.update_percentage_for_coaching_balance(@balance_id, summary)
-   else
-     puts @update_percentage
-   end
-
+   up_parameter(:summary, summary)
    return summary
 
  rescue StandardError => error
    errors.add(:messages, "Error summarying the coaching sessions #{error.message}")
  end
+
+ # TODO only one public method
 
  def summary(coaching_sessions)
     summary = {}
@@ -31,11 +29,10 @@ class SummaryCoachingSession
                                   sessions: sessions,
                                   percentage: calculate_percentage(summary[:totalcs],sessions)}
     end
+    summary
+ end
 
-    return summary
-  end
-
-  private
+ private
 
  def count_sessions_for_kleerer(coaching_sessions)
    sessions_counter = {}
@@ -48,11 +45,11 @@ class SummaryCoachingSession
        end
      end
    end
-   return sessions_counter
+   sessions_counter
  end
 
  def calculate_percentage(total_sessions, kleerer_sessions)
-   return ((kleerer_sessions*100)/total_sessions.to_f).round(2)
+   ((kleerer_sessions*100)/total_sessions.to_f).round(2)
  end
 
 

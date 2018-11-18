@@ -5,7 +5,7 @@ module Api
       def create
         validate_parameters [:balanceId, :coaching_session], params do
           execute_command(CreateCoachingSession.new(
-              params[:balanceId], params[:coaching_session]))
+                            params[:balanceId], params[:coaching_session]))
         end
       end
 
@@ -23,8 +23,8 @@ module Api
 
       def summary
         validate_parameters [:id, :updatePercentage], params do
-          execute_command(SummaryCoachingSession.new(
-              params[:id],params[:updatePercentage]))
+          execute_command(SummaryAndUpdateCoachingSession.new(
+                            params[:id], params[:updatePercentage]))
         end
       end
     end

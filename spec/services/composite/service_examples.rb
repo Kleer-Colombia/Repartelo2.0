@@ -35,6 +35,38 @@ module ServiceExamples
     end
   end
 
+  class SuccessfulPushParameterService
+    prepend Service
+    attr_accessor :param
+    def initialize param
+      @param = param
+    end
+    def call
+      up_parameter(:name, @param.reverse)
+    end
+  end
+
+  class SuccessfulUsedPushParameterService
+    prepend Service
+    attr_accessor :name
+    def initialize(name)
+      @name= name
+    end
+    def call
+      write_log(@name.upcase!)
+    end
+  end
+
+  class SuccessfulSharedparametersComposedService
+    prepend ComposedService
+
+    def initialize parameter
+      super
+      add_service(SuccessfulPushParameterService.new(parameter))
+      add_service(SuccessfulUsedPushParameterService.new(Service::INSPECT))
+    end
+  end
+
   class FailureComposedService
     prepend ComposedService
     def initialize

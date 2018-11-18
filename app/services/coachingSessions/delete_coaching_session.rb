@@ -1,5 +1,7 @@
 class DeleteCoachingSession
-  prepend SimpleCommand
+  prepend Service
+
+  attr_accessor :cs_id
 
   def initialize(cs_id)
     @cs_id = cs_id

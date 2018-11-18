@@ -46,7 +46,11 @@ if(ENV['RAILS_ENV']=='acceptance_test')
                                    :desired_capabilities => caps)
   end
 else
-  headless_chrome
+  if ENV['BROWSER'] == 'headless-chrome'
+    headless_chrome
+  else
+    chrome
+  end
 end
 
 # Capybara defaults to CSS3 selectors rather than XPath.

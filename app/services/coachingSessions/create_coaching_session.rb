@@ -1,7 +1,8 @@
 class CreateCoachingSession
-  prepend SimpleCommand
+  prepend Service
 
   attr_reader :coaching_session
+  attr_accessor :balance_id, :data
 
   def initialize(balance_id, data)
     @balance_id = balance_id
@@ -13,7 +14,6 @@ class CreateCoachingSession
     add_kleerers(@data[:kleerers])
     @coaching_session.balance_id = @balance_id
     @coaching_session.save!
-
     return true
   rescue StandardError => error
     errors.add(:messages, "Invalid parameters creating coaching session #{error}")

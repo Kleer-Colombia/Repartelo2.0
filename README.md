@@ -80,8 +80,13 @@
        
     run cucumber:
     
-        rails cucumber
+        rails cucumber 
+     
         rails cucumber FEATURE=features/login.feature
+     
+    Optinal you can choose headless chrome
+        
+        rails cucumber BROWSER=headless-chrome
         
     to run rspec:
     

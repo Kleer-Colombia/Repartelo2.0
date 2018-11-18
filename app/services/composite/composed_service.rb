@@ -3,6 +3,10 @@ module ComposedService
 
   attr_reader :sub_services
 
+  def initialize(*args)
+    super(*args)
+  end
+
   def add_service(service)
     (@sub_services ||= []) << service
     service.parent = self
@@ -14,6 +18,7 @@ module ComposedService
   end
 
   def call
+    #TODO called super if exists
     @sub_services.each do |sub_services|
       sub_services.call
       write_log("called service #{sub_services.class}")

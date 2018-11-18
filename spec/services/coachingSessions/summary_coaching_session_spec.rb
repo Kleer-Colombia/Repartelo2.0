@@ -23,7 +23,7 @@ describe SummaryCoachingSession do
     @create.add_kleerers([1000])
     coaching_sessions << @create.coaching_session
 
-    summarizer = SummaryCoachingSession.new(nil,nil)
+    summarizer = SummaryCoachingSession.new(nil)
     result = summarizer.summary(coaching_sessions)
 
     expect(result[:totalcs]).to eq 1
@@ -40,7 +40,7 @@ describe SummaryCoachingSession do
     @create.add_kleerers([1000,1002])
     coaching_sessions << @create.coaching_session
 
-    summarizer = SummaryCoachingSession.new(nil,nil)
+    summarizer = SummaryCoachingSession.new(nil)
     result = summarizer.summary(coaching_sessions)
 
     expect(result[:totalcs]).to eq 1
@@ -61,7 +61,7 @@ describe SummaryCoachingSession do
     @create.add_kleerers([1000,1002,1003])
     coaching_sessions << @create.coaching_session
 
-    summarizer = SummaryCoachingSession.new(nil,nil)
+    summarizer = SummaryCoachingSession.new(nil)
     result = summarizer.summary(coaching_sessions)
 
     expect(result[:totalcs]).to eq 1
@@ -94,7 +94,7 @@ describe SummaryCoachingSession do
     @create.add_kleerers([1003])
     coaching_sessions << @create.coaching_session
 
-    summarizer = SummaryCoachingSession.new(nil,nil)
+    summarizer = SummaryCoachingSession.new(nil)
     result = summarizer.summary(coaching_sessions)
 
     expect(result[:totalcs]).to eq 3
@@ -131,7 +131,7 @@ describe SummaryCoachingSession do
     @create.add_kleerers([1002])
     coaching_sessions << @create.coaching_session
 
-    summarizer = SummaryCoachingSession.new(nil,nil)
+    summarizer = SummaryCoachingSession.new(nil)
     result = summarizer.summary(coaching_sessions)
 
     expect(result[:totalcs]).to eq 4
