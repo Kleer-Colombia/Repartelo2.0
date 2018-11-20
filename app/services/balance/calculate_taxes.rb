@@ -20,7 +20,7 @@ class CalculateTaxes
     utility = calculate_utility(result)
 
     result = calculate_taxes(:post_utility , utility)
-    result[:utility] = calculate_utility(result)
+    result['utility'] = calculate_utility(result)
     return result
   end
 
@@ -28,8 +28,8 @@ class CalculateTaxes
 
   def calculate_taxes (type, amount)
     @taxes.each do |tax|
-      if tax[:type] == type
-        @taxes_amounts[tax[:name]] = calculate_percentage(amount, tax[:value])
+      if tax.type_tax == type.to_s
+        @taxes_amounts[tax.name] = calculate_percentage(amount, tax.value)
       end
     end
     @taxes_amounts

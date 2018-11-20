@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_21_163050) do
+ActiveRecord::Schema.define(version: 2018_11_20_210221) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -104,7 +104,15 @@ ActiveRecord::Schema.define(version: 2018_09_21_163050) do
 
   create_table "kleerers", force: :cascade do |t|
     t.string "name", null: false
-    t.string "option", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "option_id"
+    t.index ["option_id"], name: "index_kleerers_on_option_id"
+  end
+
+  create_table "options", force: :cascade do |t|
+    t.string "name"
+    t.decimal "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -129,6 +137,14 @@ ActiveRecord::Schema.define(version: 2018_09_21_163050) do
     t.datetime "updated_at", null: false
     t.index ["balance_id"], name: "index_saldos_on_balance_id"
     t.index ["kleerer_id"], name: "index_saldos_on_kleerer_id"
+  end
+
+  create_table "taxes", force: :cascade do |t|
+    t.string "name"
+    t.decimal "value"
+    t.string "type_tax"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
