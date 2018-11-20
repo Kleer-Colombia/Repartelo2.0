@@ -15,7 +15,11 @@ class CalculateTaxes
     @incomes = @invoice[:total] + @incomes
     result = calculate_taxes(:invoiced, @incomes)
     pre_utility = calculate_utility(result)
+
     result = calculate_taxes(:utility , pre_utility)
+    utility = calculate_utility(result)
+
+    result = calculate_taxes(:post_utility , utility)
     result[:utility] = calculate_utility(result)
     return result
   end

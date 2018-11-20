@@ -16,6 +16,11 @@ describe CalculateTaxes do
             type: :utility
     }
 
+    @kleerCo = { name: :kleerCo,
+                    value: 10,
+                    type: :post_utility
+    }
+
   end
 
   it 'should calculate chanchito' do
@@ -68,6 +73,19 @@ describe CalculateTaxes do
     expect(cib.result[:ica]).to eq 2200
     expect(cib.result[:retefuente]).to eq 32606
     expect(cib.result[:utility]).to eq 159194
+
+  end
+
+  it 'should calculate Ica, chanchito, retefuente and KleerCo' do
+
+    cib = CalculateTaxes.new(taxes: [@ica, @chanchito, @retefuente, @kleerCo], invoice: {total: 100000})
+    cib.call
+
+    expect(cib.result[:chanchito]).to eq 2500
+    expect(cib.result[:ica]).to eq 1100
+    expect(cib.result[:retefuente]).to eq 16388
+    expect(cib.result[:kleerCo]).to eq 8001.2
+    expect(cib.result[:utility]).to eq 72010.80
 
   end
 
