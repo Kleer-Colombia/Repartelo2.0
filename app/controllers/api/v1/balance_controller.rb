@@ -17,6 +17,24 @@ module Api
         end
       end
 
+      def calculate_taxes
+        validate_parameters [:balanceId], params do
+          balance = Balance.find(params[:balanceId])
+          incomes = 0
+          balance.incomes.each do |income|
+            incomes += income.amount
+          end
+          expenses = 0
+          balance.expenses.each do |expense|
+            expenses += expense.amount
+          end
+
+          execute_command(CalculateTaxes.new(taxes: Tax.all,
+                                             incomes: incomes,
+                                             expenses: expenses))
+        end
+      end
+
       def close
         validate_parameters [:balanceId], params do
           begin

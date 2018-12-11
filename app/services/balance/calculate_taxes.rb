@@ -1,10 +1,9 @@
 class CalculateTaxes
   prepend Service
 
-  attr_accessor :invoice, :taxes, :expenses, :incomes, :taxes_amounts
+  attr_accessor :taxes, :expenses, :incomes, :taxes_amounts
 
   def initialize(data)
-    @invoice = data[:invoice]
     @taxes = data[:taxes]
     data[:incomes] ? @incomes = data[:incomes] : @incomes = 0
     data[:expenses] ? @expenses = data[:expenses] : @expenses = 0
@@ -12,15 +11,21 @@ class CalculateTaxes
   end
 
   def call
-    @incomes = @invoice[:total] + @incomes
+
     result = calculate_taxes(:invoiced, @incomes)
+
     pre_utility = calculate_utility(result)
 
     result = calculate_taxes(:utility , pre_utility)
     utility = calculate_utility(result)
 
     result = calculate_taxes(:post_utility , utility)
-    result['utility'] = calculate_utility(result)
+
+    utility = calculate_utility(result)
+
+    result['Ingresos'] = @incomes
+    result['Egresos'] = @expenses
+    result['Utilidad'] = utility
     return result
   end
 

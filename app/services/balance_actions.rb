@@ -51,7 +51,9 @@ class BalanceActions
             expenses: {expenses: balance.expenses,
                       total: @accounter.calculate_total_expenses(balance)},
             distributions: prepare_distributions(balance.distributions),
-            percentages: balance.percentages }
+            percentages: balance.percentages,
+            taxes: [] #TODO find this.
+            }
   end
 
   #TODO refactor, this method was duplicated on distribute_balance

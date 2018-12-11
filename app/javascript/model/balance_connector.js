@@ -7,9 +7,25 @@ const BALANCE_URL = API_URL + '/balance'
 const CLOSE_BALANCE_URL = BALANCE_URL + '/close'
 const NEW_BALANCE_URL = BALANCE_URL + '/new'
 const KLEERERS_URL = API_URL + '/kleerers/filter'
+const SUMMARY_TAXES = BALANCE_URL + '/taxes'
 
 export default {
 
+  updateTaxes (context, data) {
+    axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
+    axios({
+      method: 'post',
+      url: SUMMARY_TAXES,
+      data: {
+        balanceId: data
+      }
+    }).then(function (response) {
+      context.resumeTaxes(response.data.response)
+    })
+      .catch(function (error) {
+        util.processErrorMsgs(error, context)
+      })
+  },
   distribute (context, data) {
     axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
     axios({
@@ -119,7 +135,7 @@ export default {
     }).then(function (response) {
       var answer = response.data.response
       context.realIncomes = answer.incomes
-      context.$emit('input', answer.total)
+      context.$emit('updateTaxes')
       context.income.description = ''
       context.income.amount = ''
     })
@@ -135,7 +151,7 @@ export default {
     }).then(function (response) {
       var answer = response.data.response
       context.realIncomes = answer.incomes
-      context.$emit('input', answer.total)
+      context.$emit('updateTaxes')
     })
     .catch(function (error) {
       util.processErrorMsgs(error, context)
@@ -150,7 +166,7 @@ export default {
     }).then(function (response) {
       var answer = response.data.response
       context.realExpenses = answer.expenses
-      context.$emit('input', answer.total)
+      context.$emit('updateTaxes')
       context.expense.description = ''
       context.expense.amount = ''
     })
@@ -166,7 +182,7 @@ export default {
     }).then(function (response) {
       var answer = response.data.response
       context.realExpenses = answer.expenses
-      context.$emit('input', answer.total)
+      context.$emit('updateTaxes')
     })
     .catch(function (error) {
       util.processErrorMsgs(error, context)

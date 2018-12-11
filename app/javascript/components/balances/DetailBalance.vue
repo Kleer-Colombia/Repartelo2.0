@@ -43,9 +43,9 @@
             </el-card>
             <el-row id="row-money">
                 <el-col :span="6">
-                    <incomes-admin v-model="incomes.totalIncomes" :editable="balance.editable"
+                    <incomes-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
                                    :allIncomes="incomes.realIncomes"/>
-                    <expenses-admin v-model="expenses.totalExpenses" :editable="balance.editable"
+                    <expenses-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
                                     :allExpenses="expenses.realExpenses"/>
                 </el-col>
                 <el-col :span="18">
@@ -53,11 +53,11 @@
                         <el-row :gutter="10">
                             <el-col :span="8" :offset="1">
                                 <el-table
-                                        :data="summary()"
+                                        :data="taxes"
                                         border
                                         style="width: 100%">
                                     <el-table-column
-                                            prop="title"
+                                            prop="tittle"
                                             label="">
                                     </el-table-column>
                                     <el-table-column
@@ -184,7 +184,8 @@
         expenses: {
           realExpenses: [],
           totalExpenses: 0
-        }
+        },
+        taxes: []
       }
     },
     beforeCreate: function () {
@@ -193,11 +194,15 @@
       })
     },
     methods: {
+      updateTaxes(){
+        this.distribution.result = false
+        balanceConnector.updateTaxes(this, this.$route.params.id)
+      },
       formatPrice (value) {
         return util.formatPrice(value)
       },
       close () {
-        this.$confirm('Esta opcion envia la distribucion a saldos kleerers y hara que el balance no se pueda volver a editar, ¿Desea continuar?',
+        this.$confirm('Esta opcion envia la distribución a saldos kleerers y hara que el balance no se pueda volver a editar, ¿Desea continuar?',
           'Cuidado!', {
             confirmButtonText: 'Aceptar',
             cancelButtonText: 'Cancelar',
@@ -231,12 +236,18 @@
           })
         })
       },
-      summary () {
-        return [
-          {title: 'Ingresos', total: this.incomes.totalIncomes, id: 'totalIncomes'},
-          {title: 'Egresos', total: this.expenses.totalExpenses, id: 'totalExpenses'},
-          {title: 'Utilidad', total: this.incomes.totalIncomes - this.expenses.totalExpenses, id: 'totalProfit'}
-        ]
+      resumeTaxes (data) {
+        let taxes = []
+        Object.keys(data).map(function(objectKey, index) {
+          let obj = {}
+          obj['tittle'] = objectKey;
+          obj['total'] = data[objectKey];
+          obj['id'] = 'total'+objectKey;
+
+          taxes.push(obj)
+        });
+        this.taxes = taxes;
+
       }
     }
   }

@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       post '/balance/', to: 'balance#distribute'
       post '/balance/close', to: 'balance#close'
       post '/balance/new', to: 'balance#create'
+      post '/balance/taxes', to: 'balance#calculate_taxes'
       get '/balance/:id', to: 'balance#find'
       delete '/balance/:id', to: 'balance#delete'
       post '/balance/:id/income', to: 'balance#add_income'
