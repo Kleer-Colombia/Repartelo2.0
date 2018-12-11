@@ -42,13 +42,23 @@ class DataFactory
   end
 
   def self.create_kleerers
+
+    if Option.count <= 0
+      Option.delete_all
+      Option.create!(name: 'Socio', value: 5)
+      Option.create!(name: 'Full', value: 15)
+      Option.create!(name: 'Parcial', value: 25)
+      Option.create!(name: 'Otro', value: 10)
+      Option.create!(name: 'Home', value: 0)
+    end
+
     if Kleerer.count <= 0
       Kleerer.delete_all
-      Kleerer.create!(name: 'Socio', option: :socio)
-      Kleerer.create!(name: 'Full', option: :full)
-      Kleerer.create!(name: 'Parcial', option: :parcial)
-      Kleerer.create!(name: 'Otro', option: :otro)
-      Kleerer.create!(name: 'KleerCo', option: :home)
+      Kleerer.create!(name: 'Socio', option_id: Option.find_by(name: 'Socio').id)
+      Kleerer.create!(name: 'Full', option_id: Option.find_by(name: 'Full').id)
+      Kleerer.create!(name: 'Parcial', option_id: Option.find_by(name: 'Parcial').id)
+      Kleerer.create!(name: 'Otro', option_id: Option.find_by(name: 'Otro').id)
+      Kleerer.create!(name: 'KleerCo', option_id: Option.find_by(name: 'Home').id)
     end
   end
 end

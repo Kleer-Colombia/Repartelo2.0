@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Accounter do
 
   before(:each) do
-    @accounter = Accounter.new(Kleerer.new(name: 'KleerCo', option: :home, id: 100000000))
+    @accounter = Accounter.new(Kleerer.new(name: 'KleerCo', option: Option.new(name: 'Home', value: 0), id: 100000000))
     @accounter.option_kleer_co = 0.18
     @accounter.option_kleerer = 0.82
 
@@ -14,11 +14,11 @@ describe Accounter do
 
     allow(Balance).to receive(:find).with(@balance.id).and_return(@balance)
 
-    @socio = Kleerer.new(name: 'socio',option: :socio, id: 1000)
-    @socio2 = Kleerer.new(name: 'socio2',option: :socio, id: 2000)
-    @other = Kleerer.new(name: 'other',option: :otro, id: 1001)
-    @full = Kleerer.new(name: 'full',option: :full, id: 1002)
-    @partial = Kleerer.new(name: 'partial',option: :parcial, id: 1003)
+    @socio = Kleerer.new(name: 'socio',option: Option.new(name: 'Socio', value: 5), id: 1000)
+    @socio2 = Kleerer.new(name: 'socio2',option: Option.new(name: 'Socio', value: 5), id: 2000)
+    @other = Kleerer.new(name: 'other', option: Option.new(name: 'Otro', value: 10), id: 1001)
+    @full = Kleerer.new(name: 'full',option: Option.new(name: 'Full', value: 15), id: 1002)
+    @partial = Kleerer.new(name: 'partial',option: Option.new(name: 'Parcial', value: 25), id: 1003)
   end
 
   context "calculate distribution" do

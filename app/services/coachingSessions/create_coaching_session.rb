@@ -16,6 +16,7 @@ class CreateCoachingSession
     @coaching_session.save!
     return true
   rescue StandardError => error
+    puts error
     errors.add(:messages, "Invalid parameters creating coaching session #{error}")
   end
 

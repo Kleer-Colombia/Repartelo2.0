@@ -16,7 +16,7 @@ class UpdatePercentage
       update_percentage_for_coaching_balance(@balance_id, @summary)
     end
 
-    return true
+    true
   rescue StandardError => error
     errors.add(:messages, "We can't update the kleerers distribution: #{error.message} ")
   end

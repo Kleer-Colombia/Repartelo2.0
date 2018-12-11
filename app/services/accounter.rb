@@ -2,8 +2,6 @@ class Accounter
 
   attr_accessor :option_kleer_co, :option_kleerer
 
-  OPTIONS = {socio: 0.05, full: 0.15, parcial: 0.25, otro: 0.10}
-
   def initialize kleerCo = Kleerer.find_by(name: "KleerCo")
     @kleerCo = kleerCo
     #TODO this must be in the db
@@ -23,7 +21,7 @@ class Accounter
       balance.percentages.each do |percentage|
         kleerer = percentage.kleerer
         forKleerer = (for_percentage_distrbution * percentage.value) / 100
-        re_entry = forKleerer * OPTIONS[kleerer.option.to_sym]
+        re_entry = forKleerer * kleerer.option.value * 0.01
 
         distributions[@kleerCo.id] += re_entry
         distributions[kleerer.id] = forKleerer - re_entry

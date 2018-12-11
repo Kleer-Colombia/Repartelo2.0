@@ -3,9 +3,9 @@ require 'rails_helper'
 describe SummaryCoachingSession do
 
   before(:each) do
-    @socio = Kleerer.new(name: 'socio',option: :socio, id: 1000)
-    @full = Kleerer.new(name: 'full',option: :full, id: 1002)
-    @partial = Kleerer.new(name: 'partial',option: :parcial, id: 1003)
+    @socio = Kleerer.new(name: 'socio',option: Option.new(name: 'Socio', value: 5), id: 1000)
+    @full = Kleerer.new(name: 'full',option: Option.new(name: 'Full', value: 15), id: 1002)
+    @partial = Kleerer.new(name: 'partial',option: Option.new(name: 'Parcial', value: 25), id: 1003)
 
     allow(Kleerer).to receive(:find).with(@socio.id).and_return(@socio)
     allow(Kleerer).to receive(:find).with(@full.id).and_return(@full)
