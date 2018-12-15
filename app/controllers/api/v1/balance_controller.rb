@@ -5,45 +5,7 @@ module Api
       before_action :set_actions
 
       def set_actions
-        @accounter ||= Accounter.new
         @actions ||= BalanceActions.new
-      end
-
-      def distribute
-        validate_parameters [:balanceId], params do
-          distribute = DistributeBalance.new
-          distribute.add_subscriber(self)
-          distribute.call params[:balanceId]
-        end
-      end
-
-      def calculate_taxes
-        validate_parameters [:balanceId], params do
-          balance = Balance.find(params[:balanceId])
-          incomes = 0
-          balance.incomes.each do |income|
-            incomes += income.amount
-          end
-          expenses = 0
-          balance.expenses.each do |expense|
-            expenses += expense.amount
-          end
-
-          execute_command(CalculateTaxes.new(taxes: Tax.all,
-                                             incomes: incomes,
-                                             expenses: expenses))
-        end
-      end
-
-      def close
-        validate_parameters [:balanceId], params do
-          begin
-            @actions.close params[:balanceId]
-            send_response('Ok')
-          rescue StandardError => error
-            halt_message("can't close balance: #{error.message}", :internal_server_error)
-          end
-        end
       end
 
       def find_all
@@ -55,11 +17,11 @@ module Api
           balance = params[:balance]
           begin
             result = Balance.create!(
-                project: balance['project'],
-                client: balance['client'],
-                description: balance['description'],
-                balance_type: balance['balance_type'],
-                date: Date.strptime(balance['date'], '%Y-%m-%d'))
+              project: balance['project'],
+              client: balance['client'],
+              description: balance['description'],
+              balance_type: balance['balance_type'],
+              date: Date.strptime(balance['date'], '%Y-%m-%d'))
             send_response result.id
           rescue StandardError => e
             halt_message("Invalid parameters creating balance #{e}", :internal_server_error)
@@ -88,53 +50,6 @@ module Api
         end
       end
 
-      def add_income
-        validate_parameters [:id, :income], params do
-          begin
-            income = params[:income]
-            send_response @actions.add_income_to_balance(params[:id], income)
-          rescue => e
-            halt_message("We can't add income #{e.message}", :internal_server_error)
-          end
-        end
-      end
-
-      def delete_income
-        validate_parameters [:id, :idIncome], params do
-          begin
-            send_response @actions.remove_income_to_balance(params[:id], params[:idIncome])
-          rescue
-            halt_message("We can't remove income: #{e.message}", :internal_server_error)
-          end
-        end
-      end
-
-      def add_expense
-        validate_parameters [:id, :expense], params do
-          begin
-            income = params[:expense]
-            send_response @actions.add_expense_to_balance(params[:id], income)
-          rescue
-            halt_message("We can't add expense: #{e.message}", :internal_server_error)
-          end
-        end
-      end
-
-      def delete_expense
-        validate_parameters [:id, :idExpense], params do
-          begin
-            send_response @actions.remove_expense_to_balance(params[:id], params[:idExpense])
-          rescue
-            halt_message("We can't remove expense: #{e.message}", :internal_server_error)
-          end
-        end
-      end
-
-      def update_percentages
-        validate_parameters [:id, :kleerers], params do
-          execute_command(UpdatePercentage.new(params[:id], kleerers: params[:kleerers]))
-        end
-      end
     end
   end
 end
