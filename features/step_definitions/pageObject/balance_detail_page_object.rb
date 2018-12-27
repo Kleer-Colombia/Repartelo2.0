@@ -17,15 +17,15 @@ class BalanceDetailPageObject < APageObject
   end
 
   def find_total_incomes
-    @page.find("#totalIncomes",wait: 5).text
+    @page.find("#totalIngresos",wait: 5).text
   end
 
   def find_total_expenses
-    @page.find("#totalExpenses",wait: 5).text
+    @page.find("#totalEgresos",wait: 5).text
   end
 
   def find_total_profit
-    @page.find("#totalProfit",wait: 5).text
+    @page.find("#totalUtilidad",wait: 5).text
   end
 
   def add_income income

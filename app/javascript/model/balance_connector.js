@@ -102,6 +102,7 @@ export default {
       context.incomes.totalIncomes = balance.incomes.total
       context.expenses.realExpenses = balance.expenses.expenses
       context.expenses.totalExpenses = balance.expenses.total
+      context.taxes = balance.taxes
       context.distribution.balancePercentages = balance.percentages
       if (balance.distributions.length > 0) {
         context.distribution.result = balance.distributions

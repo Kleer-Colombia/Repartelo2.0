@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_20_210221) do
+ActiveRecord::Schema.define(version: 2018_12_14_225941) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -139,12 +139,22 @@ ActiveRecord::Schema.define(version: 2018_11_20_210221) do
     t.index ["kleerer_id"], name: "index_saldos_on_kleerer_id"
   end
 
-  create_table "taxes", force: :cascade do |t|
+  create_table "tax_masters", force: :cascade do |t|
     t.string "name"
     t.decimal "value"
     t.string "type_tax"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "taxes", force: :cascade do |t|
+    t.bigint "balance_id"
+    t.string "name", null: false
+    t.decimal "amount", null: false
+    t.decimal "percentage", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["balance_id"], name: "index_taxes_on_balance_id"
   end
 
   create_table "users", force: :cascade do |t|

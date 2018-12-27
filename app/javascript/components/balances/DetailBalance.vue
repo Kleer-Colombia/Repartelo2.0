@@ -52,26 +52,28 @@
                     <el-card class="box-card">
                         <el-row :gutter="10">
                             <el-col :span="8" :offset="1">
-                                <el-table
-                                        :data="taxes"
-                                        border
-                                        style="width: 100%">
-                                    <el-table-column
-                                            prop="tittle"
-                                            label="">
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="total"
-                                            label="Totales">
-                                        <template slot-scope="scope">
-                                            <b>
-                        <span :id="scope.row.id">
-                          {{ formatPrice(scope.row.total) }}
-                        </span>
-                                            </b>
-                                        </template>
-                                    </el-table-column>
-                                </el-table>
+                                <div v-if="showTaxes">
+                                    <el-table
+                                            :data="taxes"
+                                            border
+                                            style="width: 100%">
+                                        <el-table-column
+                                                prop="tittle"
+                                                label="">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="total"
+                                                label="Totales">
+                                            <template slot-scope="scope">
+                                                <b>
+                                                    <span :id="scope.row.id">
+                                                      {{ formatPrice(scope.row.total) }}
+                                                    </span>
+                                                </b>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
                             </el-col>
 
                             <div v-if="balance.balance_type === 'standard' ">
@@ -165,6 +167,7 @@
     data () {
       return {
         loaded: false,
+        showTaxes: true,
         balance: {
           id: '',
           client: '',
@@ -192,7 +195,8 @@
       })
     },
     methods: {
-      updateTaxes(){
+      updateTaxes () {
+        this.showTaxes = false
         this.distribution.result = false
         balanceConnector.updateTaxes(this, this.$route.params.id)
       },
@@ -226,26 +230,26 @@
             type: 'warning',
             center: true
           }).then(() => {
-          balanceConnector.deleteBalance(this, this.$route.params.id)
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'Borrado cancelado'
+            balanceConnector.deleteBalance(this, this.$route.params.id)
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: 'Borrado cancelado'
+            })
           })
-        })
       },
       resumeTaxes (data) {
         let taxes = []
-        Object.keys(data).map(function(objectKey, index) {
+        Object.keys(data).map(function (objectKey, index) {
           let obj = {}
-          obj['tittle'] = objectKey;
-          obj['total'] = data[objectKey];
-          obj['id'] = 'total'+objectKey;
+          obj['tittle'] = objectKey
+          obj['total'] = data[objectKey]
+          obj['id'] = 'total' + objectKey
 
           taxes.push(obj)
-        });
-        this.taxes = taxes;
-
+        })
+        this.taxes = taxes
+        this.showTaxes = true
       }
     }
   }

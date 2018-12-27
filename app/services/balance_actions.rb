@@ -52,7 +52,7 @@ class BalanceActions
                       total: @accounter.calculate_total_expenses(balance)},
             distributions: prepare_distributions(balance.distributions),
             percentages: balance.percentages,
-            taxes: [] #TODO find this.
+            taxes: balance.taxes
             }
   end
 
@@ -83,6 +83,7 @@ class BalanceActions
       Income.where(balance_id: balance_id).destroy_all
       Expense.where(balance_id: balance_id).destroy_all
       Distribution.where(balance_id: balance_id).destroy_all
+      Tax.where(balance_id: balance_id).destroy_all
       Balance.where(id: balance_id).destroy_all
     end
   end
