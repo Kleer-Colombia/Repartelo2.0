@@ -178,12 +178,10 @@
           balancePercentages: []
         },
         incomes: {
-          realIncomes: [],
-          totalIncomes: 0
+          realIncomes: []
         },
         expenses: {
-          realExpenses: [],
-          totalExpenses: 0
+          realExpenses: []
         },
         taxes: []
       }
