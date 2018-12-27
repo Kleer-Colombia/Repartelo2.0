@@ -16,7 +16,7 @@ class ChangeKleererOption < ActiveRecord::Migration[5.2]
       end
     end
 
-    remove_column :kleerers, :opt
+    remove_column :kleerers, :opt, :string
 
   end
 end
