@@ -28,7 +28,7 @@ class ApiController < ActionController::API
     if command.success?
       send_response(command.result)
     else
-      command.errors[:error_code] ||= :internal_server_error
+      command.errors[:error_code][0] ||= :internal_server_error
       halt_message(command.errors[:messages], command.errors[:error_code])
     end
   end

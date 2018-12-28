@@ -7,6 +7,10 @@ And(/^I have Taxes$/) do
   DataFactory.create_taxes
 end
 
+And(/^I have kleer tax$/) do
+  DataFactory.create_kleer_tax
+end
+
 Given(/^I logged$/) do
   DataFactory.clean_balances
   step 'i have a user in the db'
@@ -247,3 +251,4 @@ end
 And(/^I close the coaching sessions admin$/) do
   @actual_page = @actual_page.close
 end
+

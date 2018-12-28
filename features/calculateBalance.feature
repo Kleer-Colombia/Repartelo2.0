@@ -7,6 +7,7 @@ Feature:
   Scenario: calculate balance with yamit as a kleerer
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new standard balance for client "Sparkta"
     And I add income for "1100.00"
     And I add expense for "100.00"
@@ -19,6 +20,7 @@ Feature:
   Scenario: calculate balance with negative profit
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new standard balance for client "Sparkta"
     And I add income for "100.00"
     And I add expense for "1100.00"
@@ -30,6 +32,7 @@ Feature:
   Scenario: calculate distributions with Full and Socio
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new standard balance for client "Corbeta"
     And I add income for "1100.00"
     And I add expense for "200.00"
@@ -44,6 +47,7 @@ Feature:
   Scenario: calculate distributions with Full and Socio on 70/30
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new standard balance for client "Corbeta"
     And I add income for "1100.00"
     And I add expense for "200.00"
@@ -60,6 +64,7 @@ Feature:
   Scenario: calculate distributions with Full, Socio and Partial
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new standard balance for client "Corbeta"
     And I add income for "1000.00"
     And I select "Full" as a kleerer
@@ -78,6 +83,7 @@ Feature:
   Scenario: calculate distributions with Full, Socio and Partial with  custom values
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new standard balance for client "Test"
     And I add income for "1000.00"
     And I select "Full" as a kleerer

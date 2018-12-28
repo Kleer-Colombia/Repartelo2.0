@@ -35,14 +35,13 @@ class CalculateTaxes
   private
 
   def save_taxes(taxes)
-    ActiveRecord::Base.transaction do
-      Tax.where(balance_id: @save_in.id).destroy_all
-      taxes.each do |name, value|
-        @save_in.taxes.create!(name: name,
-                               amount: value,
-                               percentage: @taxes_percentages[name])
-      end
+    @save_in.taxes.clear
+    taxes.each do |name, value|
+      @save_in.taxes.push(Tax.new(name: name,
+                             amount: value,
+                             percentage: @taxes_percentages[name]))
     end
+    @save_in.save!
   end
 
   def calculate_taxes(type, amount)

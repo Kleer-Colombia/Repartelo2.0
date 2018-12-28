@@ -77,4 +77,10 @@ class DataFactory
                              value: 10,
                              type_tax: :post_utility)
   end
+
+  def self.create_kleer_tax
+    TaxMaster.create!(name: 'kleerCo',
+                      value: 16,
+                      type_tax: :post_utility)
+  end
 end

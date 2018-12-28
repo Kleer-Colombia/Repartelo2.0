@@ -223,7 +223,7 @@
           })
       },
       deleteBalance () {
-        this.$confirm('Esto borrara permanentemente todos los datos asociados a este balance, ¿Desea continuar?',
+        this.$confirm('Esto borrará permanentemente todos los datos asociados a este balance, ¿Desea continuar?',
           'Cuidado!', {
             confirmButtonText: 'Aceptar',
             cancelButtonText: 'Cancelar',

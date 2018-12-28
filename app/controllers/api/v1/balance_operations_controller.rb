@@ -10,9 +10,10 @@ module Api
 
       def distribute
         validate_parameters [:balanceId], params do
-          distribute = DistributeBalance.new
-          distribute.add_subscriber(self)
-          distribute.call params[:balanceId]
+          execute_command(DistributeBalanceService.new(balance_id: params[:balanceId]))
+         # distribute = DistributeBalance.new
+         # distribute.add_subscriber(self)
+          #distribute.call params[:balanceId]
         end
       end
 
