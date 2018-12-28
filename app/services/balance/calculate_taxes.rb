@@ -28,16 +28,20 @@ class CalculateTaxes
     result['Egresos'] = @expenses
     result['Utilidad'] = utility
 
-    result
+    @save_in ? @save_in.resume : result
+
   end
 
   private
 
   def save_taxes(taxes)
-    taxes.each_with_index do |name, value|
-      @save_in.taxes.create!(name: taxes[name],
-                             amount: taxes[value],
-                             percentage: @taxes_percentages[name])
+    ActiveRecord::Base.transaction do
+      Tax.where(balance_id: @save_in.id).destroy_all
+      taxes.each do |name, value|
+        @save_in.taxes.create!(name: name,
+                               amount: value,
+                               percentage: @taxes_percentages[name])
+      end
     end
   end
 

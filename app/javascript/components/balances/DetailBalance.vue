@@ -52,9 +52,9 @@
                     <el-card class="box-card">
                         <el-row :gutter="10">
                             <el-col :span="8" :offset="1">
-                                <div v-if="showTaxes">
+                                <div v-if="showResume">
                                     <el-table
-                                            :data="taxes"
+                                            :data="resume"
                                             border
                                             style="width: 100%">
                                         <el-table-column
@@ -167,7 +167,7 @@
     data () {
       return {
         loaded: false,
-        showTaxes: true,
+        showResume: true,
         balance: {
           id: '',
           client: '',
@@ -186,7 +186,7 @@
         expenses: {
           realExpenses: []
         },
-        taxes: []
+        resume: []
       }
     },
     beforeCreate: function () {
@@ -196,7 +196,7 @@
     },
     methods: {
       updateTaxes () {
-        this.showTaxes = false
+        this.showResume = false
         this.distribution.result = false
         balanceConnector.updateTaxes(this, this.$route.params.id)
       },
@@ -238,19 +238,19 @@
             })
           })
       },
-      resumeTaxes (data) {
+      prepareResume (data) {
         let taxes = []
         Object.keys(data).map(function (objectKey, index) {
           let obj = {}
           obj['tittle'] = objectKey
           obj['total'] = data[objectKey]
-          obj['id'] = 'total' + objectKey
+          obj['id'] = 'money' + objectKey
 
           taxes.push(obj)
         })
-        this.taxes = taxes
-        this.showTaxes = true
-      }
+        this.resume = taxes
+        this.showResume = true
+      },
     }
   }
 </script>

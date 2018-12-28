@@ -61,4 +61,20 @@ class DataFactory
       Kleerer.create!(name: 'KleerCo', option_id: Option.find_by(name: 'Home').id)
     end
   end
+
+  def self.create_taxes
+    TaxMaster.create!(name: 'ica',
+                         value: 1.1,
+                         type_tax: :invoiced)
+
+    TaxMaster.create!(name: 'chanchito',
+                               value: 2.5,
+                               type_tax: :invoiced)
+    TaxMaster.create!(name: 'retefuente',
+                                value: 26,
+                                type_tax: :utility)
+    TaxMaster.create!(name: 'kleerCo',
+                             value: 10,
+                             type_tax: :post_utility)
+  end
 end

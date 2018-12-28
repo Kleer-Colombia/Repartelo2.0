@@ -17,7 +17,25 @@ class Balance < ApplicationRecord
     plus_data(self.expenses)
   end
 
+  def resume
+    resume = {}
+    resume[:ingresos] = total_incomes
+    resume[:chanchito] = find_tax_value(:chanchito)
+    resume[:ica] = find_tax_value(:ica)
+    resume[:egresos] = total_expenses
+    resume[:pre_utilidad] = resume[:ingresos] - resume[:chanchito] - resume[:ica] - resume[:egresos]
+    resume[:retefuente] = find_tax_value(:retefuente)
+    resume[:utilidad] = resume[:pre_utilidad] - resume[:retefuente]
+    resume[:kleerCo] = find_tax_value(:kleerCo)
+    return resume
+  end
+
   private
+
+  def find_tax_value(name)
+    tax = self.taxes.detect {|e| e.name == name.to_s}
+    tax ? tax.amount.to_f : 0
+  end
 
   def plus_data(data)
     result = 0

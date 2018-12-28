@@ -52,7 +52,7 @@ class BalanceActions
                       total: @accounter.calculate_total_expenses(balance)},
             distributions: prepare_distributions(balance.distributions),
             percentages: balance.percentages,
-            taxes: balance.taxes
+            resume: balance.resume
             }
   end
 

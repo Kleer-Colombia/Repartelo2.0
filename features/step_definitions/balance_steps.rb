@@ -3,6 +3,10 @@ And(/^I have kleerers$/) do
   DataFactory.create_kleerers
 end
 
+And(/^I have Taxes$/) do
+  DataFactory.create_taxes
+end
+
 Given(/^I logged$/) do
   DataFactory.clean_balances
   step 'i have a user in the db'
