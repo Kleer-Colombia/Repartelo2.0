@@ -7,6 +7,7 @@ Feature:
   Scenario: calculate coaching balance with yamit as a kleerer
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new coaching balance for client "Sparkta"
     When I open the coaching sessions admin
     And I add many new sessions
@@ -23,6 +24,7 @@ Feature:
   Scenario: calculate balance with negative profit
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new coaching balance for client "Sparkta"
     When I open the coaching sessions admin
     And I add many new sessions
@@ -38,6 +40,7 @@ Feature:
   Scenario: calculate distributions with Full and Socio
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new coaching balance for client "Sparkta"
     When I open the coaching sessions admin
     And I add many new sessions
@@ -56,6 +59,7 @@ Feature:
   Scenario: calculate distributions with Full and Socio on 70/30
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new coaching balance for client "Sparkta"
     When I open the coaching sessions admin
     And I add many new sessions
@@ -82,6 +86,7 @@ Feature:
   Scenario: calculate distributions with Full, Socio and Partial with  custom values
     Given I logged
     And I have kleerers
+    And I have kleer tax
     And I create a new coaching balance for client "Sparkta"
     When I open the coaching sessions admin
     And I add many new sessions

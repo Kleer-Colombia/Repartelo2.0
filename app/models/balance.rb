@@ -20,12 +20,13 @@ class Balance < ApplicationRecord
   def resume
     resume = {}
     resume[:ingresos] = total_incomes
-    resume[:chanchito] = find_tax_value(:chanchito)
-    resume[:ica] = find_tax_value(:ica)
+    resume_invoiced, total = find_tax(:invoiced)
+    resume.merge!(resume_invoiced)
     resume[:egresos] = total_expenses
-    resume[:pre_utilidad] = resume[:ingresos] - resume[:chanchito] - resume[:ica] - resume[:egresos]
-    resume[:retefuente] = find_tax_value(:retefuente)
-    resume[:utilidad] = resume[:pre_utilidad] - resume[:retefuente]
+    resume[:pre_utilidad] = resume[:ingresos] - resume[:egresos] - total
+    resume_utility, total = find_tax(:utility)
+    resume.merge!(resume_utility)
+    resume[:utilidad] = resume[:pre_utilidad] - total
     return resume
   end
 
@@ -51,6 +52,16 @@ class Balance < ApplicationRecord
       result += item.amount
     end
     result
+  end
+
+  def find_tax(type)
+    resume = {}
+    total = 0
+    TaxMaster.find_taxes(type).each do |tax|
+      resume[tax.name] = find_tax_value(tax.name)
+      total+= resume[tax.name]
+    end
+    return resume, total
   end
 
 end

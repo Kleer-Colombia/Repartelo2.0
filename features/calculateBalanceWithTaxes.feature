@@ -40,7 +40,7 @@ Feature:
     And I should see "$120,97" for "KleerCo"
 
   @javascript
-  Scenario: calculate distributions with Full, Socio and Partial with  custom values
+  Scenario: calculate distributions with  custom values
     Given I logged
     And I have kleerers
     And I have Taxes
