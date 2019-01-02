@@ -27,6 +27,7 @@ gem 'jwt'
 # ActiveAdmin
 gem 'devise'
 gem 'activeadmin'
+gem 'rest-client', '~> 2.0', '>= 2.0.2'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

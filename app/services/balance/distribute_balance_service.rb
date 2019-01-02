@@ -15,7 +15,6 @@ class DistributeBalanceService
     result = distribute(balance)
     prepare_distributions(result)
   rescue StandardError => error
-    puts error.message
     errors.add(:messages, "error on distribution balance: #{error.message}")
     errors.add(:error_code, :not_acceptable)
   end

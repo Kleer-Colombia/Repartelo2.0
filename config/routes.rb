@@ -11,6 +11,8 @@ Rails.application.routes.draw do
 
       post '/login', to: 'auths#login'
 
+      get '/invoice/', to: 'alegra#find_open_invoices'
+
       get '/saldos/:kleerer_id', to: 'saldos#find_saldos'
       post '/saldos/', to: 'saldos#add_saldo'
 
