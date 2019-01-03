@@ -12,7 +12,7 @@ class CalculateTaxes
   end
 
   def call
-
+    #TODO calculate iva with income
     result = calculate_taxes(:invoiced, @incomes)
     pre_utility = calculate_utility(result)
 

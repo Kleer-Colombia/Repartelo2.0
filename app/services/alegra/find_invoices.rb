@@ -1,6 +1,5 @@
 class FindInvoices
   prepend Service
-  include AlegraConnector
 
   attr_reader :status
 
@@ -9,7 +8,7 @@ class FindInvoices
   end
 
   def call
-    invoices = get_invoices(@status)
+    invoices = AlegraConnector.get_invoices(@status)
     remove_unnecessary_data(invoices)
     #TODO remove invoice in balances (incomes)
   rescue StandardError => error
