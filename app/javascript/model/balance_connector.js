@@ -127,7 +127,7 @@ export default {
       util.processErrorMsgs(error, context)
     })
   },
-  addIncome (context, id) {
+  addIncome (context, id, nextFunction) {
     axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
     axios({
       method: 'post',
@@ -139,6 +139,9 @@ export default {
       context.$emit('updateTaxes')
       context.income.description = ''
       context.income.amount = ''
+      if (nextFunction) {
+        nextFunction(context)
+      }
     })
     .catch(function (error) {
       util.processErrorMsgs(error, context)

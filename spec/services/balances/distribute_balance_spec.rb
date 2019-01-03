@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe DistributeBalanceService do
+describe DistributeBalance do
 
   before(:each) do
 
@@ -36,7 +36,7 @@ describe DistributeBalanceService do
       @balance.incomes.push Income.new(description: 'descrip', amount: 1000)
       @balance.percentages.push(Percentage.new(value: 100, kleerer: @socio))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq false
@@ -51,7 +51,7 @@ describe DistributeBalanceService do
       @balance.taxes.push(Tax.new(name: 'retefuente', amount: 250.64, percentage: 26))
       @balance.taxes.push(Tax.new(name: 'kleerCo', amount: 71.34, percentage: 10))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq true
@@ -69,7 +69,7 @@ describe DistributeBalanceService do
       @balance.taxes.push(Tax.new(name: 'retefuente', amount: 1486.88, percentage: 26))
       @balance.taxes.push(Tax.new(name: 'kleerCo', amount: 423.19, percentage: 10))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq true
@@ -86,7 +86,7 @@ describe DistributeBalanceService do
       @balance.taxes.push(Tax.new(name: 'retefuente', amount: 2506.40, percentage: 26))
       @balance.taxes.push(Tax.new(name: 'kleerCo', amount: 713.36, percentage: 10))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq true
@@ -103,7 +103,7 @@ describe DistributeBalanceService do
       @balance.taxes.push(Tax.new(name: 'retefuente', amount: 1393558.40, percentage: 26))
       @balance.taxes.push(Tax.new(name: 'kleerCo', amount: 396628.16, percentage: 10))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq true
@@ -121,7 +121,7 @@ describe DistributeBalanceService do
       @balance.taxes.push(Tax.new(name: 'retefuente', amount: 1393558.40, percentage: 26))
       @balance.taxes.push(Tax.new(name: 'kleerCo', amount: 396628.16, percentage: 10))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq true
@@ -141,7 +141,7 @@ describe DistributeBalanceService do
       @balance.taxes.push(Tax.new(name: 'retefuente', amount: 250640.00, percentage: 26))
       @balance.taxes.push(Tax.new(name: 'kleerCo', amount: 71336.00, percentage: 10))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq true
@@ -160,7 +160,7 @@ describe DistributeBalanceService do
       @balance.taxes.push(Tax.new(name: 'retefuente', amount: 250640.00, percentage: 26))
       @balance.taxes.push(Tax.new(name: 'kleerCo', amount: 71336.00, percentage: 10))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq true
@@ -179,7 +179,7 @@ describe DistributeBalanceService do
       @balance.taxes.push(Tax.new(name: 'retefuente', amount: 250640.00, percentage: 26))
       @balance.taxes.push(Tax.new(name: 'kleerCo', amount: 71336.00, percentage: 10))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq true
@@ -200,7 +200,7 @@ describe DistributeBalanceService do
       @balance.taxes.push(Tax.new(name: 'retefuente', amount: 250640.00, percentage: 26))
       @balance.taxes.push(Tax.new(name: 'kleerCo', amount: 71336.00, percentage: 10))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq true
@@ -220,7 +220,7 @@ describe DistributeBalanceService do
       @balance.taxes.push(Tax.new(name: 'retefuente', amount: 250640.00, percentage: 26))
       @balance.taxes.push(Tax.new(name: 'kleerCo', amount: 71336.00, percentage: 10))
 
-      db = DistributeBalanceService.new(balance_id: @balance.id)
+      db = DistributeBalance.new(balance_id: @balance.id)
       db.call
 
       expect(db.success?).to eq false

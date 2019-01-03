@@ -11,6 +11,7 @@ class FindInvoices
   def call
     invoices = get_invoices(@status)
     remove_unnecessary_data(invoices)
+    #TODO remove invoice in balances (incomes)
   rescue StandardError => error
     errors.add(:messages, "error getting invoice: #{error.message}")
     errors.add(:error_code, :not_acceptable)

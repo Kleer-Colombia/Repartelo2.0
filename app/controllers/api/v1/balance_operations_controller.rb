@@ -10,10 +10,7 @@ module Api
 
       def distribute
         validate_parameters [:balanceId], params do
-          execute_command(DistributeBalanceService.new(balance_id: params[:balanceId]))
-         # distribute = DistributeBalance.new
-         # distribute.add_subscriber(self)
-          #distribute.call params[:balanceId]
+          execute_command(DistributeBalance.new(balance_id: params[:balanceId]))
         end
       end
 
@@ -40,12 +37,7 @@ module Api
 
       def add_income
         validate_parameters [:id, :income], params do
-          begin
-            income = params[:income]
-            send_response @actions.add_income_to_balance(params[:id], income)
-          rescue => e
-            halt_message("We can't add income #{e.message}", :internal_server_error)
-          end
+          execute_command(AddIncome.new(balance_id: params[:id], income: params[:income]))
         end
       end
 

@@ -45,6 +45,8 @@
                 <el-col :span="6">
                     <incomes-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
                                    :allIncomes="incomes.realIncomes"/>
+                    <invoice-selector v-on:updateTaxes="updateTaxes" :editable="balance.editable"
+                                      :allIncomes="incomes.realIncomes"/>
                     <expenses-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
                                     :allExpenses="expenses.realExpenses"/>
                 </el-col>
@@ -154,6 +156,7 @@
   import ExpensesAdmin from './ExpensesAdmin'
   import KleerersDistribution from './kleerersDistribution'
   import AdminCoachingLog from '../coachingLog/AdminCoachingLogButton'
+  import invoiceSelector from '../invoices/invoiceSelector'
 
   export default {
     components: {
@@ -161,7 +164,8 @@
       KleerersDistribution,
       IncomesAdmin,
       ExpensesAdmin,
-      SafeBody
+      SafeBody,
+      invoiceSelector
     },
     name: 'detailBalance',
     data () {

@@ -1,7 +1,6 @@
 class BalanceActions
 
   def initialize
-    @accounter = Accounter.new
     @saldos =  SaldosActions.new
   end
 
@@ -15,41 +14,34 @@ class BalanceActions
     balance.save!
   end
 
- def add_income_to_balance id,income
-    balance = Balance.find(id)
-    balance.incomes.create!(description: income[:description],amount: income[:amount])
-    return {incomes: balance.incomes,
-            total: @accounter.calculate_total_incomes(balance)}
-  end
-
   def remove_income_to_balance(id,idIncome)
     balance = Balance.find(id)
     balance.incomes.find(idIncome).destroy
     return {incomes: balance.incomes,
-            total: @accounter.calculate_total_incomes(balance)}
+            total: balance.total_incomes}
   end
 
   def add_expense_to_balance id,expense
     balance = Balance.find(id)
     balance.expenses.create!(description: expense[:description],amount: expense[:amount])
     return {expenses: balance.expenses,
-            total: @accounter.calculate_total_expenses(balance)}
+            total: balance.total_expenses}
   end
 
   def remove_expense_to_balance(id,idExpense)
     balance = Balance.find(id)
     balance.expenses.find(idExpense).destroy
     return {expenses: balance.expenses,
-            total: @accounter.calculate_total_expenses(balance)}
+            total:balance.total_expenses}
   end
 
   def find_complete_balance(id)
     balance = Balance.find(id)
     return {balance: balance,
             incomes: {incomes: balance.incomes,
-                      total: @accounter.calculate_total_incomes(balance)},
+                      total: balance.total_incomes},
             expenses: {expenses: balance.expenses,
-                      total: @accounter.calculate_total_expenses(balance)},
+                      total: balance.total_expenses},
             distributions: prepare_distributions(balance.distributions),
             percentages: balance.percentages,
             resume: balance.resume
