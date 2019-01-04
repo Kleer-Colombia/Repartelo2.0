@@ -20,13 +20,15 @@ class Balance < ApplicationRecord
   def resume
     resume = {}
     resume[:ingresos] = total_incomes
+    resume_in_invoice, total_in_invoice = find_tax(:in_invoice)
+    resume.merge!(resume_in_invoice)
     resume_invoiced, total = find_tax(:invoiced)
     resume.merge!(resume_invoiced)
     resume[:egresos] = total_expenses
-    resume[:pre_utilidad] = resume[:ingresos] - resume[:egresos] - total
-    resume_utility, total = find_tax(:utility)
+    resume[:pre_utilidad] = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
+    resume_utility, total_utility = find_tax(:utility)
     resume.merge!(resume_utility)
-    resume[:utilidad] = resume[:pre_utilidad] - total
+    resume[:utilidad] = resume[:pre_utilidad] - total_utility
     return resume
   end
 
