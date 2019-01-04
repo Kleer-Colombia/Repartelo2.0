@@ -34,6 +34,7 @@ class AddIncome
       invoice = AlegraConnector.get_invoice(@income['invoiceId'])
       @invoice_date = invoice['date']
       @invoice_id = invoice['id']
+      #TODO calculate iva with income and set the tax
       @iva = find_iva_percentage(invoice['items'])
 
   end
