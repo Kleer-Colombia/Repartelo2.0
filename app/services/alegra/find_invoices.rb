@@ -9,11 +9,22 @@ class FindInvoices
 
   def call
     invoices = AlegraConnector.get_invoices(@status)
+    invoices = remove_invoice_in_balances(invoices)
     remove_unnecessary_data(invoices)
-    #TODO remove invoice in balances (incomes)
   rescue StandardError => error
     errors.add(:messages, "error getting invoice: #{error.message}")
     errors.add(:error_code, :not_acceptable)
+  end
+
+  private
+
+  def remove_invoice_in_balances(invoices)
+    #optimize with balance editable
+    incomes = Income.where.not(invoice_id: nil)
+    invoice_ids = incomes.map{ |income| income.invoice_id }
+    invoices_to_remove = invoices.select{ |invoice| invoice_ids.include?(invoice['id'].to_i)}
+    invoices = invoices - invoices_to_remove
+    invoices
   end
 
   def remove_unnecessary_data(invoices)
