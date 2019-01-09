@@ -53,6 +53,7 @@ class CalculateTaxes
     @taxes_amounts
   end
 
+  #TODO duplicated in calculate taxes in invoice, put in utils.
   def calculate_percentage(amount, percentage)
     ((amount * percentage)/100).round(2)
   end

@@ -37,7 +37,7 @@ module Api
 
       def add_income
         validate_parameters [:id, :income], params do
-          execute_command(AddIncome.new(balance_id: params[:id], income: params[:income]))
+          execute_command(AddIncome.new(params[:id], params[:income]))
         end
       end
 
