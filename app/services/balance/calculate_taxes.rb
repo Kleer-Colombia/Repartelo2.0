@@ -28,17 +28,16 @@ class CalculateTaxes
     result['Utilidad'] = utility
 
     @save_in ? @save_in.resume : result
-
   end
 
   private
 
   def save_taxes(taxes)
-    @save_in.taxes.clear
+    @save_in.taxes -= @save_in.find_master_taxes
     taxes.each do |name, value|
       @save_in.taxes.push(Tax.new(name: name,
-                             amount: value,
-                             percentage: @taxes_percentages[name]))
+                                  amount: value,
+                                  percentage: @taxes_percentages[name]))
     end
     @save_in.save!
   end
@@ -53,9 +52,9 @@ class CalculateTaxes
     @taxes_amounts
   end
 
-  #TODO duplicated in calculate taxes in invoice, put in utils.
+  # TODO duplicated in calculate taxes in invoice, put in utils.
   def calculate_percentage(amount, percentage)
-    ((amount * percentage)/100).round(2)
+    ((amount * percentage) / 100).round(2)
   end
 
   def calculate_utility(taxes_amount)
@@ -66,6 +65,4 @@ class CalculateTaxes
     utility = @incomes - taxes_total - @expenses
     utility
   end
-
-
 end

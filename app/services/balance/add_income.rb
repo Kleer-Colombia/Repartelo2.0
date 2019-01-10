@@ -4,11 +4,14 @@ class AddIncome
 
   def initialize(balance_id, income)
     is_invoice = income['invoiceId']
-    add_service(CreateIncome.new(balance_id: balance_id,
+    balance = Balance.find(balance_id)
+    add_service(CreateIncome.new(balance: balance,
                                  income: income,
                                  is_invoice: is_invoice))
-    add_service(CalculateTaxesInInvoice.new(balance_id: balance_id,
-                                            invoice: Service::INSPECT)) if is_invoice
+    if is_invoice
+      add_service(CalculateTaxesInInvoice.new(balance: balance,
+                                              invoice: Service::INSPECT))
+    end
   end
 
   def call

@@ -1,23 +1,17 @@
 class CalculateTaxesInInvoice
   prepend Service
 
-  attr_accessor :invoice, @balance_id
+  attr_accessor :invoice, @balance
 
   def initialize(data)
     @invoice = data[:invoice]
-    @balance_id = data[:balance_id]
+    @balance = data[:balance]
   end
 
   def call
-
-    values = @invoice['items'].select do |item|
-      total_item = calculate_total_item(item)
-      taxes = find_taxes_per_item(item, total_item)
-      {id: item['id'], total_item: total_item, taxes: taxes}
-    end
-
-    #TODO validar resultado y guardar los taxes unificados por nombre
-
+    items = consolidate_items
+    taxes = consolidate_taxes(items).values
+    save_taxes(taxes)
 
   rescue StandardError => error
     errors.add(:messages, "error calculating invoice taxes: #{error.message}")
@@ -26,12 +20,34 @@ class CalculateTaxesInInvoice
 
   private
 
-  def is_valid?(taxes)
-    total = 0
-    taxes.each do |tax|
-      total += tax[:amount]
+  def save_taxes(taxes)
+    @balance.taxes -= @balance.find_other_taxes
+    @balance.taxes + taxes
+    @balance.save!
+  end
+
+  def consolidate_items
+    @invoice['items'].select do |item|
+      total_item = calculate_total_item(item)
+      taxes = find_taxes_per_item(item, total_item)
+      {id: item['id'], total_item: total_item, taxes: taxes}
     end
-    total == @invoice['total']
+  end
+
+  def consolidate_taxes(items)
+    taxes = {}
+    items.each do |item|
+      name = item[:taxes][:name]
+      amount = item[:taxes][:amount]
+      percentage = item[:taxes][:percentage]
+      if taxes[name]
+        taxes[name].amount += amount
+      else
+        taxes[name] = Tax.new(name: name,
+                              amount: amount,
+                              percentage: percentage)
+      end
+    end
   end
 
   def find_taxes_per_item(item, total_item)

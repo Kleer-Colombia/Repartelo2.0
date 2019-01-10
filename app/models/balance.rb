@@ -46,6 +46,22 @@ class Balance < ApplicationRecord
     tax ? tax.amount.to_f : 0
   end
 
+  def find_master_taxes
+    master_tax_names = TaxMaster.all.map(&:name)
+    master_taxes = taxes.select do |tax|
+      master_tax_names.include?(tax.name)
+    end
+    master_taxes
+  end
+
+  def find_other_taxes
+    master_tax_names = TaxMaster.all.map(&:name)
+    other_taxes = taxes.reject do |tax|
+      master_tax_names.include?(tax.name)
+    end
+    other_taxes
+  end
+
   private
 
   def plus_data(data)

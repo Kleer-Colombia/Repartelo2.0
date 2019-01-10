@@ -8,5 +8,9 @@ class TaxMaster < ApplicationRecord
     where(type_tax: type)
   end
 
+  def self.find_master_taxes_names
+    all.map(&:name)
+  end
+
 
 end
