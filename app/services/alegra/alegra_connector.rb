@@ -1,5 +1,4 @@
-require "base64"
-require 'rest-client'
+require 'base64'
 
 class AlegraConnector
   #TODO puts in ENV
@@ -7,14 +6,14 @@ class AlegraConnector
   API_INVOICES = 'https://app.alegra.com/api/v1/invoices/'
 
   def self.get_invoices(status)
-    response = RestClient.get("#{API_INVOICES}?status=#{status}", headers)
-    raise StandardError.new("Error conectando con alegra: #{response.code}") unless response.code == 200
+    response = connection.get("?status=#{status}")
+    raise StandardError, "Error conectando con alegra: #{response.status}" unless response.status == 200
     JSON.parse(response.body)
   end
 
   def self.get_invoice(invoice_id)
-    response = RestClient.get("#{API_INVOICES}?id=#{invoice_id}", headers)
-    raise StandardError.new("Error conectando con alegra: #{response.code}") unless response.code == 200
+    response = connection.get("?id=#{invoice_id}")
+    raise StandardError, "Error conectando con alegra: #{response.status}" unless response.status == 200
     JSON.parse(response.body)[0]
   end
 
@@ -22,6 +21,12 @@ class AlegraConnector
 
   def self.headers
     {Authorization: "Basic #{TOKEN}"}
+  end
+
+  def self.connection
+    conn = Faraday.new(url: API_INVOICES)
+    conn.authorization :Basic, TOKEN
+    conn
   end
 
 end

@@ -1,7 +1,7 @@
 class CalculateTaxesInInvoice
   prepend Service
 
-  attr_accessor :invoice, @balance
+  attr_accessor :invoice, :balance
 
   def initialize(data)
     @invoice = data[:invoice]
@@ -14,6 +14,7 @@ class CalculateTaxesInInvoice
     save_taxes(taxes)
 
   rescue StandardError => error
+    puts error
     errors.add(:messages, "error calculating invoice taxes: #{error.message}")
     errors.add(:error_code, :not_acceptable)
   end
@@ -21,37 +22,41 @@ class CalculateTaxesInInvoice
   private
 
   def save_taxes(taxes)
-    @balance.taxes -= @balance.find_other_taxes
-    @balance.taxes + taxes
+    @balance.taxes -= @balance.find_in_invoice_taxes
+    @balance.taxes += taxes
     @balance.save!
   end
 
   def consolidate_items
-    @invoice['items'].select do |item|
+    @invoice['items'].map do |item|
       total_item = calculate_total_item(item)
       taxes = find_taxes_per_item(item, total_item)
       {id: item['id'], total_item: total_item, taxes: taxes}
     end
+
   end
 
   def consolidate_taxes(items)
     taxes = {}
     items.each do |item|
-      name = item[:taxes][:name]
-      amount = item[:taxes][:amount]
-      percentage = item[:taxes][:percentage]
-      if taxes[name]
-        taxes[name].amount += amount
-      else
-        taxes[name] = Tax.new(name: name,
-                              amount: amount,
-                              percentage: percentage)
+      item[:taxes].each do |tax|
+        name = tax[:name]
+        amount = tax[:amount]
+        percentage = tax[:percentage]
+        if taxes[name]
+          taxes[name].amount += amount
+        else
+          taxes[name] = Tax.new(name: name,
+                                amount: amount,
+                                percentage: percentage)
+        end
       end
     end
+    taxes
   end
 
   def find_taxes_per_item(item, total_item)
-    item['taxes'].select do |tax|
+    item['tax'].map do |tax|
       percentage = tax['percentage'].to_f
       { name: tax['name'],
         percentage: percentage,
@@ -61,7 +66,7 @@ class CalculateTaxesInInvoice
   end
 
   def calculate_total_item(item)
-    item['price'] * item['quantity']
+    item['price'] * item['quantity'].to_f
   end
 
   def calculate_percentage(amount, percentage)

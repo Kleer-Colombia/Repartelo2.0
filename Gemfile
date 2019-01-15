@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.5.1'
+ruby '2.5.3'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -27,7 +27,7 @@ gem 'jwt'
 # ActiveAdmin
 gem 'devise'
 gem 'activeadmin'
-gem 'rest-client', '~> 2.0', '>= 2.0.2'
+gem 'faraday', '~> 0.15.4'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

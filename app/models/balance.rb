@@ -20,7 +20,7 @@ class Balance < ApplicationRecord
   def resume
     resume = {}
     resume[:ingresos] = total_incomes
-    resume_in_invoice, total_in_invoice = find_tax(:in_invoice)
+    resume_in_invoice, total_in_invoice = resume_in_invoice_tax
     resume.merge!(resume_in_invoice)
     resume_invoiced, total = find_tax(:invoiced)
     resume.merge!(resume_invoiced)
@@ -33,7 +33,6 @@ class Balance < ApplicationRecord
   end
 
   def calculate_profit
-
     profit = resume[:utilidad] - find_tax_value(:kleerCo)
     if(profit < 0)
       raise StandardError, 'Nothing to distribute!'
@@ -47,19 +46,19 @@ class Balance < ApplicationRecord
   end
 
   def find_master_taxes
-    master_tax_names = TaxMaster.all.map(&:name)
+    master_tax_names = TaxMaster.find_master_taxes_names
     master_taxes = taxes.select do |tax|
       master_tax_names.include?(tax.name)
     end
     master_taxes
   end
 
-  def find_other_taxes
-    master_tax_names = TaxMaster.all.map(&:name)
-    other_taxes = taxes.reject do |tax|
+  def find_in_invoice_taxes
+    master_tax_names = TaxMaster.find_master_taxes_names
+    in_invoice_taxes = taxes.reject do |tax|
       master_tax_names.include?(tax.name)
     end
-    other_taxes
+    in_invoice_taxes
   end
 
   private
@@ -77,7 +76,17 @@ class Balance < ApplicationRecord
     total = 0
     TaxMaster.find_taxes(type).each do |tax|
       resume[tax.name] = find_tax_value(tax.name)
-      total+= resume[tax.name]
+      total += resume[tax.name]
+    end
+    return resume, total
+  end
+
+  def resume_in_invoice_tax
+    resume = {}
+    total = 0
+    find_in_invoice_taxes.each do |tax|
+      resume[tax.name] = tax.amount.to_f
+      total += resume[tax.name]
     end
     return resume, total
   end
