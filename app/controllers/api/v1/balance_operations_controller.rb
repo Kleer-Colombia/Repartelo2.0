@@ -43,11 +43,7 @@ module Api
 
       def delete_income
         validate_parameters [:id, :idIncome], params do
-          begin
-            send_response @actions.remove_income_to_balance(params[:id], params[:idIncome])
-          rescue
-            halt_message("We can't remove income: #{e.message}", :internal_server_error)
-          end
+          execute_command(DeleteIncome.new(params[:id], params[:idIncome]))
         end
       end
 

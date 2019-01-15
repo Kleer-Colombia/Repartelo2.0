@@ -14,12 +14,6 @@ class BalanceActions
     balance.save!
   end
 
-  def remove_income_to_balance(id,idIncome)
-    balance = Balance.find(id)
-    balance.incomes.find(idIncome).destroy
-    return {incomes: balance.incomes,
-            total: balance.total_incomes}
-  end
 
   def add_expense_to_balance id,expense
     balance = Balance.find(id)
