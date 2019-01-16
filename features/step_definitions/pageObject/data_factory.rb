@@ -63,6 +63,7 @@ class DataFactory
   end
 
   def self.create_taxes
+    TaxMaster.delete_all
     TaxMaster.create!(name: 'ica',
                          value: 1.1,
                          type_tax: :invoiced)

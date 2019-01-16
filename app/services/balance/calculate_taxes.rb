@@ -1,5 +1,6 @@
 class CalculateTaxes
   prepend Service
+  #TODO all the taxes must have the invoice id.
 
   attr_accessor :taxes, :expenses, :incomes, :save_in, :taxes_amounts, :taxes_percentages
   def initialize(data)

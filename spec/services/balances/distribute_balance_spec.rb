@@ -12,6 +12,21 @@ describe DistributeBalance do
 
     allow(Balance).to receive(:find).with(@balance.id).and_return(@balance)
 
+    TaxMaster.delete_all
+    TaxMaster.create!(name: 'ica',
+                      value: 1.1,
+                      type_tax: :invoiced)
+
+    TaxMaster.create!(name: 'chanchito',
+                      value: 2.5,
+                      type_tax: :invoiced)
+    TaxMaster.create!(name: 'retefuente',
+                      value: 26,
+                      type_tax: :utility)
+    TaxMaster.create!(name: 'kleerCo',
+                      value: 10,
+                      type_tax: :post_utility)
+
     @socio = Kleerer.new(name: 'socio',option: Option.new(name: 'Socio', value: 5), id: 1000)
     @socio2 = Kleerer.new(name: 'socio2',option: Option.new(name: 'Socio', value: 5), id: 2000)
     @other = Kleerer.new(name: 'other', option: Option.new(name: 'Otro', value: 10), id: 1001)
