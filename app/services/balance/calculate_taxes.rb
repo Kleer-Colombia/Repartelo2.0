@@ -1,6 +1,5 @@
 class CalculateTaxes
   prepend Service
-  #TODO all the taxes must have the invoice id.
 
   attr_accessor :taxes, :expenses, :incomes, :save_in, :taxes_amounts, :taxes_percentages
   def initialize(data)
@@ -35,10 +34,13 @@ class CalculateTaxes
 
   def save_taxes(taxes)
     @save_in.taxes -= @save_in.find_master_taxes
+    invoice_date = @save_in.find_invoice_date
     taxes.each do |name, value|
       @save_in.taxes.push(Tax.new(name: name,
                                   amount: value,
-                                  percentage: @taxes_percentages[name]))
+                                  percentage: @taxes_percentages[name],
+                                  invoice_id: invoice_date[:invoice_id],
+                                  invoice_date: invoice_date[:invoice_date]))
     end
     @save_in.save!
   end

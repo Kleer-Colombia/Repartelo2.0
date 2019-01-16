@@ -17,6 +17,14 @@ class Balance < ApplicationRecord
     plus_data(self.expenses)
   end
 
+  def calculate_profit
+    profit = resume[:utilidad] - find_tax_value(:kleerCo)
+    if(profit < 0)
+      raise StandardError, 'Nothing to distribute!'
+    end
+    profit
+  end
+
   def resume
     resume = {}
     resume[:ingresos] = total_incomes
@@ -32,16 +40,8 @@ class Balance < ApplicationRecord
     return resume
   end
 
-  def calculate_profit
-    profit = resume[:utilidad] - find_tax_value(:kleerCo)
-    if(profit < 0)
-      raise StandardError, 'Nothing to distribute!'
-    end
-    profit
-  end
-
   def find_tax_value(name)
-    tax = self.taxes.detect {|e| e.name == name.to_s}
+    tax = self.taxes.detect { |e| e.name == name.to_s }
     tax ? tax.amount.to_f : 0
   end
 
@@ -51,6 +51,12 @@ class Balance < ApplicationRecord
       master_tax_names.include?(tax.name)
     end
     master_taxes
+  end
+  
+  # by default select the most older date
+  def find_invoice_date
+    older_income = incomes.min_by(&:invoice_date)
+    {invoice_id: older_income&.invoice_id, invoice_date: older_income&.invoice_date}
   end
 
   def find_in_invoice_taxes

@@ -48,7 +48,9 @@ class CalculateTaxesInInvoice
         else
           taxes[name] = Tax.new(name: name,
                                 amount: amount,
-                                percentage: percentage)
+                                percentage: percentage,
+                                invoice_id: @invoice['id'],
+                                invoice_date: @invoice['date'])
         end
       end
     end

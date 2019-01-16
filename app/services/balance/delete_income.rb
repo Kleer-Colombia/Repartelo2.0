@@ -8,15 +8,10 @@ class DeleteIncome
     @income_id = income_id
   end
 
-  #TODO al borrar y agregar mas de una factura, falla
-
   def call
-
     income = @balance.incomes.find(@income_id)
-
     if income.invoice_id
-      @balance.taxes -= @balance.find_in_invoice_taxes
-      @balance.save!
+      delete_taxes_only_for_invoice(income)
     end
 
     income.destroy
@@ -25,5 +20,15 @@ class DeleteIncome
   rescue StandardError => e
     errors.add(:messages, "We can't remove income: #{e.message}")
     errors.add(:error_code, :not_acceptable)
+  end
+
+  private
+
+  def delete_taxes_only_for_invoice(income)
+    taxes_to_delete = @balance.find_in_invoice_taxes.select do |tax|
+      tax.invoice_id == income.invoice_id
+    end
+    @balance.taxes -= taxes_to_delete
+    @balance.save!
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_03_214908) do
+ActiveRecord::Schema.define(version: 2019_01_16_024521) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -156,6 +156,8 @@ ActiveRecord::Schema.define(version: 2019_01_03_214908) do
     t.decimal "percentage", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "invoice_id"
+    t.date "invoice_date"
     t.index ["balance_id"], name: "index_taxes_on_balance_id"
   end
 
