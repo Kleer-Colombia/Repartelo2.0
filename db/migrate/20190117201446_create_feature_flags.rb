@@ -6,8 +6,8 @@ class CreateFeatureFlags < ActiveRecord::Migration[5.2]
       t.timestamps
     end
 
-    FeatureFlag.create!(name: "balance>incomes", status: true)
-    FeatureFlag.create!(name: "balance>invoices", status: false)
+    FeatureFlag.create!(feature: "balance-incomes", status: false)
+    FeatureFlag.create!(feature: "balance-invoices", status: true)
 
 
   end

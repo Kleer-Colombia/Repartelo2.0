@@ -43,10 +43,14 @@
             </el-card>
             <el-row id="row-money">
                 <el-col :span="6">
-                    <incomes-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
-                                   :allIncomes="incomes.realIncomes"/>
+                    <div v-if="checkFlag('balance-incomes')">
+                        <incomes-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
+                                       :allIncomes="incomes.realIncomes"/>
+                    </div>
+                    <div v-if="checkFlag('balance-invoices')">
                     <invoice-selector v-on:updateTaxes="updateTaxes" :editable="balance.editable"
                                       :allIncomes="incomes.realIncomes"/>
+                    </div>
                     <expenses-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
                                     :allExpenses="expenses.realExpenses"/>
                 </el-col>
@@ -255,6 +259,9 @@
         this.resume = taxes
         this.showResume = true
       },
+      checkFlag (flag) {
+        return util.checkFlag(flag)
+      }
     }
   }
 </script>

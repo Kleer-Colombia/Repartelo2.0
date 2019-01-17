@@ -6,6 +6,9 @@ Version 2.2
    
     - Dockerized app for acceptance test
     - Service layer refactors
+    - taxes calculations
+    - import and use invoices for alegra
+    - feature flags for invoice and incomes
 
 Version 2.1
     

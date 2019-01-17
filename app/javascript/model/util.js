@@ -1,6 +1,6 @@
 import auth from './auth'
 
-export default {
+const util = {
   // The object to be passed as a header for authenticated requests
   validURL (str) {
     var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
@@ -8,6 +8,12 @@ export default {
   },
   getAuthHeader () {
     return 'Bearer ' + this.checkAuth('access_token')
+  },
+  saveFeatureFlag (featureFlag) {
+    localStorage.setItem('feature-flag', JSON.stringify(featureFlag))
+  },
+  checkFlag (flag) {
+    return JSON.parse(localStorage.getItem('feature-flag'))[flag]
   },
   checkAuth () {
     return localStorage.getItem('access_token')
@@ -43,22 +49,23 @@ export default {
         })
       }
     } else {
-      this.manageSrvNotFoundError(context)
+      this.manageSrvNotFoundError(error, context)
     }
   },
   manageAuthError (error, context) {
     auth.logout()
     context.$message({
       type: 'error',
-      message: error.response.data.message,
+      message: 'Sesión expirada' + error.response.data.message,
       duration: 6000
     })
   },
-  manageSrvNotFoundError (context) {
+  manageSrvNotFoundError (error, context) {
     context.$message({
       type: 'error',
-      message: 'Uyyyy algo le paso al back :/',
+      message: 'Uyyyy algo paso: ' + error,
       duration: 6000
     })
   }
 }
+export default util
