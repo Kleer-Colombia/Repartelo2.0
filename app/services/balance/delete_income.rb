@@ -13,8 +13,8 @@ class DeleteIncome
     if income.invoice_id
       delete_taxes_only_for_invoice(income)
     end
-
     income.destroy
+
     { incomes: balance.incomes,
       total: balance.total_incomes }
   rescue StandardError => e

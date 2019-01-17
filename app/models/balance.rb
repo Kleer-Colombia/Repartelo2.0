@@ -10,11 +10,11 @@ class Balance < ApplicationRecord
 
 
   def total_incomes
-    plus_data(self.incomes)
+    plus_data(incomes)
   end
 
   def total_expenses
-    plus_data(self.expenses)
+    plus_data(expenses)
   end
 
   def calculate_profit
@@ -91,7 +91,11 @@ class Balance < ApplicationRecord
     resume = {}
     total = 0
     find_in_invoice_taxes.each do |tax|
-      resume[tax.name] = tax.amount.to_f
+      if resume[tax.name]
+        resume[tax.name] += tax.amount.to_f
+      else
+        resume[tax.name] = tax.amount.to_f
+      end
       total += resume[tax.name]
     end
     return resume, total

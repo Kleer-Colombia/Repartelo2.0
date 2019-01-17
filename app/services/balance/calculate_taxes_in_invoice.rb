@@ -22,7 +22,7 @@ class CalculateTaxesInInvoice
   private
 
   def save_taxes(taxes)
-    @balance.taxes -= @balance.find_in_invoice_taxes
+    Tax.where("invoice_id = #{@invoice['id']} and balance_id = #{@balance.id}").destroy_all
     @balance.taxes += taxes
     @balance.save!
   end

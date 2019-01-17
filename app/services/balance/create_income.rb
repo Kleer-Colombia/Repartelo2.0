@@ -12,7 +12,6 @@ class CreateIncome
 
   def call
     get_data_from_invoice if @is_invoice
-    #TODO when added more than one invoice overried the taxes. :(
     @balance.incomes.create!(description: @income[:description],
                             amount: @income[:amount],
                             invoice_date: @invoice_date,
