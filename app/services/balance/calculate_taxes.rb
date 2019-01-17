@@ -12,6 +12,9 @@ class CalculateTaxes
   end
 
   def call
+
+    adjust_incomes_with_in_invoice_taxes if @save_in
+
     result = calculate_taxes(:invoiced, @incomes)
     pre_utility = calculate_utility(result)
 
@@ -31,6 +34,11 @@ class CalculateTaxes
   end
 
   private
+
+  def adjust_incomes_with_in_invoice_taxes
+    resume_in_invoice, total_in_invoice = @save_in.resume_in_invoice_tax
+    @incomes -= total_in_invoice
+  end
 
   def save_taxes(taxes)
     @save_in.taxes -= @save_in.find_master_taxes

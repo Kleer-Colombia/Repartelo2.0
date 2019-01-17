@@ -67,6 +67,21 @@ class Balance < ApplicationRecord
     in_invoice_taxes
   end
 
+  def resume_in_invoice_tax
+    resume = {}
+    total = 0
+    find_in_invoice_taxes.each do |tax|
+      if resume[tax.name]
+        resume[tax.name] += tax.amount.to_f
+        total += tax.amount.to_f
+      else
+        resume[tax.name] = tax.amount.to_f
+        total = tax.amount.to_f
+      end
+    end
+    return resume, total
+  end
+
   private
 
   def plus_data(data)
@@ -87,18 +102,6 @@ class Balance < ApplicationRecord
     return resume, total
   end
 
-  def resume_in_invoice_tax
-    resume = {}
-    total = 0
-    find_in_invoice_taxes.each do |tax|
-      if resume[tax.name]
-        resume[tax.name] += tax.amount.to_f
-      else
-        resume[tax.name] = tax.amount.to_f
-      end
-      total += resume[tax.name]
-    end
-    return resume, total
-  end
+
 
 end
