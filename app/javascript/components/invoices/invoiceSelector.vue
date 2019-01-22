@@ -35,14 +35,14 @@
                         <el-table-column property="client.name" label="Cliente" width="450"></el-table-column>
                         <el-table-column property="total" label="Monto" width="120">
                             <template slot-scope="scope">
-                                 <span style="float: right;" :id="scope.row.id">
+                                 <span style="float: right;">
                                                       {{ formatPrice(scope.row.total) }}
                                 </span>
                             </template>
                         </el-table-column>
                         <el-table-column label="opciones">
                             <template slot-scope="scope">
-                                <el-button id="agregar" :disabled="!editable" type="text"
+                                <el-button :id="scope.row.id" :disabled="!editable" type="text"
                                            @click='addToBalance(scope.row)' icon="el-icon-success">Agregar</el-button>
                             </template>
                         </el-table-column>

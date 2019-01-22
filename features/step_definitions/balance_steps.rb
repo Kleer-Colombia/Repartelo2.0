@@ -3,6 +3,7 @@
 And(/^I have data for balances$/) do
   step 'I have kleerers'
   step 'I have enable incomes'
+  step 'I have enable invoices'
 end
 
 And(/^I have kleerers$/) do
@@ -25,6 +26,11 @@ end
 
 And(/^I have enable incomes$/) do
   DataFactory.enable_incomes
+end
+
+And(/^I have enable invoices/) do
+  DataFactory.enable_invoices
+  DataFactory.enable_alegra_mock
 end
 
 When(/^I create a new standard balance for client "([^"]*)"$/) do |client|
@@ -263,3 +269,6 @@ And(/^I close the coaching sessions admin$/) do
 end
 
 
+And(/^I add the invoice (\d+)$/) do |invoice_id|
+  @actual_page.select_invoice(invoice_id)
+end

@@ -1,0 +1,71 @@
+{
+  "id": "531",
+  "date": "2019-01-09",
+  "dueDate": "2019-02-08",
+  "observations": "",
+  "anotation": "Factura Resolución # 18762007807441 de el 17 de Abril de 2018. Habilita factura 329 a 9999\n\nDatos transferencia: Bancolombia, Cuenta de Ahorros No. 666-583817-69.",
+  "termsConditions": "Esta factura se asimila en todos sus efectos a una letra de cambio de conformidad con el Art. 774 del código de comercio. Autorizo que en caso de incumplimiento de esta obligación sea reportado a las centrales de riesgo, se cobraran intereses por mora.",
+  "status": "open",
+  "client": {
+    "id": "183",
+    "name": "Scotiabank Colpatria S.A",
+    "identification": "860034594-1",
+    "phonePrimary": "7456300",
+    "phoneSecondary": "",
+    "fax": "",
+    "mobile": "",
+    "email": "solanoa@colpatria.com",
+    "kindOfPerson": "",
+    "regime": "",
+    "identificationObject": {
+      "type": "",
+      "number": "860034594-1"
+    },
+    "address": {
+      "address": "cra 7 # 24-89 p12",
+      "department": "",
+      "city": "Bogotá"
+    }
+  },
+  "numberTemplate": {
+    "id": "1",
+    "prefix": null,
+    "number": "531",
+    "text": null
+  },
+  "total": 22596315,
+  "totalPaid": 0,
+  "balance": 22596315,
+  "decimalPrecision": "0",
+  "warehouse": {
+    "id": "1",
+    "name": "Principal"
+  },
+  "seller": null,
+  "priceList": {
+    "id": "1",
+    "name": "General"
+  },
+  "items": [
+    {
+      "id": 150,
+      "name": "Workshop de Agilidad para Ejecutivos",
+      "description": "Taller de 1 día, hasta 16 participantes.\nGTI-2194\nCosto USD $6000 a TRM 9 de Enero de 2019 $3.164,75",
+      "price": 18988500,
+      "discount": "0.00",
+      "reference": "",
+      "quantity": "1.00",
+      "tax": [
+        {
+          "id": "4",
+          "name": "IVA",
+          "percentage": "19.00",
+          "description": null,
+          "status": "active",
+          "type": "IVA"
+        }
+      ],
+      "total": 22596315
+    }
+  ]
+}

@@ -92,4 +92,8 @@ class DataFactory
   def self.enable_invoices
     FeatureFlag.create!(feature: "balance-invoices", status: true)
   end
+
+  def self.enable_alegra_mock
+    FeatureFlag.create!(feature: FeatureFlag::ALEGRA_INVOICE_MOCK, status: true)
+  end
 end

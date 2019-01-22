@@ -1,6 +1,6 @@
 class CreateIncome
   prepend Service
-  attr_accessor :balance, :income, :invoice_date, :is_invoice, :invoice_id
+  attr_accessor :balance, :income, :invoice_date, :is_invoice, :invoice_id, :alegraClient
 
   def initialize(data)
     @balance = data[:balance]
@@ -8,6 +8,7 @@ class CreateIncome
     @invoice_date = Time.now
     @invoice_id = ''
     @is_invoice = data[:is_invoice]
+    @alegraClient = AlegraClientFactory.build
   end
 
   def call
@@ -28,7 +29,7 @@ class CreateIncome
   private
 
   def get_data_from_invoice
-    invoice = AlegraConnector.get_invoice(@income['invoiceId'])
+    invoice = @alegraClient.get_invoice(@income['invoiceId'])
     up_parameter(:invoice, invoice)
     @invoice_date = invoice['date']
     @invoice_id = invoice['id']

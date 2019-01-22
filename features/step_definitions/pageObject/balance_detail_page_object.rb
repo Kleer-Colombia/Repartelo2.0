@@ -35,6 +35,12 @@ class BalanceDetailPageObject < APageObject
     @page.click_button("saveIncome")
   end
 
+  def select_invoice(invoice_id)
+    @page.click_button("Buscar factura")
+    @page.click_button(invoice_id)
+
+  end
+
   def remove_income income
     @page.click_button("removeIncome#{income}")
   end
