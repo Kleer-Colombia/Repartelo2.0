@@ -5,7 +5,7 @@ Feature: vizualizar saldos
 
   @javascript
   Scenario: view saldos
-    Given I have kleerers
+    And I have data for balances
     And I have kleer tax
     And I logged
     When I go to the "Saldos" option
@@ -14,7 +14,7 @@ Feature: vizualizar saldos
 
   @javascript
   Scenario: view saldos details
-    Given I have kleerers
+    And I have data for balances
     And I have kleer tax
     And I logged
     And I have 1 distributed balances
@@ -23,7 +23,7 @@ Feature: vizualizar saldos
 
   @javascript
   Scenario: view saldos details with multiple balances
-    Given I have kleerers
+    And I have data for balances
     And I have kleer tax
     And I logged
     And I have 3 distributed balances

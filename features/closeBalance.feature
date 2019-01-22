@@ -5,7 +5,7 @@ Feature:
 
   @javascript
   Scenario: not editable balance
-    Given I have kleerers
+    And I have data for balances
     And I have kleer tax
     And I logged
     When I have 1 distributed balances
@@ -13,7 +13,7 @@ Feature:
 
   @javascript
   Scenario: not editable coaching balance
-    Given I have kleerers
+    And I have data for balances
     And I have kleer tax
     And I logged
     When I have 1 distributed coaching balance

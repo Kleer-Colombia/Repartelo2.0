@@ -26,5 +26,5 @@ When(/^i do login$/) do
 end
 
 Then(/^i should see invalid user and password$/) do
-  expect(@actual_page.find_error).to eq 'Invalid user or password'
+  expect(@actual_page.find_error).to eq 'Error de sesión: Invalid user or password'
 end

@@ -17,14 +17,16 @@ Feature:
 
   @javascript
   Scenario: create new standard balance with one income
-    Given I logged
+    Given I have data for balances
+    And I logged
     And I create a new standard balance for client "Sparkta"
     When I add income for "1000.00"
     Then I should see "$1.000,00" for total "incomes"
 
   @javascript
   Scenario: create new standard balance with many incomes
-    Given I logged
+    Given I have data for balances
+    And I logged
     And I create a new standard balance for client "Corb"
     When I add income for "1000.57"
     When I add income for "5500.00"
@@ -33,7 +35,8 @@ Feature:
 
   @javascript
   Scenario: remove income
-    Given I logged
+    Given I have data for balances
+    And I logged
     And I create a new standard balance for client "Corb"
     When I add income for "1000.57"
     When I add income for "5500.50"
@@ -42,14 +45,16 @@ Feature:
 
   @javascript
   Scenario: create new standard balance with one expense
-    Given I logged
+    Given I have data for balances
+    And I logged
     And I create a new standard balance for client "Sparkta"
     When I add expense for "1000.00"
     Then I should see "$1.000,00" for total "expenses"
 
   @javascript
   Scenario: create new standard balance with many incomes
-    Given I logged
+    Given I have data for balances
+    And I logged
     And I create a new standard balance for client "Corb"
     When I add expense for "1000.57"
     When I add expense for "5500.00"
@@ -58,7 +63,8 @@ Feature:
 
   @javascript
   Scenario: remove income
-    Given I logged
+    Given I have data for balances
+    And I logged
     And I create a new standard balance for client "Corb"
     When I add expense for "1000.57"
     When I add expense for "5500.50"
@@ -67,7 +73,8 @@ Feature:
 
   @javascript
   Scenario: find profit
-    Given I logged
+    Given I have data for balances
+    And I logged
     And I create a new standard balance for client "Corb"
     When I add expense for "10000.00"
     When I add income for "1500.00"

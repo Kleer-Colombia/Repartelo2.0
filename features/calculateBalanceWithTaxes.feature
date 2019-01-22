@@ -5,8 +5,8 @@ Feature:
 
   @javascript
   Scenario: calculate balance with yamit as a kleerer
-    Given I logged
-    And I have kleerers
+    Given I have data for balances
+    And I logged
     And I have Taxes
     And I create a new standard balance for client "Sparkta"
     And I add income for "1000.00"
@@ -22,8 +22,8 @@ Feature:
 
   @javascript
   Scenario: calculate distributions with Full and Socio
-    Given I logged
-    And I have kleerers
+    Given I have data for balances
+    And I logged
     And I have Taxes
     And I create a new standard balance for client "Corbeta"
     And I add income for "1100.00"
@@ -41,8 +41,8 @@ Feature:
 
   @javascript
   Scenario: calculate distributions with  custom values
-    Given I logged
-    And I have kleerers
+    Given I have data for balances
+    And I logged
     And I have Taxes
     And I create a new standard balance for client "Test"
     And I add income for "1000.00"

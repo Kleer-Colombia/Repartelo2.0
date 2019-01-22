@@ -12,8 +12,8 @@ Feature:
 
   @javascript
   Scenario: load coaching balance info
-    Given I logged
-    And I have kleerers
+    Given I have data for balances
+    And I logged
     And I create a new coaching balance for client "Sparkta"
     And I open the coaching sessions admin
     And I add many new sessions

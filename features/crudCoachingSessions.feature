@@ -5,8 +5,8 @@ Feature:
 
   @javascript
   Scenario: add single coaching session
-    Given I logged
-    And I have kleerers
+    Given I have data for balances
+    And I logged
     And I create a new coaching balance for client "Sparkta"
     When I open the coaching sessions admin
     And I add a new session with "some description" and the kleerers "Socio"
@@ -19,8 +19,8 @@ Feature:
 
   @javascript
   Scenario: add one coaching session with some kleerers
-    Given I logged
-    And I have kleerers
+    Given I have data for balances
+    And I logged
     And I create a new coaching balance for client "Sparkta"
     When I open the coaching sessions admin
     And I add a new session with "some description" and the kleerers "Socio,Full"
@@ -33,8 +33,8 @@ Feature:
 
   @javascript
   Scenario: add many coaching session with some kleerers
-    Given I logged
-    And I have kleerers
+    Given I have data for balances
+    And I logged
     And I create a new coaching balance for client "Sparkta"
     When I open the coaching sessions admin
     And I add many new sessions
@@ -55,8 +55,8 @@ Feature:
 
   @javascript
   Scenario: add many coaching and delete sessions with some kleerers
-    Given I logged
-    And I have kleerers
+    Given I have data for balances
+    And I logged
     And I create a new coaching balance for client "Sparkta"
     When I open the coaching sessions admin
     And I add many new sessions

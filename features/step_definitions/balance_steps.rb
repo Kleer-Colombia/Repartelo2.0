@@ -1,4 +1,10 @@
 # frozen_string_literal: true
+
+And(/^I have data for balances$/) do
+  step 'I have kleerers'
+  step 'I have enable incomes'
+end
+
 And(/^I have kleerers$/) do
   DataFactory.create_kleerers
 end
@@ -15,6 +21,10 @@ Given(/^I logged$/) do
   DataFactory.clean_balances
   step 'i have a user in the db'
   step 'i do login'
+end
+
+And(/^I have enable incomes$/) do
+  DataFactory.enable_incomes
 end
 
 When(/^I create a new standard balance for client "([^"]*)"$/) do |client|
@@ -251,4 +261,5 @@ end
 And(/^I close the coaching sessions admin$/) do
   @actual_page = @actual_page.close
 end
+
 

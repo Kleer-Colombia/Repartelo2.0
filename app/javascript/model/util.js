@@ -56,7 +56,7 @@ const util = {
     auth.logout()
     context.$message({
       type: 'error',
-      message: 'Sesión expirada' + error.response.data.message,
+      message: 'Error de sesión: ' + error.response.data.message,
       duration: 6000
     })
   },

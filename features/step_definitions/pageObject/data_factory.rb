@@ -84,4 +84,12 @@ class DataFactory
                       value: 16,
                       type_tax: :post_utility)
   end
+
+  def self.enable_incomes
+    FeatureFlag.create!(feature: "balance-incomes", status: true)
+  end
+
+  def self.enable_invoices
+    FeatureFlag.create!(feature: "balance-invoices", status: true)
+  end
 end
