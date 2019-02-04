@@ -108,6 +108,7 @@ ActiveRecord::Schema.define(version: 2019_01_17_201446) do
     t.datetime "updated_at", null: false
     t.integer "invoice_id"
     t.date "invoice_date"
+    t.integer "iva", default: 0
     t.index ["balance_id"], name: "index_incomes_on_balance_id"
   end
 

@@ -4,17 +4,6 @@ class BalanceActions
     @saldos =  SaldosActions.new
   end
 
-  def close balanceId
-    balance = Balance.find(balanceId)
-    distributions = balance.distributions
-    distributions.each do |distribution|
-      @saldos.add_saldo distribution: distribution,balance: balance
-    end
-    balance.editable = false
-    balance.save!
-  end
-
-
   def add_expense_to_balance id,expense
     balance = Balance.find(id)
     balance.expenses.create!(description: expense[:description],amount: expense[:amount])

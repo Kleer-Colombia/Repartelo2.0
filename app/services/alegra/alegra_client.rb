@@ -17,6 +17,11 @@ class AlegraClient
     JSON.parse(response.body)[0]
   end
 
+  def is_invoice_closed?(invoice_id)
+    invoice = get_invoice(invoice_id)
+    invoice['status'] == 'closed'
+  end
+
   private
 
   def headers
