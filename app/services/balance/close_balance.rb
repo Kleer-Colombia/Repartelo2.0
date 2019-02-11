@@ -1,18 +1,19 @@
 class CloseBalance
   prepend Service
 
-  attr_accessor :balance, :alegra_client
+  attr_accessor :balance, :alegra_client, :saldos
   def initialize(balance_id)
     @balance = Balance.find(balance_id)
     @alegra_client = AlegraClientFactory.build
-
+    #TODO move this for a service.
+    @saldos =  SaldosActions.new
   end
 
   def call
     if can_close_the_balance?
       distributions = @balance.distributions
       distributions.each do |distribution|
-        @saldos.add_saldo(distribution: distribution,balance: balance)
+        @saldos.add_saldo(distribution: distribution, balance: balance)
       end
       balance.editable = false
       balance.save!
