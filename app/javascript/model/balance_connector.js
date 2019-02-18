@@ -122,6 +122,7 @@ export default {
       url: BALANCE_URL
     }).then(function (response) {
       context.balances = response.data.response
+      console.log(context.balances)
     })
     .catch(function (error) {
       util.processErrorMsgs(error, context)

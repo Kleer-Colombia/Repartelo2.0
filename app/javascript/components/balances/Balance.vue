@@ -17,7 +17,7 @@
                     <el-table-column
                             prop="date"
                             label="Fecha"
-                            min-width="120"
+                            min-width="80"
                             sortable>
                         <template slot-scope="scope">
               <span :id="'date'+scope.row.id">
@@ -28,7 +28,7 @@
                     <el-table-column
                             prop="client"
                             label="Cliente"
-                            min-width="150"
+                            min-width="120"
                             sortable>
                         <template slot-scope="scope">
               <span :id="'client'+scope.row.id">
@@ -37,9 +37,20 @@
                         </template>
                     </el-table-column>
                     <el-table-column
+                            prop="project"
+                            label="Proyecto"
+                            min-width="300"
+                    >
+                        <template slot-scope="scope">
+              <span :id="'project'+scope.row.id">
+                {{ scope.row.project }}
+              </span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
                             prop="description"
                             label="Descripción"
-                            min-width="650"
+                            min-width="300"
                     >
                         <template slot-scope="scope">
               <span :id="'description'+scope.row.id">
@@ -49,7 +60,7 @@
                     </el-table-column>
                     <el-table-column
                             label="Opciones"
-                            min-width="120">
+                            min-width="80">
                         <template slot-scope="scope">
                             <el-button type="text" @click='viewBalance(scope.row.id)'>Editar</el-button>
                         </template>
