@@ -11,7 +11,7 @@ pipelines:
         caches:
           - bundler
         script: 
-          - bundle install
+          - gem install bundler && bundle install
     - step:
         name: unit test
         deployment: test
