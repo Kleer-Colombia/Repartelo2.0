@@ -1,6 +1,8 @@
 <template>
     <div class="el-input">
-        <money class="el-input__inner" :name="name" :value="amount" @input="updateAmount($event)" v-bind="money" ></money>
+        <money class="el-input__inner"
+               :style="getFormat(format)"
+               :name="name" :value="amount" @input="updateAmount($event)" v-bind="money" ></money>
     </div>
 </template>
 <style>
@@ -18,6 +20,10 @@ export default {
       type: [Number, String],
       default: 0
     },
+    format: {
+      type: String,
+      default: "white"
+    },
     name: {
       type: String
     }
@@ -31,12 +37,20 @@ export default {
         suffix: '',
         precision: 2,
         masked: false
+      },
+      formats: {
+          white: "",
+          income: "border:2px solid #27d401",
+          expense: "border:2px solid #df4a30"
       }
     }
   },
   methods: {
     updateAmount (amount) {
       this.$emit('input', amount)
+    },
+    getFormat(format) {
+      return this.formats[format]
     }
   }
 }
