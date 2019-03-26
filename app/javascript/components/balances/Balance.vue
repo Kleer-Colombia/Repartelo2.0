@@ -113,7 +113,7 @@
       return {
         filters: {
           keyword: "",
-          active: "cliente"
+          active: "client"
         },
         balances: [],
         filteredBalances: []
