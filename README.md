@@ -9,7 +9,7 @@
 
 * ## Configuration
         
-    #### for standalone config
+  ### for standalone config
         - install  and configure Db postgres
         - bundle install
         - bundle exec bin/setup
@@ -18,7 +18,7 @@
                 
     para instalar dependencias de package.json
     
-        bin/yarn install
+        yarn install
         
     para windows:
         
@@ -31,8 +31,8 @@
         bundle exec rails db:create
         bundle exec rails db:migrate
 
-    ### for docker environment
-        
+  ### for docker environment
+     
     open carefully read and edit the `.env` file
     
     run:
