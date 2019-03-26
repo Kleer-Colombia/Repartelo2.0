@@ -12,7 +12,7 @@ import App from '../app.vue'
 import VueResource from 'vue-resource'
 import ElementUI from 'element-ui'
 import money from 'v-money'
-import locale from 'element-ui/lib/locale/lang/en'
+import locale from 'element-ui/lib/locale/lang/es'
 import 'element-ui/lib/theme-chalk/index.css'
 import router from '../router'
 Vue.config.productionTip = false
