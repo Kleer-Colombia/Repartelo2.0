@@ -61,7 +61,7 @@ class BalanceDetailPageObject < APageObject
   end
 
   def set_percentage kleerer,amount
-    @page.fill_in("inputPercentage#{kleerer}", {:id => "inputPercentage#{kleerer}", :with => amount})
+    @page.fill_in("inputPercentage#{kleerer}", {:name => "inputPercentage#{kleerer}", :with => amount})
     @page.find("#app").click
   end
 

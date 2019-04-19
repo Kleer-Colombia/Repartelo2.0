@@ -22,7 +22,7 @@ class BalancePageObject < APageObject
   end
 
   def balance_table_is_empty?
-    @page.find(".el-table__empty-text").text == 'No Data'
+    @page.find(".el-table__empty-text").text == 'Sin Datos'
   end
 
   def new_balance
@@ -31,7 +31,7 @@ class BalancePageObject < APageObject
   end
 
   def edit_balance
-    @page.click_button("Editar")
+    @page.click_link("Editar")
     BalanceDetailPageObject.new(@page)
   end
 end

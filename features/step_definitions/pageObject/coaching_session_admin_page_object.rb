@@ -23,6 +23,7 @@ class CoachingSessionAdminPageObject < APageObject
 
   def create_coaching_session
     @page.click_button('Guardar')
+    sleep(1)
   end
 
   def count_sessions
@@ -38,6 +39,7 @@ class CoachingSessionAdminPageObject < APageObject
       end
       counter += 1
     end
+    sleep(1)
   end
 
   def close

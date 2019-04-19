@@ -77,20 +77,3 @@ describe Balance do
     end
   end
 end
-
-
-
-describe 'Test service: Calculator' do
-    describe 'Test method: plus' do
-        it '5 + 5 = 10'do
-            calculator = Calculator.new
-            response = calculator.plus 5, 5
-            expect(response).to.equal 10
-         end
-        it '4 + 3 = 7' do
-            calculator = Calculator.new
-            response = calculator.plus 4, 3
-            expect(response).to.equal 7
-        end
-    end
-end

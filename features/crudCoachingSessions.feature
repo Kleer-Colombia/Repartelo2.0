@@ -62,10 +62,10 @@ Feature:
     And I add many new sessions
       |description     | kleerers |
       |Some description|Socio,Full|
+      |Some description|Parcial,Full|
       |Some description|Socio     |
       |Some description|Full      |
-      |Some description|Parcial,Full|
-    And I delete the 4 session
+    And I delete the 2 session
     And I add a new session with "some description" and the kleerers "Socio,Full"
     Then I should see the coaching session table with 4 registry
     And I close the coaching sessions admin
