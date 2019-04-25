@@ -10,10 +10,6 @@ And(/^I have kleerers$/) do
   DataFactory.create_kleerers
 end
 
-And(/^I have Taxes$/) do
-  DataFactory.create_taxes
-end
-
 And(/^I have kleer tax$/) do
   DataFactory.create_kleer_tax
 end

@@ -39,6 +39,8 @@ Rails.application.routes.draw do
       delete '/balance/:id/coachingSessions/:csId', to: 'coaching_sessions#delete'
       post '/balance/:id/coachingSessions/summary', to: 'coaching_sessions#summary'
 
+      get '/taxes/', to: 'taxes#resume_taxes'
+
     end
   end
 end

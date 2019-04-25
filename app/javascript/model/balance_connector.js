@@ -123,7 +123,6 @@ export default {
     }).then(function (response) {
       context.balances = response.data.response
       context.filteredBalances = context.balances
-      console.log(context.balances)
     })
     .catch(function (error) {
       util.processErrorMsgs(error, context)

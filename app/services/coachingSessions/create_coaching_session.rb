@@ -34,7 +34,4 @@ class CreateCoachingSession
       @coaching_session.kleerers << Kleerer.find(kleerer_id)
     end
   end
-
-
-
 end

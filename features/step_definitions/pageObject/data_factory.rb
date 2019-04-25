@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'csv'
 
 class DataFactory
   def self.create_one_user
@@ -67,7 +68,6 @@ class DataFactory
     TaxMaster.create!(name: 'ica',
                          value: 1.1,
                          type_tax: :invoiced)
-
     TaxMaster.create!(name: 'chanchito',
                                value: 2.5,
                                type_tax: :invoiced)
@@ -95,5 +95,13 @@ class DataFactory
 
   def self.enable_alegra_mock
     FeatureFlag.create!(feature: FeatureFlag::ALEGRA_INVOICE_MOCK, status: true)
+  end
+
+  def self.load_taxes
+    csv_text = File.read("#{Dir.pwd}/features/data/taxes.tsv")
+    csv = CSV.parse(csv_text, :headers => true, :col_sep => "\t")
+    csv.each do |row|
+      Tax.create!(row.to_hash)
+    end
   end
 end

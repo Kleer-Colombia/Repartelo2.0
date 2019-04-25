@@ -5,6 +5,7 @@ import Balance from '../components/balances/Balance'
 import NewBalance from '../components/balances/NewBalance'
 import DetailBalance from '../components/balances/DetailBalance'
 import Saldos from '../components/saldos/Saldos'
+import Taxes from '../components/taxes/Taxes'
 
 Vue.use(Router)
 
@@ -38,6 +39,11 @@ export default new Router({
       path: '/saldos',
       name: 'saldos',
       component: Saldos
+    },
+    {
+      path: '/impuestos',
+      name: 'impuestos',
+      component: Taxes
     }
   ]
 })
