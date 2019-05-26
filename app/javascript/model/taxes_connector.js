@@ -12,7 +12,6 @@ export default {
       url: SERVICE_URL
     }).then(function (response) {
       if (response.status === 200) {
-        console.log(response.data.response)
         context.taxes = response.data.response
       }
     })

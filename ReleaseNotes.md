@@ -1,6 +1,14 @@
 TODO:
     
     extraer botton de distribuir como componente, actualmente en KleerersDistribution y AdminCoachingLogButton
+    
+Version 2.3
+
+    - Taxes view con paginacion
+    - seed for iva 0 in tax master
+    - admin for feature flags
+    - update version of vue and element.io
+    - filtros de busqueda pagina de balances
 
 Version 2.2
    

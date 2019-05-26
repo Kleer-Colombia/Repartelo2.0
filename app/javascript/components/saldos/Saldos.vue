@@ -3,7 +3,7 @@
       <el-row>
         <el-col :span="20" :offset="2">
             <el-card class="box-card">
-              <el-tabs v-model="activeTab" type="border-card" style="margin-bottom: 30px;" tab-position="left">
+              <el-tabs v-model="activeTab" style="margin-bottom: 30px;">
                 <el-tab-pane v-for="kleerer in kleerers" :key="kleerer.name" v-bind:label="kleerer.name" v-bind:name="kleerer.name">
                   <saldos-detail v-bind:kleerer="kleerer"/>
                 </el-tab-pane>

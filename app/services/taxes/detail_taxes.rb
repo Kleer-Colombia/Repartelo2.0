@@ -3,25 +3,27 @@ class DetailTaxes
 
   def call
     data = []
-
     TaxMaster.find_master_taxes_names.select{|name| name!=:kleerCo.to_s }.each do |name|
-      taxesDetail = Tax.all.select{ |tax| tax.name == name }.map do |tax|
+      taxesDetail = Tax.all.select{ |tax| tax.name == name and !tax.balance.editable and tax.amount != 0}.map do |tax|
+
+        tax.invoice_date = tax.created_at.strftime("%Y-%m-%d") if tax.invoice_date == nil
         {
            balance: {
-               balanceId: tax.balance.id,
-               balanceClient: tax.balance.client,
-               balanceProject: tax.balance.project,
-               balanceDescription: tax.balance.description
+               id: tax.balance.id,
+               client: tax.balance.client,
+               project: tax.balance.project,
+               description: tax.balance.description
            },
-           date: tax.created_at,
+           date: tax.invoice_date,
            amount: tax.amount
         }
       end
+      taxesDetail = taxesDetail.sort_by{ |taxDetail| taxDetail[:date] }.reverse
       data.push({name: name, detail: taxesDetail})
     end
   data
   rescue StandardError => error
-    puts error
+    puts error.to_s #TODO improve the logs
     errors.add(:messages, "error getting details for taxes: #{error.message}")
     errors.add(:error_code, :not_acceptable)
   end

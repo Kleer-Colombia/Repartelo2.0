@@ -14,12 +14,19 @@ class APageObject
 
   end
 
+
+  def find_error
+    @page.find(".el-message__content", wait: 10).text
+  end
+
   def go_for option
     @page.find("##{option}").click
     if option == 'Saldos'
       SaldoPageObject.new @page
     elsif option == 'Balances'
       BalancePageObject.new @page
+    elsif option == 'Impuestos'
+      TaxPageObject.new @page
     end
   end
 

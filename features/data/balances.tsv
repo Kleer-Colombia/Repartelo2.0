@@ -1,0 +1,98 @@
+id	client	project	date	description	created_at	updated_at	editable	balance_type
+21	Colpatria	CSDs incompany	2018-05-25	3 CSDs incompany para colpatria	2018-05-28 19:44:24.444344	2018-08-28 21:17:33.473851	false	standard
+25	Colpatria	Coaching colpatria TI	2018-06-01	distribucion del mes 1 a agosto 31	2018-06-06 18:15:57.690988	2018-08-28 22:23:56.135491	false	standard
+8	Solati	Das incompany	2018-04-05	Das incompany con jader como participante.	2018-03-15 15:12:36.420027	2018-05-17 17:10:17.805927	false	standard
+2	banco de Occidente	PAS	2018-02-01	Pas para banco de occidente	2018-02-08 14:55:49.687437	2018-05-17 19:46:22.563746	false	standard
+3	ATF Abierto	ATF abierto Bogota Febrero	2018-02-17	Atf abierto en Bogotá	2018-02-20 20:45:10.267824	2018-05-17 19:46:41.126188	false	standard
+5	Colpatria	Inception nuevo OnBoarding Tarjeta de Crédito	2018-03-05	Inception facilitado por Cami y Juli	2018-03-05 15:22:08.835734	2018-05-17 19:46:52.256035	false	standard
+7	Hyland	PAS en Bogotá	2018-02-06	PAS en Bogotá	2018-03-05 19:01:20.729956	2018-05-17 19:47:03.154514	false	standard
+9	Corbeta	Pas	2018-03-12	pas para corbeta-alkosto, en el marco del redisenio de gestion de la demanda	2018-03-15 15:51:45.893067	2018-05-17 19:47:13.345696	false	standard
+15	CSD Abierto	cursos abiertos	2018-04-16	curso abierto abril, con gente de solati	2018-05-17 16:59:54.138985	2018-05-17 19:49:36.783026	false	standard
+73	Colpatria	Acompañamiento Fabrica digital	2018-07-18	Acompañamiento fabrica digital distribución mes 1 a agosto 31	2018-08-09 15:44:13.614978	2018-08-28 22:35:09.366861	false	standard
+6	Hyland	PAS en Perú	2018-03-12	Este Taller sera en perú, cobramos en dolares 	2018-03-05 18:47:50.342372	2018-05-24 21:35:35.412115	false	standard
+19	Banco de Occidente	Pas Bogotá y Calúi	2018-05-21	Este es el balance relativo a los talleres dados por Camilo en Bogota y Medellín	2018-05-24 16:08:47.586140	2018-05-24 21:36:05.239632	false	standard
+64	Protección	Protección - Taller de PO's	2018-06-28	Protección - Taller de PO's. Facilitado por Pablo y Juli	2018-06-28 18:58:53.391885	2018-09-10 03:00:12.744450	false	standard
+14	Konecta	hackathon	2017-12-20	Servicio dado por Jader	2018-05-17 16:54:34.118616	2018-06-06 17:08:36.880642	false	standard
+26	Grupo Familia	YukaLab	2018-06-06	Acompañamiento y facilitación proyecto de innovación de GF	2018-06-06 19:43:39.117508	2018-06-06 19:53:51.146218	false	standard
+17	Bancolombia	Evolución Organizacional Bancolombia - Marzo y Abril	2018-05-20	Evolución Organizacional Bancolombia - Correspondiente a Marzo y Abril	2018-05-21 03:43:04.490413	2018-06-07 22:50:37.438830	false	standard
+63	ATF Abierto	ATF Abierto en Medellín	2018-06-16	ATF Abierto en Medellín	2018-06-26 21:33:00.672802	2018-06-26 21:58:25.941477	false	standard
+16	Tuya	Evolución somos ágiles somos tuya	2018-03-23	Acompañamiento inicial en evolución organizacional somos ágiles somos tuya	2018-05-21 02:40:52.133727	2018-07-26 04:18:33.898115	false	standard
+71	Tuya	ATF Incompany	2018-07-19	ATF Incompany	2018-08-01 21:01:55.510356	2018-08-01 21:10:23.617216	false	standard
+27	Grupo Familia	Proyecto YukaLab	2018-06-06	Acompañamiento y facilitación proyecto de innovación	2018-06-06 20:00:05.916909	2018-08-15 21:58:42.779363	false	standard
+75	BlueConcept	CSD abierto MX	2018-07-24	Curso abierto en CDMX	2018-08-15 22:09:32.354029	2018-08-15 22:11:54.030213	false	standard
+29	Bancolombia	Evolución Organizacional Bancolombia - Correspondiente a Mayo	2018-06-20	Evolución Organizacional Bancolombia - Correspondiente a Mayo	2018-06-20 23:28:56.496895	2018-08-23 01:02:01.392320	false	standard
+67	OSP INTERNATIONAL	OSP - Acompañamiento Agile	2018-07-18	Acompañamiento Agile a OSP, de manera remota.	2018-07-18 14:28:44.517359	2018-09-19 13:37:08.196104	false	standard
+68	Bancolombia	Evolución Organizacional Bancolombia - Junio	2018-07-25	Evolución Organizacional Bancolombia - Correspondiente a Junio	2018-07-26 04:25:32.647894	2018-09-19 13:53:30.709202	false	standard
+78	Colpatria	ATF in conpany	2018-09-19	3 atfs incompany	2018-09-20 21:58:57.634908	2018-09-20 22:17:41.777596	false	standard
+18	Colpatria	Taller FG Colpatria	2018-05-22	Talleres de FG en Colpatria, dictados mayo 29 y 30 por Juliana Betancur	2018-05-22 21:41:38.390903	2018-09-21 04:19:51.626173	false	standard
+81	Corbeta	DevOps mes 1	2018-08-31	primer mes del acompañamiento en DevOps	2018-09-27 20:09:05.847673	2018-09-27 20:21:44.241662	false	standard
+82	Colpatria 	segundo mes acompañamiento TI	2018-09-21	Segundo mes de acompañamiento al area de TI en su proceso de evolución organizacional	2018-09-27 20:28:06.653502	2018-09-27 20:35:16.453215	false	standard
+83	Colpatria	Segundo mes de acompañamiento Fabrica digital	2018-09-21	Segundo mes de acompañamiento Fabrica digital	2018-09-27 20:28:36.257110	2018-09-27 20:43:32.009252	false	standard
+28	EPM	Segundo pensamiento sistemico 	2018-06-14	Segundo taller de camilo	2018-06-12 14:40:30.708155	2018-09-27 20:51:49.462061	false	standard
+84	ATF abierto Bogota	ATF abierto Bogota	2018-09-19	ATF abierto Bogota	2018-09-27 21:37:44.716658	2018-09-27 21:40:26.159946	false	standard
+70	Protección	Protección - Evolución Organizacional - Julio	2018-07-25	Protección - Evolución Organizacional - Julio	2018-07-26 04:30:45.318113	2018-12-06 19:56:52.737722	false	standard
+123	Protección	Protección - Evolución Organizacional - Agosto	2018-08-01	Protección - Evolución Organizacional - Agosto	2018-10-20 13:58:10.123596	2018-12-06 20:03:12.101217	false	standard
+86	Tuya	Acompañamiento y Formación	2018-08-13	Training y acompañamiento	2018-10-16 16:38:20.754843	2018-12-06 20:28:09.569449	false	standard
+69	Bancolombia	Evolución Organizacional Bancolombia - Correspondiente a Julio	2018-07-25	Evolución Organizacional Bancolombia - Correspondiente a Julio	2018-07-26 04:25:56.966990	2018-10-23 18:35:58.653160	false	standard
+72	Colpatria	Taller product owner estrategico	2018-07-26	taller para 30 personas sobre el producto owner estrategico	2018-08-02 16:22:34.406162	2018-10-24 19:15:53.532716	false	standard
+132	Colpatria	Acompañamiento a TI mes 3 	2018-10-29	Acompañamiento a colpatria mes 3 a 29 de Octubre	2018-10-29 18:47:00.587014	2018-10-29 19:01:11.331615	false	standard
+79	PAS Abierto en Medellín	PAS Abierto en Medellín	2018-09-23	""	2018-09-24 02:09:49.645698	2018-12-03 20:02:47.688005	false	standard
+135	Colpatria	coaching	2018-11-30	Cuarto mes acompañamiento TI	2018-11-08 00:51:15.059640	2018-11-22 23:48:50.608569	false	coaching
+126	Protección	Protección - Evolución Organizacional - Octubre	2018-10-01	Protección - Evolución Organizacional - Octubre	2018-10-20 15:19:53.231046	2018-12-06 14:24:49.442493	false	standard
+125	Protección	Protección - Evolución Organizacional - Septiembre	2018-09-01	Protección - Evolución Organizacional - Septiembre	2018-10-20 14:30:36.936313	2018-12-06 14:27:47.391046	false	standard
+85	Nutresa	Taller Aprendamos sobre agilismo	2018-10-13	Taller 8 horas y 1 sesión de acompañamiento y resolución de dudas.	2018-10-13 20:03:17.040996	2018-12-06 18:15:09.488184	false	standard
+76	Bancolombia	Evolución Organizacional Bancolombia - Correspondiente a Agosto	2018-08-22	Evolución Organizacional Bancolombia - Correspondiente a Agosto	2018-08-23 01:03:04.958121	2018-12-14 17:06:34.255975	false	standard
+77	Grupo Familia	YukaLab	2018-09-06	Acompañamiento y facilitación proyecto de innovación de GF	2018-09-06 06:27:54.374605	2018-12-21 17:22:16.488416	false	standard
+127	Grupo Éxito	Grupo Éxito - Flex Total - Mes 1	2018-10-01	Acompañamiento a Flex Total, mes 1	2018-10-23 00:53:47.276668	2019-01-22 19:16:53.055146	false	standard
+137	Corbeta	DevOps	2018-11-01	Tercer mes de acompaniamiento en DevOps	2018-11-08 16:53:35.618719	2019-01-22 19:21:27.167033	false	coaching
+128	Ecopetrol	Primer PAS	2018-10-30	Primer PAS Ecopetrol dado por Camilo	2018-10-29 16:46:56.542465	2019-02-18 14:15:33.644585	false	standard
+131	Colpatria	Tercer mes de acompañamiento Fabrica Digital	2018-10-29	Tercer mes de acompañamiento Fabrica Digital	2018-10-29 17:00:16.842996	2018-10-29 18:55:54.709265	false	standard
+136	Colpatria	cuarto mes acompañamiento Fabrica Digital	2018-11-30	cuarto mes acompañamiento Fabrica Digital	2018-11-08 01:08:06.857414	2018-11-22 23:52:33.565926	false	coaching
+138	FG Abierto Medellín	FG Abierto Medellín	2018-11-12	FG Abierto Medellín Noviembre 16 y 17	2018-11-13 04:07:54.339080	2018-11-30 15:26:52.156380	false	standard
+139	Bancolombia	Taller Proyectos Ágiles con Scrum	2018-12-03	Taller Proyectos Ágiles con Scrum incompany	2018-11-14 19:33:01.061457	2018-12-28 18:02:22.974917	false	standard
+133	Ecopetrol	Segundo PAS Ecopetrol	2018-10-31	Segundo PAS Ecopetrol (Yamit y Juli)	2018-10-31 17:38:44.298050	2019-02-13 18:58:46.258273	false	standard
+65	Corbeta	Acompañamiento agil Junio	2018-06-30	mes 1 nuevo contrato	2018-07-06 22:03:35.924285	2018-11-22 23:41:17.342318	false	standard
+143	Corbeta	DevOps	2018-10-01	Segundo mes de acompañamiento en DevOps	2018-11-22 23:42:33.725814	2018-11-22 23:44:24.784338	false	standard
+122	Enconcreto	Talleres para Nutresa (retos, octubre 2018)	2018-10-19	2 Talleres de 8hs cada uno. Medellin 19/oct y Bogotá 26/oct	2018-10-20 00:44:01.204934	2018-12-05 00:16:44.842719	false	standard
+150	CSD Abierto MX	CSD	2018-11-30	CSD dado en MX para 8 personas noviembre 2018	2018-12-06 16:18:54.323523	2018-12-06 17:17:00.692323	false	standard
+153	Nutresa	Facilitación gráfica y storytelling - Foro de Analítica	2018-11-02	Facilitación gráfica y storytelling - Foro de Analítica	2018-12-10 22:08:01.978436	2018-12-10 22:13:22.772794	false	standard
+144	Colpatria	Segundo taller PO Estrategico	2018-12-18	Segundo taller PO Estrategico	2018-11-22 23:58:19.722474	2018-12-20 20:35:44.735127	false	standard
+156	Nutresa	Taller de Facilitación gráfica	2018-12-21	Taller de Facilitación gráfica, 20 y 21 de diciembre	2018-12-21 18:09:46.941810	2018-12-29 16:54:13.936841	false	standard
+142	Copa Airlines	Copa Airlines - Agile Coaching Noviembre	2018-11-19	Copa Airlines - Agile Coaching Noviembre	2018-11-20 03:22:37.528814	2019-01-09 12:15:00.974082	false	standard
+146	Ecopetrol	Taller de Profundización para Scrum Masters	2018-12-12	Taller de Profundización para Scrum Masters	2018-12-03 18:52:13.359949	2019-01-22 18:51:54.060282	false	standard
+149	Protección	Ilustración cuento Desarrollo Organizacional	2018-12-06	Ilustración cuento Desarrollo Organizacional - Juli	2018-12-06 14:33:10.256526	2019-01-22 18:55:18.226423	false	standard
+158	Protección	Facilitación de Deep Dive de TI	2019-01-22	Pablitux facilitó este espacio para todo el equipo de TI, un miércoles por la mañana en el auditorio del piso 6 de Protección.	2019-01-22 22:04:03.669167	2019-01-22 22:08:16.286993	false	standard
+159	Protección	Facilitación sesión NFHC	2019-01-22	Sesión de 1 mañana - Nuevas Formas de hacer las cosas	2019-01-22 22:08:49.077414	2019-01-22 22:11:05.594469	false	standard
+160	Grupo Éxito	Arquitectura Organizacional	2019-02-01	Factura n° 535	2019-01-31 23:43:43.128674	2019-01-31 23:43:43.128674	true	standard
+162	SuraIM	Planeación estratégica para TH	2019-02-07	Acompañamiento, entrenamientoy facilitación para el equipo de Talento Humano de SuraIM	2019-02-08 19:04:50.045281	2019-02-08 19:04:50.045281	true	standard
+152	Nutresa	Taller de sensibilización en Agilidad	2018-12-10	Taller de sensibilización en Agilidad - 2 días	2018-12-10 21:28:27.798088	2019-02-11 01:07:42.347977	false	standard
+163	Copa Airlines	Copa - Evolución organizacional Febrero 2019	2019-02-11	Agile Coaching & Training	2019-02-13 17:43:11.261557	2019-02-13 17:43:11.261557	true	standard
+147	Natura	Taller de Agilidad - PAS	2018-12-03	Taller de Agilidad - PAS	2018-12-03 19:25:58.125678	2019-02-13 18:42:34.918859	false	standard
+145	Sura Invest Management	Offsite Research	2018-11-23	Diseño y facilitación del offsite research	2018-12-01 01:13:15.688771	2019-02-13 23:59:58.149268	false	standard
+141	Grupo Familia	10X-Casa	2018-11-16	Servicios de Preinception e inception, factura 492	2018-11-16 18:26:18.846486	2019-02-14 00:01:47.318031	false	standard
+164	Grupo Familia	Acompañamiento a CASA	2019-02-13	Acompañamiento y facilitación del proyecto CASA	2019-02-14 00:40:20.251347	2019-02-14 00:40:20.251347	true	standard
+166	Grupo Familia	Yuka	2019-02-13	Coaching y mentoring al equipo Yuka Versión 2.0	2019-02-14 01:50:22.287865	2019-02-14 01:50:22.287865	true	standard
+168	Bolsa Mercantil	Taller de Design Thinking	2019-02-18	Taller in-company en Bogotá, facilitado por Pablitux y JuliBetancur. 2 días: 25 y 26 de febrero de 2019	2019-02-18 14:59:39.164197	2019-02-18 14:59:39.164197	true	standard
+169	Bolsa Mercantil	PAS 	2019-02-18	PAS Jader y Leo para Bolsa	2019-02-19 16:44:31.646991	2019-02-19 16:44:31.646991	true	standard
+170	BolsaMercantil	Taller PO	2019-02-21	Taller PO Jader y Leo para Bolsa	2019-02-19 16:51:10.521135	2019-02-19 16:51:10.521135	true	standard
+171	Corbeta	DevOps	2019-02-11	Quinto mes de acopañamiento	2019-02-20 21:12:37.584802	2019-02-20 21:12:37.584802	true	coaching
+155	Colpatria Digital factory	Acompañamiento digital factory ultimo mes	2018-12-21	Acompañamiento digital factory ultimo mes	2018-12-20 17:04:47.852726	2019-02-25 04:00:52.309146	false	coaching
+173	Colpatria	Coaching TI	2019-02-18	Segundo contrato de acompañamiento x 3 meses 4 sesiones por semana.	2019-02-25 13:46:38.821435	2019-02-25 13:46:38.821435	true	coaching
+148	Ecopetrol	Taller de Líderes	2018-11-30	Taller de ejecutivos	2018-12-05 19:55:50.414907	2019-02-26 14:41:37.011456	false	standard
+176	SURA ASSET MANAGEMENT	TALLER ONLINE EQUIPO DE CAMBIO	2019-02-25	Taller online introductorio con conceptos ágiles	2019-02-28 22:24:43.196397	2019-02-28 22:24:43.196397	true	standard
+175	Cursos Abiertos Kleer	Taller Facilitación Gráfica Bogotá - marzo 5 y 6	2019-02-27	Taller Facilitación Gráfica Bogotá - marzo 5 y 6	2019-02-27 12:36:05.425883	2019-03-11 14:59:33.933642	false	standard
+157	Copa Airlines	Copa - Evolución organizacional Enero 2019	2019-01-21	Copa - Evolución organizacional Enero 2019	2019-01-21 12:11:14.895553	2019-03-11 15:11:47.968285	false	standard
+167	Colpatria	Facilitación Inception Banca empresarial	2019-02-14	Facilitación Inception Banca empresarial	2019-02-18 14:16:30.511203	2019-03-11 15:17:34.472884	false	standard
+151	OSP INTERNATIONAL	Acompañamiento Agile OSP	2018-12-10	Acompañamiento Agile OSP - Diciembre	2018-12-10 16:01:16.980631	2019-03-19 18:33:21.413010	false	standard
+178	OSP INTERNATIONAL	Acompañamiento Agile OSP	2019-03-19	Acompañamiento Agile OSP, Open Space y sesiones remotas	2019-03-19 15:56:45.764080	2019-03-20 16:37:53.343340	false	standard
+172	Seguros G&T, S.A.	Charla Agilidad Seguros G&T, S.A. - Guatemala	2019-02-22	Charla Agilidad Seguros G&T, S.A. - Guatemala	2019-02-22 17:03:39.946535	2019-03-20 16:46:11.880900	false	standard
+154	Colpatria	Acompaniamiento TI	2018-12-01	Quito mes de acompaniamiento en TI	2018-12-14 21:15:06.350664	2019-03-26 16:44:19.245973	false	coaching
+179	Curso abierto	ATF Marzo Bogotá	2019-03-20	ATF abierto	2019-03-26 19:45:03.460166	2019-03-26 20:03:23.019917	false	standard
+180	Copa Airlines	Copa - Evolución organizacional Marzo 2019	2019-03-26	Agile Coaching & Training	2019-03-26 23:49:07.461793	2019-03-26 23:49:07.461793	true	standard
+183	SaludSA	Acompañamiento en proyecto piloto de adaptación de plataforma	2019-04-02	Acompañamiento en la estructuración del proyecto, conformación y dinámica de equipo y creación de valor cada sprint	2019-04-08 15:22:39.157685	2019-04-08 15:22:39.157685	true	standard
+182	Enconcreto	Taller para Ingredion	2019-02-28	Taller en el Decameron Barú para 96 líderes y comerciales de Ingredion, en conjunto con Enconcreto.	2019-04-04 20:00:13.209433	2019-04-12 22:22:07.235464	false	standard
+181	Cursos Abiertos Kleer	Taller Facilitación Gráfica Medellín - abril 3 y 4	2019-04-03	Taller Facilitación Gráfica Medellín - abril 3 y 4	2019-03-29 16:25:47.653915	2019-04-12 22:52:39.404247	false	standard
+184	Nutresa	Ilustración flujo proceso Taller pregunta de negocio	2019-04-12	Ilustración flujo proceso Taller pregunta de negocio - Juliana	2019-04-15 13:00:46.353938	2019-04-15 13:00:46.353938	true	standard
+161	Corbeta	DevOps	2019-01-06	Cuarto mes de acompañamiento	2019-02-04 17:27:06.106175	2019-04-16 20:05:56.874913	false	coaching
+185	Axa colpatria	PAS	2019-04-01	Taller Proyectos ágiles con Scrum	2019-04-16 20:11:55.662395	2019-04-16 20:11:55.662395	true	standard
+174	Fabrica digital Colpatria	Fabrica digital Colpatria LeSS	2019-04-01	Fabrica digital Colpatria LeSS	2019-02-25 22:29:35.946828	2019-04-16 22:18:50.052829	false	coaching

@@ -65,18 +65,21 @@ class DataFactory
 
   def self.create_taxes
     TaxMaster.delete_all
-    TaxMaster.create!(name: 'ica',
+    TaxMaster.create!(name: 'Ica',
                          value: 1.1,
                          type_tax: :invoiced)
-    TaxMaster.create!(name: 'chanchito',
+    TaxMaster.create!(name: 'Chanchito',
                                value: 2.5,
                                type_tax: :invoiced)
-    TaxMaster.create!(name: 'retefuente',
+    TaxMaster.create!(name: 'Retefuente',
                                 value: 26,
                                 type_tax: :utility)
     TaxMaster.create!(name: 'kleerCo',
                              value: 10,
                              type_tax: :post_utility)
+    TaxMaster.create!(name: 'IVA',
+                      value: 0,
+                      type_tax: :in_alegra)
   end
 
   def self.create_kleer_tax
@@ -97,7 +100,17 @@ class DataFactory
     FeatureFlag.create!(feature: FeatureFlag::ALEGRA_INVOICE_MOCK, status: true)
   end
 
+  def self.load_balances
+    Balance.delete_all
+    csv_text = File.read("#{Dir.pwd}/features/data/balances.tsv")
+    csv = CSV.parse(csv_text, :headers => true, :col_sep => "\t")
+    csv.each do |row|
+      Balance.create!(row.to_hash)
+    end
+  end
+
   def self.load_taxes
+    Tax.delete_all
     csv_text = File.read("#{Dir.pwd}/features/data/taxes.tsv")
     csv = CSV.parse(csv_text, :headers => true, :col_sep => "\t")
     csv.each do |row|

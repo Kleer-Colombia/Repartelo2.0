@@ -6,6 +6,7 @@
 * ## System dependencies
     * Docker 
     * Yarn
+    * Postgres
 
 * ## Configuration
         

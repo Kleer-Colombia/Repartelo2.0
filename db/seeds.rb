@@ -28,3 +28,6 @@ FeatureFlag.create!(feature: "balance-invoices", status: true)
 TaxMaster.create!(name: 'kleerCo',
                   value: 16,
                   type_tax: :post_utility)
+TaxMaster.create!(name: 'IVA',
+                  value: 0,
+                  type_tax: :in_alegra)

@@ -57,6 +57,7 @@ class BalanceDetailPageObject < APageObject
   end
 
   def select_kleerer kleerer
+    @page.find("#app").click
     @page.find_by_id("check#{kleerer}").click
   end
 

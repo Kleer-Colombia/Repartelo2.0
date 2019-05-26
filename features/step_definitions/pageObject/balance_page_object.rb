@@ -5,10 +5,6 @@ class BalancePageObject < APageObject
     super
   end
 
-  def find_error
-    @page.find(".el-message__content", wait: 10).text
-  end
-
   def find_balance_date id
     @page.find("#date#{id}").text
   end
