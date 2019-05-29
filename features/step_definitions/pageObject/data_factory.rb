@@ -40,6 +40,7 @@ class DataFactory
     Distribution.delete_all
     Percentage.delete_all
     Saldo.delete_all
+    Tax.delete_all
   end
 
   def self.create_kleerers
@@ -101,20 +102,24 @@ class DataFactory
   end
 
   def self.load_balances
-    Balance.delete_all
-    csv_text = File.read("#{Dir.pwd}/features/data/balances.tsv")
-    csv = CSV.parse(csv_text, :headers => true, :col_sep => "\t")
-    csv.each do |row|
-      Balance.create!(row.to_hash)
-    end
+   load_file('balances.tsv',Balance)
   end
 
   def self.load_taxes
-    Tax.delete_all
-    csv_text = File.read("#{Dir.pwd}/features/data/taxes.tsv")
+    load_file('taxes.tsv',Tax)
+  end
+
+  private
+
+  def self.load_file(filename, entity)
+    entity.delete_all
+    puts ActiveRecord::Base.connection.current_database
+    puts "Entity: #{entity}, size: #{entity.all.size}"
+    csv_text = File.read("#{Dir.pwd}/features/data/#{filename}")
     csv = CSV.parse(csv_text, :headers => true, :col_sep => "\t")
     csv.each do |row|
-      Tax.create!(row.to_hash)
+      entity.create!(row.to_hash)
     end
+    puts "Entity: #{entity}, loaded: #{entity.all.size}"
   end
 end

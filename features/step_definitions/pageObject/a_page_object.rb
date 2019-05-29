@@ -1,4 +1,37 @@
+require 'active_support/all'
+
+module BeforeEach
+  extend ActiveSupport::Concern
+
+  module InstanceMethods
+    def before_each
+      raise NotImplementedError('Please define before_each method')
+    end
+  end
+
+  module ClassMethods
+    def method_added(method)
+      method = method.to_s.gsub(/_with(out)?_before$/, '')
+      with_method, without_method = "#{method}_with_before", "#{method}_without_before"
+
+      return if method == 'before_each' or method_defined?(with_method)
+
+      define_method(with_method) do |*args, &block|
+        before_each
+        send(without_method, *args, &block)
+      end
+      alias_method_chain(method, :before)
+    end
+  end
+end
+
 class APageObject
+
+
+  def before_each
+    puts "Before Method" #this is supposed to be invoked by each extending class' method
+  end
+
   def initialize page
     @page = page
   end
@@ -20,7 +53,9 @@ class APageObject
   end
 
   def go_for option
+    sleep(1)
     @page.find("##{option}").click
+
     if option == 'Saldos'
       SaldoPageObject.new @page
     elsif option == 'Balances'
@@ -45,12 +80,14 @@ class APageObject
   end
 
   def take_screenshot(scenario)
-    path = "features/screenshots/#{scenario.__id__}.png"
-    @page.driver.browser.save_screenshot(path)
+    path = "#{__dir__}../../../screenshots/#{scenario.__id__}.png"
+    @page.save_screenshot(path)
   end
 
   def print_page
     puts @page.body
   end
+
+
 
 end

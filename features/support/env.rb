@@ -8,6 +8,24 @@ require 'cucumber/rails'
 require "selenium-webdriver"
 require 'capybara'
 require 'capybara/cucumber'
+require 'capybara/poltergeist'
+
+
+def poltergeist
+  Capybara.register_driver :poltergeist do |app|
+    Capybara::Poltergeist::Driver.new(app, {
+        js_errors: true,
+        phantomjs_options: ['--ignore-ssl-errors=yes', '--ssl-protocol=any'],
+        debug: false,
+        timeout: 500,
+        window_size:[1440,900],
+        phantomjs: File.absolute_path(Phantomjs.path)
+    })
+  end
+  Capybara.javascript_driver = :poltergeist
+  Capybara.default_max_wait_time = 5
+
+end
 
 def chrome
   caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {"args" => [ "--start-maximized" ]})
@@ -49,6 +67,7 @@ else
   if ENV['BROWSER'] == 'headless-chrome'
     headless_chrome
   else
+    #poltergeist
     chrome
   end
 end

@@ -7,7 +7,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'rails', '~> 5.2.1'
+gem 'rails', '~> 5.2.3'
 gem 'pg', '>= 0.19.0.beta'
 
 gem 'simple_command'
@@ -38,6 +38,8 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'faker'
   gem 'rspec-rails', '~> 3.7.1'
+  gem 'phantomjs'
+  gem 'poltergeist'
 end
 
 group :development do

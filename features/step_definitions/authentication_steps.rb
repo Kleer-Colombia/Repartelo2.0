@@ -3,6 +3,9 @@ require 'faker'
 #TODO use faker?
 
 After do |scenario|
+  if scenario.respond_to?('scenario_outline') then
+    scenario = scenario.scenario_outline
+  end
   if scenario.failed?
     @actual_page.take_screenshot(scenario)
   end

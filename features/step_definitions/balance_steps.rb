@@ -15,7 +15,6 @@ And(/^I have kleer tax$/) do
 end
 
 Given(/^I logged$/) do
-  DataFactory.clean_balances
   step 'i have a user in the db'
   step 'i do login'
 end
@@ -208,6 +207,7 @@ Then(/^I could not edit the balance$/) do
 end
 
 Then(/^I could not edit the coaching balance$/) do
+  sleep(1)
   expect(@actual_page.editable? 'nuevo ingreso').to eq false
   expect(@actual_page.editable? 'nuevo egreso').to eq false
   expect(@actual_page.editable? 'Distribuir').to eq false

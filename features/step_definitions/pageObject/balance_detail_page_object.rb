@@ -29,6 +29,7 @@ class BalanceDetailPageObject < APageObject
   end
 
   def add_income income
+    sleep(1)
     @page.click_button("nuevo ingreso")
     fill_field("incomeDescription", "prueba ingreso")
     fill_field("incomeAmount", income)
@@ -46,6 +47,7 @@ class BalanceDetailPageObject < APageObject
   end
 
   def add_expense expense
+    sleep(1)
     @page.click_button("nuevo egreso")
     fill_field("expenseDescription", "prueba gasto")
     fill_field("expenseAmount", expense)
@@ -67,6 +69,7 @@ class BalanceDetailPageObject < APageObject
   end
 
   def distribute
+    sleep(1)
     @page.click_button("Distribuir")
   end
 
