@@ -2,6 +2,14 @@ TODO:
     
     extraer botton de distribuir como componente, actualmente en KleerersDistribution y AdminCoachingLogButton
     
+    al cerrar el balance, verificar que la factura este usada al 100% y avisar!!!
+    Guardar uso de la factura al agregarla a un balance
+    Calcular el ingreso real de acuerdo al porcentaje de uso de la factura
+    Mostrar las facturas que no completan su uso en la lista de posibles selecciones
+    proceso de migracion de income with invoice
+    al borrar un income remover invoice y valores con el porcentaje
+    
+    
 Version 2.3
 
     - Taxes view con paginacion

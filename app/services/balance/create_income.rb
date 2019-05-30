@@ -1,22 +1,25 @@
 class CreateIncome
   prepend Service
-  attr_accessor :balance, :income, :invoice_date, :is_invoice, :invoice_id, :alegraClient
+  attr_accessor :balance, :income, :invoice_date, :is_invoice, :invoice_id, :alegraClient, :invoice_percentage
 
   def initialize(data)
     @balance = data[:balance]
     @income = data[:income]
     @invoice_date = Time.now
     @invoice_id = ''
+    @invoice_percentage = data[:invoice_percentage]
     @is_invoice = data[:is_invoice]
     @alegraClient = AlegraClientFactory.build
   end
 
   def call
     get_data_from_invoice if @is_invoice
-    @balance.incomes.create!(description: @income[:description],
-                            amount: @income[:amount],
-                            invoice_date: @invoice_date,
-                            invoice_id: @invoice_id)
+    income = @balance.incomes.create!(description: @income[:description],
+                            amount: @income[:amount])
+    income.create_invoice!(income: income,
+                                 invoice_id: @invoice_id,
+                                 date: @invoice_date,
+                                 percentage: @invoice_percentage)
 
     return {incomes: @balance.incomes,
             total: @balance.total_incomes}
@@ -30,9 +33,9 @@ class CreateIncome
 
   def get_data_from_invoice
     invoice = @alegraClient.get_invoice(@income['invoiceId'])
-    up_parameter(:invoice, invoice)
     @invoice_date = invoice['date']
     @invoice_id = invoice['id']
-
+    invoice['invoice_percentage'] = @invoice_percentage
+    up_parameter(:invoice, invoice)
   end
 end

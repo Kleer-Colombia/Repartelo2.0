@@ -4,10 +4,12 @@ class AddIncome
 
   def initialize(balance_id, income)
     is_invoice = income['invoiceId']
+    invoice_percentage = income['invoicePercentage'] || 100
     balance = Balance.find(balance_id)
     add_service(CreateIncome.new(balance: balance,
                                  income: income,
-                                 is_invoice: is_invoice))
+                                 is_invoice: is_invoice,
+                                 invoice_percentage: invoice_percentage))
     if is_invoice
       add_service(CalculateTaxesInInvoice.new(balance: balance,
                                               invoice: Service::INSPECT))
