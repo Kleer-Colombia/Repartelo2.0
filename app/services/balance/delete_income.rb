@@ -10,7 +10,7 @@ class DeleteIncome
 
   def call
     income = @balance.incomes.find(@income_id)
-    if income.invoice_id
+    if income.invoice
       delete_taxes_only_for_invoice(income)
     end
     income.destroy
@@ -26,7 +26,7 @@ class DeleteIncome
 
   def delete_taxes_only_for_invoice(income)
     taxes_to_delete = @balance.find_in_invoice_taxes.select do |tax|
-      tax.invoice_id == income.invoice_id
+      tax.invoice_id == income.invoice.invoice_id
     end
     @balance.taxes -= taxes_to_delete
     @balance.save!

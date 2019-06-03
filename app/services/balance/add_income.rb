@@ -12,7 +12,8 @@ class AddIncome
                                  invoice_percentage: invoice_percentage))
     if is_invoice
       add_service(CalculateTaxesInInvoice.new(balance: balance,
-                                              invoice: Service::INSPECT))
+                                              invoice: Service::INSPECT,
+                                              invoice_percentage: Service::INSPECT))
     end
   end
 

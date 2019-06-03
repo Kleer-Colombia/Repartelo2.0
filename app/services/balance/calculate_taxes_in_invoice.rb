@@ -1,11 +1,12 @@
 class CalculateTaxesInInvoice
   prepend Service
 
-  attr_accessor :invoice, :balance
+  attr_accessor :invoice, :balance, :invoice_percentage
 
   def initialize(data)
     @invoice = data[:invoice]
     @balance = data[:balance]
+    @invoice_percentage = data[:invoice_percentage]
   end
 
   def call
@@ -68,7 +69,9 @@ class CalculateTaxesInInvoice
   end
 
   def calculate_total_item(item)
-    item['price'] * item['quantity'].to_f
+    one_hundred_total = item['price'] * item['quantity'].to_f
+    total_for_balance = calculate_percentage(one_hundred_total,@invoice_percentage)
+    total_for_balance
   end
 
   def calculate_percentage(amount, percentage)

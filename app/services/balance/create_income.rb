@@ -37,7 +37,11 @@ class CreateIncome
     invoice = @alegraClient.get_invoice(@income['invoiceId'])
     @invoice_date = invoice['date']
     @invoice_id = invoice['id']
-    invoice['invoice_percentage'] = @invoice_percentage
+    set_parameter_for_other_services(invoice)
+  end
+
+  def set_parameter_for_other_services(invoice)
     up_parameter(:invoice, invoice)
+    up_parameter(:invoice_percentage, @invoice_percentage)
   end
 end

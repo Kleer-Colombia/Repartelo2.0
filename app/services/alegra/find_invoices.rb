@@ -10,20 +10,19 @@ class FindInvoices
 
   def call
     invoices = @alegraClient.get_invoices(@status)
-    invoices = remove_invoice_in_balances(invoices)
+    invoices = remove_the_invoices_in_balances(invoices)
     remove_unnecessary_data(invoices)
   rescue StandardError => error
+    puts "An error of type #{error.class} happened, message is #{error.message}"
     errors.add(:messages, "error getting invoice: #{error.message}")
     errors.add(:error_code, :not_acceptable)
   end
 
   private
 
-  def remove_invoice_in_balances(invoices)
-    #optimize with balance editable
-    incomes = Income.where.not(invoice_id: nil)
-    invoice_ids = incomes.map{ |income| income.invoice_id }
-    invoices_to_remove = invoices.select{ |invoice| invoice_ids.include?(invoice['id'].to_i)}
+  def remove_the_invoices_in_balances(invoices)
+    invoice_candidates_ids = Invoice.where(percentage: 100).map{ |invoice| invoice.invoice_id }
+    invoices_to_remove = invoices.select{ |invoice| invoice_candidates_ids.include?(invoice['id'].to_i)}
     invoices = invoices - invoices_to_remove
     invoices
   end

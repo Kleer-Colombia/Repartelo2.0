@@ -59,8 +59,9 @@ class Balance < ApplicationRecord
   
   # by default select the most older date
   def find_invoice_date
-    older_income = incomes.min_by(&:invoice_date)
-    {invoice_id: older_income&.invoice_id, invoice_date: older_income&.invoice_date}
+    incomes_ids = incomes.map { |income| income.id }
+    older_invoice = Invoice.where(income_id: incomes_ids).order(:date).first
+    {invoice_id: older_invoice&.invoice_id, invoice_date: older_invoice&.date}
   end
 
   def find_in_invoice_taxes
