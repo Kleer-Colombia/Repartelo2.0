@@ -13,13 +13,15 @@ class CreateIncome
   end
 
   def call
-    get_data_from_invoice if @is_invoice
     income = @balance.incomes.create!(description: @income[:description],
-                            amount: @income[:amount])
-    income.create_invoice!(income: income,
-                                 invoice_id: @invoice_id,
-                                 date: @invoice_date,
-                                 percentage: @invoice_percentage)
+                                      amount: @income[:amount])
+    if @is_invoice
+      get_data_from_invoice
+      income.create_invoice!(income: income,
+                             invoice_id: @invoice_id,
+                             date: @invoice_date,
+                             percentage: @invoice_percentage)
+    end
 
     return {incomes: @balance.incomes,
             total: @balance.total_incomes}
