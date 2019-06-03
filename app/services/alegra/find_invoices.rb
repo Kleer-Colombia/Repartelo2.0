@@ -10,7 +10,8 @@ class FindInvoices
 
   def call
     invoices = @alegraClient.get_invoices(@status)
-    invoices = remove_the_invoices_in_balances(invoices)
+    invoices = remove_the_invoices_used_in_balances(invoices)
+    invoices = add_invoice_percentage_unused(invoices)
     remove_unnecessary_data(invoices)
   rescue StandardError => error
     puts "An error of type #{error.class} happened, message is #{error.message}"
@@ -20,11 +21,26 @@ class FindInvoices
 
   private
 
-  def remove_the_invoices_in_balances(invoices)
-    invoice_candidates_ids = Invoice.where(percentage: 100).map{ |invoice| invoice.invoice_id }
+  def remove_the_invoices_used_in_balances(invoices)
+    invoice_candidates_ids = Invoice.find_invoice_with_percentage_used_at_all.map {|invoice| invoice.invoice_id}
     invoices_to_remove = invoices.select{ |invoice| invoice_candidates_ids.include?(invoice['id'].to_i)}
     invoices = invoices - invoices_to_remove
     invoices
+  end
+
+  def add_invoice_percentage_unused(alegra_invoices)
+    invoices_with_percentage_unused = Invoice.find_invoice_with_percentage_unused
+    invoices_with_percentage_unused.each do |invoice|
+      invoice_found = alegra_invoices.select {|alegra_invoice| alegra_invoice['id'].to_i == invoice.invoice_id.to_i}
+      if invoice_found
+        invoice_found['percentage_used'] = invoice.percentage
+      else
+        invoice = @alegraClient.get_invoice(invoice.invoice_id)
+        invoice['percentage_used'] =invoice.percentage
+        alegra_invoices.unshift(invoice)
+      end
+    end
+    alegra_invoices
   end
 
   def remove_unnecessary_data(invoices)
