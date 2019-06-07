@@ -15,6 +15,7 @@ class FindInvoices
     remove_unnecessary_data(invoices)
   rescue StandardError => error
     puts "An error of type #{error.class} happened, message is #{error.message}"
+    puts error.backtrace
     errors.add(:messages, "error getting invoice: #{error.message}")
     errors.add(:error_code, :not_acceptable)
   end
@@ -29,14 +30,16 @@ class FindInvoices
   end
 
   def add_invoice_percentage_unused(alegra_invoices)
+    alegra_invoices.each {|alegra_invoice| alegra_invoice['percentageUsed'] = 0.to_f}
     invoices_with_percentage_unused = Invoice.find_invoice_with_percentage_unused
     invoices_with_percentage_unused.each do |invoice|
       invoice_found = alegra_invoices.select {|alegra_invoice| alegra_invoice['id'].to_i == invoice.invoice_id.to_i}
       if invoice_found
-        invoice_found['percentage_used'] = invoice.percentage
+        invoice_found[0]['percentageUsed'] = invoice.percentage
       else
+        #search_especific_invoice_and_set_percentage
         invoice = @alegraClient.get_invoice(invoice.invoice_id)
-        invoice['percentage_used'] =invoice.percentage
+        invoice['percentageUsed'] =invoice.percentage
         alegra_invoices.unshift(invoice)
       end
     end

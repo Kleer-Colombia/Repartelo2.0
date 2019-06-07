@@ -1,6 +1,5 @@
 import axios from 'axios'
 import util from './util'
-import router from '../router'
 
 const API_URL = util.apiUrl()
 const INVOICE_URL = API_URL + '/invoice'

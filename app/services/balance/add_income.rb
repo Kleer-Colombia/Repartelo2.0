@@ -4,7 +4,7 @@ class AddIncome
 
   def initialize(balance_id, income)
     is_invoice = income['invoiceId']
-    invoice_percentage = income['invoicePercentage'] || 100
+    invoice_percentage = income['invoicePercentageToUse'] || 100
     balance = Balance.find(balance_id)
     add_service(CreateIncome.new(balance: balance,
                                  income: income,
