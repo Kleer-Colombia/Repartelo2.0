@@ -9,7 +9,7 @@ class TaxMaster < ApplicationRecord
   end
 
   def self.find_master_taxes_names
-    all.map(&:name)
+    where.not(name: 'IVA').map(&:name)
   end
 
 

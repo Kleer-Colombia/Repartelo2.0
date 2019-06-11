@@ -35,7 +35,7 @@ class FindInvoices
     invoices_with_percentage_unused.each do |invoice|
       invoice_found = alegra_invoices.select {|alegra_invoice| alegra_invoice['id'].to_i == invoice.invoice_id.to_i}
       if invoice_found
-        invoice_found[0]['percentageUsed'] = invoice.percentage
+        invoice_found[0]['percentageUsed'] += invoice.percentage
       else
         #search_especific_invoice_and_set_percentage
         invoice = @alegraClient.get_invoice(invoice.invoice_id)

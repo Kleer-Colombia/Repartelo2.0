@@ -14,7 +14,7 @@ class CreateIncome
 
   def call
     income = @balance.incomes.create!(description: @income[:description],
-                                      amount: @income[:amount])
+                                      amount: calculate_amount(@income[:amount],@invoice_percentage))
     if @is_invoice
       get_data_from_invoice
       income.create_invoice!(income: income,
@@ -43,5 +43,9 @@ class CreateIncome
   def set_parameter_for_other_services(invoice)
     up_parameter(:invoice, invoice)
     up_parameter(:invoice_percentage, @invoice_percentage)
+  end
+
+  def calculate_amount(amount, percentage)
+    ((amount*percentage.to_f)/100).round 2
   end
 end
