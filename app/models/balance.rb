@@ -46,7 +46,7 @@ class Balance < ApplicationRecord
   end
 
   def find_master_taxes
-    master_tax_names = TaxMaster.find_master_taxes_names
+    master_tax_names = TaxMaster.taxes_names_to_calculate
     master_taxes = taxes.select do |tax|
       master_tax_names.include?(tax.name)
     end
@@ -65,7 +65,7 @@ class Balance < ApplicationRecord
   end
 
   def find_in_invoice_taxes
-    master_tax_names = TaxMaster.find_master_taxes_names
+    master_tax_names = TaxMaster.taxes_names_to_calculate
     in_invoice_taxes = taxes.reject do |tax|
       master_tax_names.include?(tax.name)
     end

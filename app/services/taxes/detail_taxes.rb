@@ -3,7 +3,7 @@ class DetailTaxes
 
   def call
     data = []
-    TaxMaster.find_master_taxes_names.select{|name| name!=:kleerCo.to_s }.each do |name|
+    TaxMaster.taxes_names_to_show.each do |name|
       taxesDetail = Tax.all.select{ |tax| tax.name == name and !tax.balance.editable and tax.amount != 0}.map do |tax|
 
         tax.invoice_date = tax.created_at.strftime("%Y-%m-%d") if tax.invoice_date == nil
