@@ -7,6 +7,9 @@ TODO:
     
     verificar el calculo de impuestos y su asociacion con los invoices
     
+    BUG
+    cuando diferentes partes de una factura van al mismo balance, los impuestos no se calculan bien. SOLO con el calculo del IVA por ser la misma factura.
+    
 Version 2.3
 
     - Taxes view con paginacion

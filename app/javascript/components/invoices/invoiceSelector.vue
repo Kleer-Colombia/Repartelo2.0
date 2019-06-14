@@ -53,27 +53,49 @@
 			</div>
 			
 			<el-row>
-				<el-col :span="4" style="padding-top: 10px; text-align: right">
+				<el-col :span="2" style="padding-top: 10px; text-align: center">
 					 {{percentageSelector.min}}%
 				</el-col>
-				<el-col :span="16">
+				<el-col :span="8">
 				
 				<el-slider
-								v-model="percentageSelector.percentageToUse"
+								v-model="percentageSelector.digit"
 								:max="percentageSelector.max"
 								:min="percentageSelector.min"
+								@change="calculatePercentageTotal()"
+								:disabled="!percentageSelector.canAddDigits"
 								>
 				</el-slider>
 				
 				</el-col>
-				<el-col :span="4" style="padding-top: 10px">
+				<el-col :span="2" style="padding-top: 10px; text-align: center">
 					   {{percentageSelector.max}}%
+				</el-col>
+				
+				<el-col :span="2" style="padding-top: 10px; text-align: center">
+					Decimales .{{percentageSelector.minDecimal}}
+				</el-col>
+				<el-col :span="8">
+					
+					<el-slider
+									v-model="percentageSelector.decimals"
+									:max="percentageSelector.maxDecimal"
+									:min="percentageSelector.minDecimal"
+									@change="calculatePercentageTotal()"
+									:disabled="!percentageSelector.canAddDecimals"
+									
+					>
+					</el-slider>
+				
+				</el-col>
+				<el-col :span="2" style="padding-top: 10px; text-align: center">
+					. {{percentageSelector.maxDecimal}}
 				</el-col>
 			</el-row>
 			
-			<el-row>
+			
 				<el-col :span="24" style="text-align: center">
-					<h5>Porcentaje a utilizar: {{ percentageSelector.percentageToUse}}%</h5>
+					<h5>Porcentaje a utilizar: {{ percentageSelector.percentageTotal}}%</h5>
 				</el-col>
 			</el-row>
 			
@@ -120,7 +142,13 @@
 	      percentageSelector: {
           max: 100,
 		      min: 0,
-		      percentageToUse: 0
+		      digit: 0,
+		      decimals: 0,
+		      maxDecimal: 99,
+		      minDecimal:0,
+		      percentageTotal: 0,
+		      canAddDigits: false,
+          canAddDecimals: false
 	      }
       }
     },
@@ -137,26 +165,60 @@
         this.loaded = false
 	      this.cleanSelection()
       },
-	    cleanSelection(){
+	    cleanSelection () {
         this.canAddInvoice = false
         this.selectedInvoice = false
-        this.percentageSelector.percentageToUse = 0
-        this.percentageSelector.max = 100
+        this.percentageSelector.digit = 0
+        this.percentageSelector.decimals = 0
+        this.percentageSelector.percentageTotal = 0
+        this.percentageSelector.max = 99
+        this.percentageSelector.maxDecimal = 100
+        this.percentageSelector.canAddDecimals = false
+        this.percentageSelector.canAddDigits = false
 	    },
       handleSelectInvoice (row) {
         this.selectedInvoice = row
 	      this.canAddInvoice = true
-        this.percentageSelector.max = 100 - this.selectedInvoice.percentageUsed
-        this.percentageSelector.percentageToUse = this.percentageSelector.max
+	      let info = (this.selectedInvoice.percentageUsed + '').split('.')
+        let digitPart = parseInt(info[0])
+	      let decimalPart = 0
+	      if (info.length === 2) {
+	        let stringDecimal = info[1]
+         
+	        if(stringDecimal.length === 1) {
+            stringDecimal = stringDecimal + '0'
+	        }
+	        decimalPart = parseInt(stringDecimal)
+	      }
+	      this.percentageSelector.max = 99 - digitPart
+        this.percentageSelector.digit = this.percentageSelector.max
+        this.percentageSelector.maxDecimal = 100 - decimalPart
+        this.percentageSelector.decimals = this.percentageSelector.maxDecimal
+	      
+        this.percentageSelector.canAddDigits = this.percentageSelector.max > 0
+        this.percentageSelector.canAddDecimals = this.percentageSelector.maxDecimal > 0
+        
+        this.calculatePercentageTotal()
         
       },
+	    calculatePercentageTotal () {
+
+        let decimals = this.percentageSelector.decimals / 100
+        this.percentageSelector.percentageTotal = this.percentageSelector.digit + decimals
+		    
+        let totalForSelect = this.percentageSelector.max + (this.percentageSelector.maxDecimal / 100)
+		    if (this.percentageSelector.percentageTotal > totalForSelect) {
+		      this.percentageSelector.decimals = 0
+          this.percentageSelector.percentageTotal = this.percentageSelector.max
+		    }
+	    },
       addToBalance () {
         
-        this.income.description = 'Factura ' + this.selectedInvoice.id + '  ('+ this.percentageSelector.percentageToUse +'%)'
+        this.income.description = 'Factura ' + this.selectedInvoice.id + '  ('+ this.percentageSelector.percentageTotal +'%)'
         this.income.amount = this.selectedInvoice.total
         this.income.invoiceId = this.selectedInvoice.id
         this.income.date = this.selectedInvoice.date
-	      this.income.invoicePercentageToUse = this.percentageSelector.percentageToUse
+	      this.income.invoicePercentageToUse = this.percentageSelector.percentageTotal
         balanceConnector.addIncome(this, this.$route.params.id, function (context) {
           context.loaded = false
           context.visible = false

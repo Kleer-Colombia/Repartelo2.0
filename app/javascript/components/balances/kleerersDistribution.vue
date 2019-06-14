@@ -27,7 +27,7 @@
         <el-row :gutter="10">
             <el-col :offset="8" :span="4">
                 <el-button type="success" id="Distribuir" @click="distribute()"
-                           :disabled="!editable">Distribuir
+                           :disabled="!editable || !checkFlag('balance-distribute')">Distribuir
                 </el-button>
             </el-col>
         </el-row>
@@ -38,7 +38,8 @@
 
   import balanceConnector from '../../model/balance_connector'
   import dealer from '../../model/kleerers_distributions'
-
+  import util from '../../model/util'
+  
   export default {
     name: 'kleerers-distribution',
     props: {
@@ -121,6 +122,10 @@
             message: 'la suma de los porcentajes de distribucion no suma 100, verificalo bien ;-)'
           })
         }
+      },
+      checkFlag (flag) {
+          console.log(util.checkFlag(flag))
+          return util.checkFlag(flag)
       }
     }
   }
