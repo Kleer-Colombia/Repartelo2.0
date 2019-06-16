@@ -1,10 +1,10 @@
 class CreateIncome
   prepend Service
-  attr_accessor :balance, :income, :invoice_date, :is_invoice, :invoice_id, :alegraClient, :invoice_percentage
+  attr_accessor :balance, :service_income, :invoice_date, :is_invoice, :invoice_id, :alegraClient, :invoice_percentage
 
   def initialize(data)
     @balance = data[:balance]
-    @income = data[:income]
+    @service_income = data[:income]
     @invoice_date = Time.now
     @invoice_id = ''
     @invoice_percentage = data[:invoice_percentage]
@@ -13,14 +13,15 @@ class CreateIncome
   end
 
   def call
-    income = @balance.incomes.create!(description: @income[:description],
-                                      amount: calculate_amount(@income[:amount],@invoice_percentage))
+    income = @balance.incomes.create!(description: @service_income[:description],
+                                      amount: calculate_amount(@service_income[:amount]))
     if @is_invoice
       get_data_from_invoice
       income.create_invoice!(income: income,
                              invoice_id: @invoice_id,
                              date: @invoice_date,
                              percentage: @invoice_percentage)
+      up_parameter(:invoice, income.invoice)
     end
 
     return {incomes: @balance.incomes,
@@ -34,18 +35,14 @@ class CreateIncome
   private
 
   def get_data_from_invoice
-    invoice = @alegraClient.get_invoice(@income['invoiceId'])
-    @invoice_date = invoice['date']
-    @invoice_id = invoice['id']
-    set_parameter_for_other_services(invoice)
+    alegra_invoice = @alegraClient.get_invoice(@service_income['invoiceId'])
+    @invoice_date = alegra_invoice['date']
+    @invoice_id = alegra_invoice['id']
+    up_parameter(:alegra_invoice, alegra_invoice)
   end
 
-  def set_parameter_for_other_services(invoice)
-    up_parameter(:invoice, invoice)
-    up_parameter(:invoice_percentage, @invoice_percentage)
-  end
 
-  def calculate_amount(amount, percentage)
-    ((amount*percentage.to_f)/100).round 2
+  def calculate_amount(amount)
+    ((amount * @invoice_percentage.to_f)/100).round 2
   end
 end

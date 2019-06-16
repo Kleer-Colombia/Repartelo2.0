@@ -10,9 +10,9 @@ class DeleteIncome
 
   def call
     income = @balance.incomes.find(@income_id)
-    if income.invoice
-      delete_taxes_only_for_invoice(income)
-    end
+    #if income.invoice
+    #  income.invoice.taxes.each(&:destroy)
+    #end
     income.destroy
 
     { incomes: balance.incomes,
@@ -22,13 +22,4 @@ class DeleteIncome
     errors.add(:error_code, :not_acceptable)
   end
 
-  private
-
-  def delete_taxes_only_for_invoice(income)
-    taxes_to_delete = @balance.find_in_invoice_taxes.select do |tax|
-      tax.invoice_id == income.invoice.invoice_id
-    end
-    @balance.taxes -= taxes_to_delete
-    @balance.save!
-  end
 end

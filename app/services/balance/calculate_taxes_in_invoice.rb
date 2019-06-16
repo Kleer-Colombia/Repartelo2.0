@@ -1,12 +1,12 @@
 class CalculateTaxesInInvoice
   prepend Service
 
-  attr_accessor :invoice, :balance, :invoice_percentage
+  attr_accessor :alegra_invoice, :balance, :invoice
 
   def initialize(data)
-    @invoice = data[:invoice]
+    @alegra_invoice = data[:invoice]
     @balance = data[:balance]
-    @invoice_percentage = data[:invoice_percentage]
+    @invoice = data[:invoice]
   end
 
   def call
@@ -16,6 +16,7 @@ class CalculateTaxesInInvoice
 
   rescue StandardError => error
     puts error
+    puts error.backtrace
     errors.add(:messages, "error calculating invoice taxes: #{error.message}")
     errors.add(:error_code, :not_acceptable)
   end
@@ -23,13 +24,13 @@ class CalculateTaxesInInvoice
   private
 
   def save_taxes(taxes)
-    Tax.where("invoice_id = #{@invoice['id']} and balance_id = #{@balance.id}").destroy_all
+    @invoice.taxes.each(&:destroy)
     @balance.taxes += taxes
     @balance.save!
   end
 
   def consolidate_items
-    @invoice['items'].map do |item|
+    @alegra_invoice['items'].map do |item|
       total_item = calculate_total_item(item)
       taxes = find_taxes_per_item(item, total_item)
       {id: item['id'], total_item: total_item, taxes: taxes}
@@ -50,8 +51,8 @@ class CalculateTaxesInInvoice
           taxes[name] = Tax.new(name: name,
                                 amount: amount,
                                 percentage: percentage,
-                                invoice_id: @invoice['id'],
-                                invoice_date: @invoice['date'])
+                                invoice: @invoice
+                                )
         end
       end
     end
@@ -70,10 +71,11 @@ class CalculateTaxesInInvoice
 
   def calculate_total_item(item)
     one_hundred_total = item['price'] * item['quantity'].to_f
-    total_for_balance = calculate_percentage(one_hundred_total,@invoice_percentage)
+    total_for_balance = calculate_percentage(one_hundred_total,@invoice.percentage)
     total_for_balance
   end
 
+  #TODO duplicated
   def calculate_percentage(amount, percentage)
     ((amount * percentage)/100).round(2)
   end

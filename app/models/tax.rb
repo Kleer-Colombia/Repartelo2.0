@@ -5,4 +5,5 @@ class Tax < ApplicationRecord
   validates :amount, presence: true
   validates :percentage, presence: true
   belongs_to :balance
+  belongs_to :invoice, required: false
 end

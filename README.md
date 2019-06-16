@@ -141,6 +141,11 @@
     
         heroku run rails --trace db:migrate
         
+* Utils
+
+    the database will be roll back with:
+    
+        db:rollback STEP=1
         
 
 

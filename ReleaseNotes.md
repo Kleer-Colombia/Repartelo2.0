@@ -1,14 +1,19 @@
 TODO:
     
     extraer botton de distribuir como componente, actualmente en KleerersDistribution y AdminCoachingLogButton
-    consider to remove the invoice_id and the invoice_date from taxes.
+    
     
     al cerrar el balance, verificar que la factura este usada al 100% y avisar!!!
     
-    verificar el calculo de impuestos y su asociacion con los invoices
+    consider to remove the invoice_id and the invoice_date from taxes.
+    para remover invoice_date e invoice ID, deben cambiar metodo de busqueda en balance por invoice_date y el consolidador de taxes.
     
-    BUG
-    cuando diferentes partes de una factura van al mismo balance, los impuestos no se calculan bien. SOLO con el calculo del IVA por ser la misma factura.
+Version 2.4
+    
+    - Selecionar factura por porcentajes
+    - selecion con decimales
+    - Iva acumulativo para multiples facturas
+        
     
 Version 2.3
 

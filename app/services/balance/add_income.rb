@@ -2,18 +2,18 @@ class AddIncome
 
   prepend ComposedService
 
-  def initialize(balance_id, income)
-    is_invoice = income['invoiceId']
-    invoice_percentage = income['invoicePercentageToUse'] || 100
+  def initialize(balance_id, service_income)
+    is_invoice = service_income['invoiceId']
+    invoice_percentage = service_income['invoicePercentageToUse'] || 100
     balance = Balance.find(balance_id)
     add_service(CreateIncome.new(balance: balance,
-                                 income: income,
+                                 income: service_income,
                                  is_invoice: is_invoice,
                                  invoice_percentage: invoice_percentage))
     if is_invoice
       add_service(CalculateTaxesInInvoice.new(balance: balance,
-                                              invoice: Service::INSPECT,
-                                              invoice_percentage: Service::INSPECT))
+                                              alegra_invoice: Service::INSPECT,
+                                              invoice: Service::INSPECT))
     end
   end
 

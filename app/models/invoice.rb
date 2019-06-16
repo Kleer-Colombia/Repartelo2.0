@@ -3,6 +3,7 @@ class Invoice < ApplicationRecord
   validates :invoice_id, presence: true
   validates :date, presence: true
   belongs_to :income
+  has_many :taxes, dependent: :destroy
 
   def self.find_invoice_with_percentage_unused
     invoices = Invoice.where.not(percentage: 100)
