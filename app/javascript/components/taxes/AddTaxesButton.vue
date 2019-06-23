@@ -16,7 +16,7 @@
                     v-model="taxInfo.concept"></el-input>
         </el-form-item>
 
-        <el-form-item label="Fecha">
+        <el-form-item label="Fecha del impuesto, <br> NO del pago">
           <el-date-picker
                   v-model="taxInfo.date"
                   type="date"

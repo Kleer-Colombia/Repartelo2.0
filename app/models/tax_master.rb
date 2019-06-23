@@ -13,8 +13,8 @@ class TaxMaster < ApplicationRecord
     where.not(name: 'IVA').map(&:name)
   end
 
-  def self.taxes_names_to_show
-    where.not(name: 'kleerCo').map(&:name)
+  def self.taxes_to_show
+    where.not(name: 'kleerCo')
   end
 
 

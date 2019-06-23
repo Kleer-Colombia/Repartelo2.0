@@ -6,7 +6,7 @@
                     <el-tabs v-model="activeTab" style="margin-bottom: 30px;">
                         <el-tab-pane v-for="tax in taxes" :key="tax.name"
                                      v-bind:label="tax.name" v-bind:name="tax.name">
-                            <taxes-detail v-bind:tax="tax"/>
+                            <taxes-detail-by-year v-bind:tax="tax"/>
                         </el-tab-pane>
                     </el-tabs>
                 </el-card>
@@ -17,14 +17,14 @@
 
 <script>
   import SafeBody from '../base/SafeBody.vue'
-  import TaxesDetail from './TaxesDetail.vue'
+  import TaxesDetailByYear from './TaxesDetailByYear.vue'
   import taxesConnector from '../../model/taxes_connector'
 
   export default {
     name: 'Taxes',
     components: {
       SafeBody,
-      TaxesDetail
+      TaxesDetailByYear
     },
     data () {
       return {

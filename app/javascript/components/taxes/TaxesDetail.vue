@@ -40,19 +40,13 @@
             <span v-html="addColorToValue(scope.row.amount, 'ID')"></span>
           </template>
         </el-table-column>
-
-        <el-table-column
-                label="Cliente"
-                prop="balance.client"
-                min-width="80">
-        </el-table-column>
         <el-table-column
                 label="Descripción"
                 prop="balance"
                 min-width="180">
           <template slot-scope="scope">
             <span>
-               {{scope.row.balance.project}} <br> {{scope.row.balance.description}}
+                <span v-html="getDescription(scope.row)"></span>
             </span>
           </template>
         </el-table-column>
@@ -60,10 +54,14 @@
         <el-table-column
                 label="Balance"
                 prop="balance">
+  
           <template slot-scope="scope">
+          <div v-if="hasBalance(scope.row)">
             <router-link class="el-button el-button--text" :to="'/balance/'+ scope.row.balance.id ">
               Balance {{scope.row.balance.id}}</router-link>
+          </div>
           </template>
+          
         </el-table-column>
       </el-table>
     </el-col>
@@ -73,7 +71,7 @@
       <el-pagination
               background
               layout="prev, pager, next"
-              :total="tax.detail.length"
+              :total="taxDetails.length"
               :page-size="pageSize"
               @current-change="currentPageChange">
       </el-pagination>
@@ -102,6 +100,10 @@
       tax: {
         type: Object,
         default: ''
+      },
+      taxDetails: {
+        type: Array,
+        default: ''
       }
     },
     data () {
@@ -123,7 +125,7 @@
     },
     methods: {
       summarize () {
-        this.summary = this.tax.detail.reduce(function (summary, tax) {
+        this.summary = this.taxDetails.reduce(function (summary, tax) {
           let amount = parseFloat(tax.amount)
           if (amount > 0) {
             summary.reserved += amount
@@ -139,7 +141,7 @@
         this.paginate()
       },
       paginate () {
-        this.taxDetailPaged = this.tax.detail.slice(this.page * this.pageSize, (this.page + 1) * this.pageSize)
+        this.taxDetailPaged = this.taxDetails.slice(this.page * this.pageSize, (this.page + 1) * this.pageSize)
       },
       addColorToValue (value, id) {
         var color = 'black'
@@ -160,6 +162,18 @@
       },
       updatetax () {
         taxesConnector.findOne(this, this.tax.id)
+      },
+      getDescription (taxDetail) {
+        let description = ''
+        if (!this.hasBalance(taxDetail)) {
+          description = taxDetail.concept
+        } else {
+          description = taxDetail.balance.client + '<br>' + taxDetail.balance.project + '<br>' + taxDetail.balance.description
+        }
+        return description
+      },
+      hasBalance (taxDetail) {
+        return taxDetail.balance !== undefined
       }
     }
   }
