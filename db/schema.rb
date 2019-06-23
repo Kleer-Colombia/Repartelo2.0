@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_16_035338) do
+ActiveRecord::Schema.define(version: 2019_06_23_025646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -125,6 +125,16 @@ ActiveRecord::Schema.define(version: 2019_06_16_035338) do
     t.datetime "updated_at", null: false
     t.bigint "option_id"
     t.index ["option_id"], name: "index_kleerers_on_option_id"
+  end
+
+  create_table "manual_taxes", force: :cascade do |t|
+    t.string "concept", null: false
+    t.decimal "amount", null: false
+    t.date "date", null: false
+    t.bigint "tax_master_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tax_master_id"], name: "index_manual_taxes_on_tax_master_id"
   end
 
   create_table "options", force: :cascade do |t|

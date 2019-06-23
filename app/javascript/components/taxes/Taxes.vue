@@ -6,7 +6,7 @@
                     <el-tabs v-model="activeTab" style="margin-bottom: 30px;">
                         <el-tab-pane v-for="tax in taxes" :key="tax.name"
                                      v-bind:label="tax.name" v-bind:name="tax.name">
-                            <taxes-detail v-bind:taxDetail="tax.detail"/>
+                            <taxes-detail v-bind:tax="tax"/>
                         </el-tab-pane>
                     </el-tabs>
                 </el-card>

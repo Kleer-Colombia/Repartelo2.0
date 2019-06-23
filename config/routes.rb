@@ -40,6 +40,8 @@ Rails.application.routes.draw do
       post '/balance/:id/coachingSessions/summary', to: 'coaching_sessions#summary'
 
       get '/taxes/', to: 'taxes#resume_taxes'
+      get '/taxes/:tax_id', to: 'taxes#resume_one_tax'
+      post '/taxes/', to: 'taxes#add_tax'
 
     end
   end
