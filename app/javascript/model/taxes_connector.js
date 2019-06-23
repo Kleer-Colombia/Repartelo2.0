@@ -19,13 +19,16 @@ export default {
         util.processErrorMsgs(error, context)
       })
   },
-  findOne (context, taxId) {
+  findOne (context, taxId, year) {
     axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
     axios({
       method: 'get',
-      url: SERVICE_URL + taxId
+      url: SERVICE_URL + taxId + '/' + year
     }).then(function (response) {
-      //TODO context.saldo = response.data.response
+      console.log(JSON.stringify(response.data.response[0].years[0].taxDetails.length))
+      context.taxesForUpdate = response.data.response[0].years[0].taxDetails
+      context.paginate()
+      context.summarize()
     }).catch(function (error) {
       util.processErrorMsgs(error, context)
     })
@@ -41,7 +44,7 @@ export default {
         context.closeDialog(true)
         context.$message({
           type: 'success',
-          message: 'Inpuesto agregado exitosamente'
+          message: 'Impuesto agregado exitosamente'
         })
         context.$emit('refresh')
       }

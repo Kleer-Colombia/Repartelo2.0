@@ -1,27 +1,32 @@
-class DetailOneTax
+class DetailOneTax < TaxesHelper
   prepend Service
+
+  attr_accessor :taxId,:taxYear
+  def initialize(taxId, taxYear)
+    @taxId = taxId
+    @taxYear = taxYear
+  end
 
   def call
     data = []
-    TaxMaster.taxes_names_to_show.each do |name|
-      taxesDetail = Tax.all.select{ |tax| tax.name == name and !tax.balance.editable and tax.amount != 0}.map do |tax|
-
-        tax.invoice_date = tax.created_at.strftime("%Y-%m-%d") if tax.invoice_date == nil
-        {
-           balance: {
-               id: tax.balance.id,
-               client: tax.balance.client,
-               project: tax.balance.project,
-               description: tax.balance.description
-           },
-           date: tax.invoice_date,
-           amount: tax.amount
-        }
-      end
-      taxesDetail = taxesDetail.sort_by{ |taxDetail| taxDetail[:date] }.reverse
-      data.push({name: name, detail: taxesDetail})
+    tax_master = TaxMaster.find(@taxId)
+    taxesDetail = Tax.all.select{ |tax|
+                                  tax.name == tax_master.name and
+                                  !tax.balance.editable and
+                                  tax.amount != 0 and
+                                  (tax.invoice_date&.strftime("%Y") == @taxYear or
+                                      tax.created_at.strftime("%Y") == @taxYear)
+                                }.map do |tax|
+      prepare_tax_registry(tax)
     end
-  data
+
+    manualTaxesDetail = ManualTax.find_by_master_and_year(@taxId,@taxYear).map do |manual_tax|
+      prepare_manual_tax_registry(manual_tax)
+    end
+
+    total_taxes = taxesDetail + manualTaxesDetail
+    data.push({name: tax_master.name, id: tax_master.id, years: order_taxes_by_year(total_taxes)})
+
   rescue StandardError => error
     puts error.to_s #TODO improve the logs
     errors.add(:messages, "error getting details for taxes: #{error.message}")

@@ -8,11 +8,16 @@ class AddManualTax
 
   def call
 
-    tax = ManualTax.new(amount: @taxInfo[:amount],
-                        tax_master: TaxMaster.find_by_name(@taxInfo[:taxName]),
-                        concept: @taxInfo[:concept],
-                        date: @taxInfo[:date])
-    tax.save!
+    if(@taxInfo[:date].include?(@taxInfo[:taxYear]))
+      tax = ManualTax.new(amount: @taxInfo[:amount],
+                          tax_master_id: @taxInfo[:taxId],
+                          concept: @taxInfo[:concept],
+                          date: @taxInfo[:date],
+                          payment_date: @taxInfo[:paymentDate])
+      tax.save!
+    else
+      raise StandardError, 'La fecha del impuesto no coincide con el tab del año seleccionado, por favor verificalo'
+    end
 
   rescue StandardError => error
     puts error.to_s #TODO improve the logs

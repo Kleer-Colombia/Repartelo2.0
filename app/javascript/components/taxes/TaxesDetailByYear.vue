@@ -5,7 +5,7 @@
 			<el-tabs v-model="activeTab" style="margin-bottom: 30px;">
 				<el-tab-pane v-for="year in tax.years" :key="year.year"
 				             v-bind:label="year.year" v-bind:name="year.year">
-					<taxes-detail v-bind:tax="tax" v-bind:taxDetails="year.taxDetails"/>
+					<taxes-detail v-bind:tax="tax" v-bind:taxDetails="year.taxDetails" v-bind:taxYear="year.year"/>
 				</el-tab-pane>
 			</el-tabs>
 		</el-col>
@@ -38,7 +38,7 @@
     },
     methods: {
       getCurrentYear () {
-	      this.activeTab = new Date().getFullYear()+""
+	      this.activeTab = new Date().getFullYear()+''
       }
     }
   }

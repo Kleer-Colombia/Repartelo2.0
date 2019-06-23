@@ -19,7 +19,7 @@
         </div>
       </el-col>
     <el-col :span="6">
-      <add-taxes-button @refresh="updatetax" style="float: right;" :tax="tax"/>
+      <add-taxes-button @refresh="updatetax" v-bind:taxYear="taxYear" style="float: right;" :tax="tax"/>
     </el-col>
   </el-row>
   <el-row>
@@ -104,6 +104,10 @@
       taxDetails: {
         type: Array,
         default: ''
+      },
+      taxYear: {
+        type: String,
+        default: ''
       }
     },
     data () {
@@ -112,6 +116,7 @@
         pageSize: 10,
         page: 0,
         taxDetailPaged: [],
+        taxesForUpdate: [],
         summary: {
           reserved: 0,
           payed: 0,
@@ -120,12 +125,13 @@
       }
     },
     mounted () {
+      this.taxesForUpdate = this.taxDetails
       this.paginate()
       this.summarize()
     },
     methods: {
       summarize () {
-        this.summary = this.taxDetails.reduce(function (summary, tax) {
+        this.summary = this.taxesForUpdate.reduce(function (summary, tax) {
           let amount = parseFloat(tax.amount)
           if (amount > 0) {
             summary.reserved += amount
@@ -141,7 +147,7 @@
         this.paginate()
       },
       paginate () {
-        this.taxDetailPaged = this.taxDetails.slice(this.page * this.pageSize, (this.page + 1) * this.pageSize)
+        this.taxDetailPaged = this.taxesForUpdate.slice(this.page * this.pageSize, (this.page + 1) * this.pageSize)
       },
       addColorToValue (value, id) {
         var color = 'black'
@@ -161,7 +167,7 @@
         router.push(route)
       },
       updatetax () {
-        taxesConnector.findOne(this, this.tax.id)
+        taxesConnector.findOne(this, this.tax.id, this.taxYear)
       },
       getDescription (taxDetail) {
         let description = ''

@@ -1,23 +1,22 @@
 TODO:
     
     extraer botton de distribuir como componente, actualmente en KleerersDistribution y AdminCoachingLogButton
-    
-    
     al cerrar el balance, verificar que la factura este usada al 100% y avisar!!!
     
-    consider to remove the invoice_id and the invoice_date from taxes.
-    para remover invoice_date e invoice ID, deben cambiar metodo de busqueda en balance por invoice_date y el consolidador de taxes.
     
 Version 2.4
     
     - Selecionar factura por porcentajes
-    - selecion con decimales
+    - selecion de porcentaje de factura con decimales
     - Iva acumulativo para multiples facturas
+    - carga de impuestos manuales para pagos y otros balances fuera de repartelo
+    - organizacion de la lista de impuestos por año
+    - Taxes view con paginacion
         
     
 Version 2.3
 
-    - Taxes view con paginacion
+    
     - seed for iva 0 in tax master
     - admin for feature flags
     - update version of vue and element.io

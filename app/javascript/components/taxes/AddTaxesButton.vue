@@ -2,8 +2,8 @@
   <el-main>
     <el-button type="primary" @click="dialogFormVisible = true">Agregar {{tax.name}}</el-button>
 
-    <el-dialog :title="'Agregando impuesto para ' + tax.name" :visible.sync="dialogFormVisible">
-      <el-form label-width="120px">
+    <el-dialog :title="'Agregando impuesto para ' + tax.name + ' - ' + taxYear" :visible.sync="dialogFormVisible">
+      <el-form label-width="220px">
         <el-form-item label="Monto">
           <input-money name="amount" :format="format" v-model="taxInfo.amount"></input-money>
           <el-radio v-model="format" label="expense">Pagado</el-radio>
@@ -14,16 +14,27 @@
                     name="concept"
                     type="textarea"
                     v-model="taxInfo.concept"></el-input>
+          Agrega información relvante, periodo del impuesto, url de Dropbox, etc.
         </el-form-item>
 
-        <el-form-item label="Fecha del impuesto, <br> NO del pago">
+        <el-form-item label="Fecha del IMPUESTO">
           <el-date-picker
                   v-model="taxInfo.date"
                   type="date"
                   v-bind:id="'tax_date'"
-                  placeholder="Fecha">
+                  placeholder="Impuesto">
           </el-date-picker>
         </el-form-item>
+  
+        <el-form-item label="Fecha del PAGO">
+          <el-date-picker
+                  v-model="taxInfo.paymentDate"
+                  type="date"
+                  v-bind:id="'payment_date'"
+                  placeholder="Pago">
+          </el-date-picker>
+        </el-form-item>
+        
       </el-form>
       <span slot="footer" class="dialog-footer">
             <el-button @click="closeDialog(false)">Cancelar</el-button>
@@ -44,6 +55,10 @@
       tax: {
         type: Object,
         default: ''
+      },
+      taxYear: {
+        type: String,
+        default: ''
       }
     },
     components: {
@@ -57,7 +72,10 @@
           amount: '',
           concept: '',
           date: '',
-          taxName: this.tax.name
+          paymentDate: '',
+          taxName: this.tax.name,
+          taxId: this.tax.id,
+          taxYear: this.taxYear
         }
       }
     },

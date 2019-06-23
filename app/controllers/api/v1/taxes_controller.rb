@@ -7,7 +7,7 @@ module Api
       end
 
       def resume_one_tax
-        execute_command(DetailOneTax.new(params[:taxId]))
+        execute_command(DetailOneTax.new(params[:tax_id],params[:tax_year]))
       end
 
       def add_tax
