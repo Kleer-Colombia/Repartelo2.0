@@ -32,16 +32,15 @@ class FindInvoices
   def add_invoice_percentage_unused(alegra_invoices)
     alegra_invoices.each {|alegra_invoice| alegra_invoice['percentageUsed'] = 0.to_f}
     invoices_with_percentage_unused = Invoice.find_invoice_with_percentage_unused
-    invoices_with_percentage_unused.each do |invoice|
-      invoice_found = alegra_invoices.select {|alegra_invoice| alegra_invoice['id'].to_i == invoice.invoice_id.to_i}
-      if invoice_found
-        invoice_found[0]['percentageUsed'] += invoice.percentage
-      else
-        #search_especific_invoice_and_set_percentage
-        invoice = @alegraClient.get_invoice(invoice.invoice_id)
-        invoice['percentageUsed'] =invoice.percentage
-        alegra_invoices.unshift(invoice)
-      end
+    invoices_with_percentage_unused.each do |invoice| invoice_found = alegra_invoices.select {|alegra_invoice| alegra_invoice['id'].to_i == invoice.invoice_id.to_i}
+    if !invoice_found.empty?
+      invoice_found[0]['percentageUsed'] += invoice.percentage
+    else
+      #search_especific_invoice_and_set_percentage
+      invoice_alegra = @alegraClient.get_invoice(invoice.invoice_id)
+      invoice_alegra['percentageUsed'] = invoice.percentage
+      alegra_invoices.unshift(invoice_alegra)
+    end
     end
     alegra_invoices
   end
