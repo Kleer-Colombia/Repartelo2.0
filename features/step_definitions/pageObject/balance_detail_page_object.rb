@@ -38,7 +38,12 @@ class BalanceDetailPageObject < APageObject
 
   def select_invoice(invoice_id)
     @page.click_button("Buscar factura")
-    @page.click_button(invoice_id)
+    #@page.find(:css, 'td.el-table_2_column_3', text: /^#{invoice_id}$/).click
+    @page.find('#tableInvoice').all('td').each do |td|
+      next unless td.find('.cell').text == invoice_id.to_s
+      td.click
+    end
+    @page.click_button('Agregar')
 
   end
 

@@ -8,6 +8,7 @@ end
 
 And(/^I have kleerers$/) do
   DataFactory.create_kleerers
+  DataFactory.enable_distribution
 end
 
 And(/^I have kleer tax$/) do

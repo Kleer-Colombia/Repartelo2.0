@@ -28,10 +28,10 @@
 				<h3> Consultando facturas en alegra ... </h3>
 			</div>
 			<div v-else>
-				<el-row>
-					<el-table id='tableInvoice' highlight-current-row @current-change="handleSelectInvoice"
+				<el-row id="tableInvoice">
+					<el-table highlight-current-row @current-change="handleSelectInvoice"
 					          :data="invoices" height="300" size="small">
-						<el-table-column property="id" label="Número" width="100"></el-table-column>
+						<el-table-column property="id" label="Número" width="100" class="id"></el-table-column>
 						<el-table-column property="date" label="Fecha Expedición" width="130"></el-table-column>
 						<el-table-column property="client.name" label="Cliente" width="550"></el-table-column>
 						<el-table-column property="total" label="Monto" width="120">
