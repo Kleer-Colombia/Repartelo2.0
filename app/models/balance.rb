@@ -87,6 +87,14 @@ class Balance < ApplicationRecord
     return resume, total
   end
 
+  def get_incomes_names
+    data=[]
+    incomes.each do |income|
+      data << "#{income.description}: #{income.amount}"
+    end
+    data.join('||')
+  end
+
   private
 
   def plus_data(data)
