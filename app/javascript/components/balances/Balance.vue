@@ -29,6 +29,17 @@
                   style="width: 100%"
                   :row-class-name="setClassName">
           <el-table-column
+                  prop="id"
+                  label="Balance"
+                  min-width="80"
+                  sortable>
+            <template slot-scope="scope">
+              <span :id="'id-'+scope.row.id">
+                {{ scope.row.id }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
                   prop="date"
                   label="Fecha"
                   min-width="80"
@@ -53,7 +64,7 @@
           <el-table-column
                   prop="project"
                   label="Proyecto"
-                  min-width="300"
+                  min-width="270"
           >
             <template slot-scope="scope">
               <span :id="'project'+scope.row.id">
@@ -64,7 +75,7 @@
           <el-table-column
                   prop="description"
                   label="Descripción"
-                  min-width="300"
+                  min-width="270"
           >
             <template slot-scope="scope">
               <span :id="'description'+scope.row.id">
@@ -109,11 +120,11 @@
     components: {
       SafeBody
     },
-    data() {
+    data () {
       return {
         filters: {
-          keyword: "",
-          active: "client"
+          keyword: '',
+          active: 'client'
         },
         balances: [],
         filteredBalances: []
@@ -123,14 +134,14 @@
       balanceConnector.findBalances(this)
     },
     methods: {
-      newBalance() {
+      newBalance () {
         router.push('/balance/new')
       },
-      filter() {
-        this.filteredBalances = this.balances.filter
-        (balance => balance[this.filters.active].includes(this.filters.keyword))
+      filter () {
+        this.filteredBalances = this.balances.filter(balance =>
+                balance[this.filters.active].toLowerCase().includes(this.filters.keyword.toLowerCase()))
       },
-      setClassName({row, rowIndex}) {
+      setClassName ({row, rowIndex}) {
         if (row.editable) {
           return 'normal-row'
         } else {
