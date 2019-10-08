@@ -140,7 +140,7 @@
           }
           return summary
         }, {reserved: 0, payed: 0, total: 0})
-        this.summary.total = this.summary.reserved - this.summary.payed
+        this.summary.total = this.summary.reserved + this.summary.payed
       },
       currentPageChange (page) {
         this.page = page - 1
