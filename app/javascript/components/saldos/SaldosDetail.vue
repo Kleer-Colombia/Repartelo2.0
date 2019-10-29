@@ -2,27 +2,31 @@
 
 <el-main>
     <el-row :gutter="20">
-      <el-col :span="6">
+      <el-col :span="5">
           <div class="grid-content">
               <h2>Saldos de {{ kleerer.name }}</h2>
           </div>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="5">
           <div class="grid-content">
               <h3>Egresos: <br> <span v-html="addColorToValue(saldo.egresos, 'egresos')"></span></h3>
           </div>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="5">
           <div class="grid-content">
               <h3>Ingresos: <br> <span v-html="addColorToValue(saldo.ingresos, 'ingresos')"></span></h3>
           </div>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="5">
           <div class="grid-content">
               <h3>Total: <br> <span v-html="addColorToValue(saldo.total, 'total')"></span></h3>
           </div>
       </el-col>
+      <el-col :span="4">
+        <add-saldos-button @refresh="updatesaldo" style="float: right;" :kleerer="kleerer"/>
+      </el-col>
     </el-row>
+
   <el-row>
     <el-table
     :data="saldo.meses"
@@ -98,9 +102,6 @@
       </template>
     </el-table-column>
   </el-table>
-  </el-row>
-  <el-row>
-    <add-saldos-button @refresh="updatesaldo" style="float: right;" :kleerer="kleerer"/>
   </el-row>
 </el-main>
 
