@@ -1,10 +1,9 @@
 class DistributeBalance
   prepend Service
-  attr_accessor :balance_id, :kleerCo
+  attr_accessor :balance_id
 
   def initialize(data)
     @balance_id = data[:balance_id]
-    @kleerCo = Kleerer.find_by(name: "KleerCo")
   end
 
   def call
@@ -25,19 +24,7 @@ class DistributeBalance
   def distribute(balance)
 
       profit = balance.calculate_profit
-      forKleerCo = balance.find_tax_value(:kleerCo)
-
-      distributions = {@kleerCo.id => forKleerCo}
-
-      balance.percentages.each do |percentage|
-        kleerer = percentage.kleerer
-        forKleerer = (profit * percentage.value) / 100
-        re_entry = forKleerer * kleerer.option.value * 0.01
-
-        distributions[@kleerCo.id] += re_entry
-        distributions[kleerer.id] = forKleerer - re_entry
-      end
-
+      distributions = balance.distribute(profit)
       save_distributions(balance, distributions)
       balance.distributions
 

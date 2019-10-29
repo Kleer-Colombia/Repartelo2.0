@@ -45,6 +45,27 @@ class Balance < ApplicationRecord
     tax ? tax.amount.to_f : 0
   end
 
+  def find_tax_percentage(name)
+    tax = self.taxes.detect { |e| e.name == name.to_s }
+    tax ? tax.percentage.to_f : 0 #percentage
+  end
+
+  def distribute(profit, kleerCoCustom = nil)
+    kleerCo = Kleerer.find_by(name: "KleerCo")
+    kleerCoCustom ? forKleerCo = kleerCoCustom : forKleerCo = find_tax_value(:kleerCo)
+    distributions = {kleerCo.id => forKleerCo}
+
+    percentages.each do |percentage|
+      kleerer = percentage.kleerer
+      forKleerer = (profit * percentage.value) / 100
+      re_entry = forKleerer * kleerer.option.value * 0.01
+
+      distributions[kleerCo.id] += re_entry
+      distributions[kleerer.id] = forKleerer - re_entry
+    end
+    distributions
+  end
+
   def find_master_taxes
     master_tax_names = TaxMaster.taxes_names_to_calculate
     master_taxes = taxes.select do |tax|
