@@ -3,21 +3,34 @@
     <el-row :gutter="20">
       <el-col :span="20" :offset="2">
         <el-row :gutter="20">
-          <el-col :span="10" :offset="2">
+          
+          <el-col :span="9" style="padding-top: 10px;">
+	          <el-radio-group v-model="filters.active" @change="filter()">
+		          <el-radio label="client">Cliente</el-radio>
+		          <el-radio label="project">Proyecto</el-radio>
+		          <el-radio label="description">Descripción</el-radio>
+		          <el-radio label="id">Id</el-radio>
+	          </el-radio-group>
+           
+          </el-col>
+          <el-col :span="9">
             <el-input name="client"
                       v-model="filters.keyword"
                       @change="filter()">
               <template slot="prepend">Filtrar balances</template>
             </el-input>
           </el-col>
-          <el-col :span="8" style="padding-top: 10px;">
-            <el-radio v-model="filters.active" label="client">Cliente</el-radio>
-            <el-radio v-model="filters.active" label="project">Proyecto</el-radio>
-            <el-radio v-model="filters.active" label="description">Descripción</el-radio>
+          <el-col :span="6">
+            <el-checkbox :indeterminate="showing.isIndeterminate" v-model="showing.checkAll"
+                         @change="handleCheckAllChange">Todos</el-checkbox>
+            <div style="margin: 15px 0;"></div>
+            <el-checkbox-group v-model="showing.checkedBalances" @change="handleCheckedBalancesChange">
+              <el-checkbox v-for="status in showing.show" :label="status" :key="status">{{status}}</el-checkbox>
+            </el-checkbox-group>
           </el-col>
-          <el-col :span="4">
-            <el-button :plain="true" type="primary" @click="newBalance()">Nuevo</el-button>
-          </el-col>
+        </el-row>
+        <el-row>
+          <el-button :plain="true" type="primary" @click="newBalance()">Nuevo</el-button>
         </el-row>
       </el-col>
       <el-col :span="20" :offset="2">
@@ -115,8 +128,10 @@
   import router from '../../router'
   import balanceConnector from '../../model/balance_connector'
   import SafeBody from '../base/SafeBody.vue'
+  const showOptions = ['Abiertos', 'Cerrados']
 
-  export default {
+export default {
+  
     components: {
       SafeBody
     },
@@ -124,7 +139,14 @@
       return {
         filters: {
           keyword: '',
-          active: 'client'
+          active: 'client',
+	        showEditable: {Abiertos: true, Cerrados: false}
+        },
+        showing: {
+          checkAll: false,
+          checkedBalances: ['Abiertos', 'Cerrados'],
+          show: showOptions,
+          isIndeterminate: true
         },
         balances: [],
         filteredBalances: []
@@ -138,8 +160,17 @@
         router.push('/balance/new')
       },
       filter () {
-        this.filteredBalances = this.balances.filter(balance =>
-                balance[this.filters.active].toLowerCase().includes(this.filters.keyword.toLowerCase()))
+        if (this.showing.checkedBalances.length === 0) {
+          this.filteredBalances = []
+        } else if (this.showing.checkedBalances.length === 2) {
+          this.filteredBalances = this.balances.filter(balance =>
+            balance[this.filters.active].toString().toLowerCase().includes(this.filters.keyword.toString().toLowerCase()))
+        } else {
+          let editableFilter = this.filters.showEditable[this.showing.checkedBalances[0]]
+          this.filteredBalances = this.balances.filter(balance =>
+            balance[this.filters.active].toString().toLowerCase().includes(this.filters.keyword.toString().toLowerCase()) &&
+          balance.editable === editableFilter)
+	      }
       },
       setClassName ({row, rowIndex}) {
         if (row.editable) {
@@ -147,6 +178,18 @@
         } else {
           return 'success-row'
         }
+      },
+      handleCheckAllChange (val) {
+        this.showing.checkedBalances = val ? this.showing.show : []
+        this.isIndeterminate = false
+	      this.filter()
+      },
+      handleCheckedBalancesChange (value) {
+        let length = value.length ? value.length : 0
+        let checkedCount = length
+        this.showing.checkAll = checkedCount === this.showing.show.length
+        this.showing.isIndeterminate = checkedCount > 0 && checkedCount < this.showing.show.length
+        this.filter()
       }
     }
   }
