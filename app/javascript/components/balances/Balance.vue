@@ -140,7 +140,7 @@ export default {
         filters: {
           keyword: '',
           active: 'client',
-	        showEditable: {Abiertos: true, Cerrados: false}
+          showEditable: {Abiertos: true, Cerrados: false}
         },
         showing: {
           checkAll: false,
@@ -170,7 +170,7 @@ export default {
           this.filteredBalances = this.balances.filter(balance =>
             balance[this.filters.active].toString().toLowerCase().includes(this.filters.keyword.toString().toLowerCase()) &&
           balance.editable === editableFilter)
-	      }
+        }
       },
       setClassName ({row, rowIndex}) {
         if (row.editable) {
@@ -182,7 +182,7 @@ export default {
       handleCheckAllChange (val) {
         this.showing.checkedBalances = val ? this.showing.show : []
         this.isIndeterminate = false
-	      this.filter()
+        this.filter()
       },
       handleCheckedBalancesChange (value) {
         let length = value.length ? value.length : 0

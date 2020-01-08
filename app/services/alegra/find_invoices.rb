@@ -50,7 +50,6 @@ class FindInvoices
       invoice.delete('observations')
       invoice.delete('anotation')
       invoice.delete('termsConditions')
-      invoice.delete('numberTemplate')
       invoice.delete('warehouse')
       invoice.delete('seller')
       invoice.delete('priceList')

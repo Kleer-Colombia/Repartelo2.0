@@ -31,13 +31,26 @@
 				<el-row id="tableInvoice">
 					<el-table highlight-current-row @current-change="handleSelectInvoice"
 					          :data="invoices" height="300" size="small">
-						<el-table-column property="id" label="Número" width="100" class="id"></el-table-column>
+						<el-table-column property="id" label="Número" width="100" class="id">
+							<template slot-scope="scope">
+                 <span style="float: right;">
+                    {{ scope.row.numberTemplate.number }} ({{scope.row.id}})
+                </span>
+							</template>
+						</el-table-column>
 						<el-table-column property="date" label="Fecha Expedición" width="130"></el-table-column>
 						<el-table-column property="client.name" label="Cliente" width="550"></el-table-column>
 						<el-table-column property="total" label="Monto" width="120">
 							<template slot-scope="scope">
                                  <span style="float: right;">
                                                       {{ formatPrice(scope.row.total) }}
+                                </span>
+							</template>
+						</el-table-column>
+						<el-table-column property="client.name" label="TRM" width="120">
+							<template slot-scope="scope">
+                                 <span style="float: right;" v-if="scope.row.currency">
+                                                    ({{scope.row.currency.code}})  {{ formatPrice(scope.row.currency.exchangeRate) }}
                                 </span>
 							</template>
 						</el-table-column>
@@ -213,9 +226,12 @@
 		    }
 	    },
       addToBalance () {
-        
-        this.income.description = 'Factura ' + this.selectedInvoice.id + '  ('+ this.percentageSelector.percentageTotal +'%)'
-        this.income.amount = this.selectedInvoice.total
+        this.income.description = 'Factura ' + this.selectedInvoice.numberTemplate.number + '  (' + this.selectedInvoice.id + ' - ' + this.percentageSelector.percentageTotal +'%)'
+	      let trm = 1
+	      if(this.selectedInvoice.currency) {
+          trm = this.selectedInvoice.currency.exchangeRate
+	      }
+        this.income.amount = this.selectedInvoice.total * trm
         this.income.invoiceId = this.selectedInvoice.id
         this.income.date = this.selectedInvoice.date
 	      this.income.invoicePercentageToUse = this.percentageSelector.percentageTotal
