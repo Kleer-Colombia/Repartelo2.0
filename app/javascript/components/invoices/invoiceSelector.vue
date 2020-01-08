@@ -47,10 +47,10 @@
                                 </span>
 							</template>
 						</el-table-column>
-						<el-table-column property="client.name" label="TRM" width="120">
+						<el-table-column property="client.name" label="Moneda" width="120">
 							<template slot-scope="scope">
-                                 <span style="float: right;" v-if="scope.row.currency">
-                                                    ({{scope.row.currency.code}})  {{ formatPrice(scope.row.currency.exchangeRate) }}
+                                 <span style="float: center;" v-if="scope.row.currency">
+                                  {{scope.row.currency.code}}
                                 </span>
 							</template>
 						</el-table-column>
@@ -106,9 +106,12 @@
 				</el-col>
 			</el-row>
 			
-			
-				<el-col :span="24" style="text-align: center">
-					<h5>Porcentaje a utilizar: {{ percentageSelector.percentageTotal}}%</h5>
+			<el-row>
+				<el-col :offset="3" :span="10" style="padding-top: 10px; text-align: center">
+					TRM: (solo se aplica a monedas diferentes a COP, por favor usa la pactada en el banco)
+				</el-col>
+				<el-col :span="4">
+					<input-money name="trm" v-model="trm"></input-money>
 				</el-col>
 			</el-row>
 			
@@ -125,9 +128,11 @@
   import invoiceConnector from '../../model/invoices_connector'
   import util from '../../model/util'
   import balanceConnector from '../../model/balance_connector'
+  import InputMoney from "../base/InputMoney";
 
   export default {
     name: 'invoice-selector',
+    components: {InputMoney},
     props: {
       editable: {
         type: [Boolean],
@@ -143,6 +148,7 @@
         loaded: false,
         visible: false,
         invoices: [],
+	      trm: '1.0',
 	      selectedInvoice: null,
 	      canAddInvoice: false,
         realIncomes: [],
@@ -226,11 +232,13 @@
 		    }
 	    },
       addToBalance () {
-        this.income.description = 'Factura ' + this.selectedInvoice.numberTemplate.number + '  (' + this.selectedInvoice.id + ' - ' + this.percentageSelector.percentageTotal +'%)'
+        this.income.description = 'Factura ' + this.selectedInvoice.numberTemplate.number + '  (' + this.selectedInvoice.id + ' - ' + this.percentageSelector.percentageTotal +'%) '
 	      let trm = 1
 	      if(this.selectedInvoice.currency) {
-          trm = this.selectedInvoice.currency.exchangeRate
+          trm = this.trm
+		      this.income.description += '[ TRM: ' + this.formatPrice(trm)+' ]'
 	      }
+	      
         this.income.amount = this.selectedInvoice.total * trm
         this.income.invoiceId = this.selectedInvoice.id
         this.income.date = this.selectedInvoice.date
