@@ -16,11 +16,19 @@ module Api
         validate_parameters [:balance], params do
           balance = params[:balance]
           begin
+
+            retencion = 0
+            if balance['balance_type'] == 'standard-international'
+              retefuente = TaxMaster.find_by(name: 'Retefuente').value
+              retencion = (balance['retencion'].to_f < retefuente) ? retefuente : balance['retencion'].to_f
+            end
+
             result = Balance.create!(
               project: balance['project'],
               client: balance['client'],
               description: balance['description'],
               balance_type: balance['balance_type'],
+              retencion: retencion,
               date: Date.strptime(balance['date'], '%Y-%m-%d'))
             send_response result.id
           rescue StandardError => e

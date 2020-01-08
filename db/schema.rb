@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_23_214908) do
+ActiveRecord::Schema.define(version: 2020_01_08_185257) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 2019_06_23_214908) do
     t.datetime "updated_at", null: false
     t.boolean "editable", default: true
     t.string "balance_type", default: "standard", null: false
+    t.decimal "retencion"
   end
 
   create_table "coaching_sessions", force: :cascade do |t|

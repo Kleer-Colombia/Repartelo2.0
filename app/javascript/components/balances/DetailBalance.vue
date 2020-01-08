@@ -22,7 +22,7 @@
                             <p>Project: <span id="project">{{balance.project}}</span></p>
                         </div>
                     </el-col>
-                    <el-col :span="4">
+                    <el-col :span="3">
                         <div class="grid-content">
                             <p>Fecha: <span id="date">{{balance.date}}</span></p>
                         </div>
@@ -32,7 +32,15 @@
                             <p>Description: <span id="description">{{balance.description}}</span></p>
                         </div>
                     </el-col>
-                    <el-col :offset="1" :span="2">
+                    <el-col :span="3" v-if="balance.balance_type === 'standard-international'">
+                        <div class="grid-content">
+                            <p>Retención a aplicar: <span id="retencion">{{balance.retencion}}</span></p>
+                        </div>
+                    </el-col>
+                    <el-col :span="3" v-else>
+                    
+                    </el-col>
+                    <el-col :span="2">
                         <el-button type="danger" id="Borrar" @click="deleteBalance()"
                                    :disabled="!balance.editable">
                             Borrar
@@ -82,15 +90,15 @@
                                 </div>
                             </el-col>
 
-                            <div v-if="balance.balance_type === 'standard' ">
-                                <kleerers-distribution v-model="distribution.result" :editable="balance.editable"
-                                                       :balancePercentages="distribution.balancePercentages"
-                                                       key="kleerers-distribution"/>
-                            </div>
-                            <div v-else>
+                            <div v-if="balance.balance_type === 'coaching' ">
                                 <admin-coaching-log v-model="distribution.result" :balanceId="balance.id"
                                                     :editable="balance.editable"
                                                     key="admin-coaching-log"></admin-coaching-log>
+                            </div>
+                            <div v-else>
+                                <kleerers-distribution v-model="distribution.result" :editable="balance.editable"
+                                                       :balancePercentages="distribution.balancePercentages"
+                                                       key="kleerers-distribution"/>
                             </div>
 
                         </el-row>

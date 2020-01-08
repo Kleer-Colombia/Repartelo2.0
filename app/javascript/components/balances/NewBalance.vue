@@ -33,7 +33,14 @@
             <el-form-item label="Tipo">
                 <el-radio id="standard" v-model="balance.balance_type" label="standard">Estándar</el-radio>
                 <el-radio id="coaching" v-model="balance.balance_type" label="coaching">Coaching</el-radio>
+                <el-radio id="standard-international" v-model="balance.balance_type" label="standard-international">Servicio Internacional</el-radio>
             </el-form-item>
+          <el-form-item label="Retención" v-show="balance.balance_type === 'standard-international'">
+            <el-input
+                      placeholder="Retención (No será menor al monto previamente acordado como previsión)"
+                      name="retencion"
+                      v-model="balance.retencion"></el-input>
+          </el-form-item>
             <el-form-item>
             <el-button type="primary" @click="guardar()">Guardar</el-button>
             </el-form-item>
@@ -61,7 +68,8 @@ export default {
         project: '',
         description: '',
         date: '',
-        balance_type: ''
+        balance_type: '',
+        retencion: 0
       }
     }
   },
