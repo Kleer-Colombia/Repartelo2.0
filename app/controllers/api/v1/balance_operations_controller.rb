@@ -17,7 +17,7 @@ module Api
       def calculate_taxes
         validate_parameters [:balanceId], params do
           balance = Balance.find(params[:balanceId])
-          execute_command(CalculateTaxes.new(taxes: TaxMaster.all,
+          execute_command(CalculateTaxes.new(taxes: TaxMaster.all_taxes(balance),
                                              incomes: balance.total_incomes,
                                              expenses: balance.total_expenses,
                                              save_in: balance))

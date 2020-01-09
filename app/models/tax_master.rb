@@ -17,5 +17,20 @@ class TaxMaster < ApplicationRecord
     where.not(name: 'kleerCo')
   end
 
+  def self.all_taxes(balance)
+
+    if balance.balance_type == 'standard-international'
+      master_taxes = where.not(name: 'Ica')
+      master_taxes.each do |master_tax|
+        if master_tax.name == 'Retefuente'
+          master_tax.value = balance.retencion
+        end
+      end
+    else
+      master_taxes = all
+    end
+    return master_taxes
+  end
+
 
 end
