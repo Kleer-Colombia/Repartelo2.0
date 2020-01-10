@@ -75,7 +75,7 @@ class Balance < ApplicationRecord
   end
 
   def get_invoice_ids
-    incomes.select {|income| income.invoice.invoice_id}.map {|income| income.invoice.invoice_id}
+    incomes.select {|income| income.invoice.invoice_id}.map {|income| income.invoice&.invoice_id}
   end
   
   # by default select the most older date
