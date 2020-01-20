@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   ActiveAdmin.routes(self)
   root to: 'landing#index'
 
+
+
   namespace :api do
     namespace :v1 do
 
@@ -42,6 +44,8 @@ Rails.application.routes.draw do
       get '/taxes/', to: 'taxes#resume_taxes'
       get '/taxes/:tax_id/:tax_year', to: 'taxes#resume_one_tax'
       post '/taxes/', to: 'taxes#add_tax'
+
+      get '/reports/financial', to: 'reports#financial_report'
 
     end
   end

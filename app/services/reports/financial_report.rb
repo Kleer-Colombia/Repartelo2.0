@@ -6,14 +6,21 @@ class FinancialReport
   end
 
   def call
-    Balance.all.each do |balance|
-      data = extract_data(balance)
-      consolidate_line(data)
+
+    attributes = %w{id invoices expenses chanchito distribución}
+
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+
+      Balance.all.each do |balance|
+        data = extract_data(balance)
+        csv << consolidate_line(data)
+      end
     end
 
   rescue StandardError => error
     puts error.to_s #TODO improve the logs
-    errors.add(:messages, "error saving manual tax: #{error.message}")
+    errors.add(:messages, "error generating balance: #{error.message}")
     errors.add(:error_code, :not_acceptable)
   end
 
@@ -28,7 +35,8 @@ class FinancialReport
   end
 
   def consolidate_line(data)
-    puts "#{data[:balance_id]},#{data[:invoices]},#{data[:expenses]},#{data[:chanchito]},#{data[:distribucion]}"
+    #"#{data[:balance_id]},#{data[:invoices]},#{data[:expenses]},#{data[:chanchito]},#{data[:distribucion]}"
+    [data[:balance_id],data[:invoices],data[:expenses],data[:chanchito],data[:distribucion]]
   end
 
 end
