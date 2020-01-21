@@ -46,6 +46,8 @@ Rails.application.routes.draw do
       post '/taxes/', to: 'taxes#add_tax'
 
       get '/reports/financial', to: 'reports#financial_report'
+      get '/reports/expenses', to: 'reports#expenses_report'
+      get '/reports/saldos', to: 'reports#saldos_report'
 
     end
   end

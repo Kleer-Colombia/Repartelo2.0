@@ -59,6 +59,14 @@
           {
             name: 'Reporte Financiero',
             action: '/financial'
+          },
+          {
+            name: 'Reporte de gastos en balances',
+            action: '/expenses'
+          },
+          {
+            name: 'Saldos',
+            action: '/saldos'
           }
         ]
       }
