@@ -71,7 +71,12 @@ class CalculateTaxesInInvoice
   end
 
   def calculate_total_item(item)
-    one_hundred_total = item['price'] * item['quantity'].to_f
+    discount_factor = 1
+    if item['discount'].to_f > 0
+      discount_factor -= (item['discount'].to_f/100)
+    end
+
+    one_hundred_total = item['price'] * item['quantity'].to_f * discount_factor
     total_for_balance = calculate_percentage(one_hundred_total,@invoice.percentage)
     total_for_balance
   end
