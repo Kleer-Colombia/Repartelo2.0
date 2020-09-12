@@ -1,12 +1,13 @@
 class CalculateTaxesInInvoice
   prepend Service
 
-  attr_accessor :alegra_invoice, :balance, :invoice
+  attr_accessor :alegra_invoice, :balance, :invoice, :trm
 
   def initialize(data)
-    @alegra_invoice = data[:invoice]
+    @alegra_invoice = data[:alegra_invoice]
     @balance = data[:balance]
     @invoice = data[:invoice]
+    @trm = data[:trm]
   end
 
   def call
@@ -43,7 +44,7 @@ class CalculateTaxesInInvoice
     items.each do |item|
       item[:taxes].each do |tax|
         name = tax[:name]
-        amount = tax[:amount]
+        amount = tax[:amount] * @trm
         percentage = tax[:percentage]
         if taxes[name]
           taxes[name].amount += amount

@@ -140,6 +140,7 @@ export default {
       context.$emit('updateTaxes')
       context.income.description = ''
       context.income.amount = ''
+      context.income.trm = 1
       // context.cleanSelection()
       if (nextFunction) {
         nextFunction(context)

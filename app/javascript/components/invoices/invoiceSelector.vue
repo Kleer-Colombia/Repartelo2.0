@@ -156,7 +156,8 @@
           description: '',
           amount: '',
           invoiceId: '',
-          date: ''
+          date: '',
+	        trm: ''
         },
 	      percentageSelector: {
           max: 100,
@@ -164,7 +165,7 @@
 		      digit: 0,
 		      decimals: 0,
 		      maxDecimal: 99,
-		      minDecimal:0,
+		      minDecimal: 0,
 		      percentageTotal: 0,
 		      canAddDigits: false,
           canAddDecimals: false
@@ -234,12 +235,14 @@
       addToBalance () {
         this.income.description = 'Factura ' + this.selectedInvoice.numberTemplate.number + '  (' + this.selectedInvoice.id + ' - ' + this.percentageSelector.percentageTotal +'%) '
 	      let trm = 1
-	      if(this.selectedInvoice.currency) {
+	      console.log('currency: ' + this.selectedInvoice.currency)
+	      if (this.selectedInvoice.currency) {
           trm = this.trm
-		      this.income.description += '[ TRM: ' + this.formatPrice(trm)+' ]'
+		      this.income.description += '[ TRM: ' + this.formatPrice(trm) + ' ]'
 	      }
 	      
         this.income.amount = this.selectedInvoice.total * trm
+	      this.income.trm = trm
         this.income.invoiceId = this.selectedInvoice.id
         this.income.date = this.selectedInvoice.date
 	      this.income.invoicePercentageToUse = this.percentageSelector.percentageTotal
