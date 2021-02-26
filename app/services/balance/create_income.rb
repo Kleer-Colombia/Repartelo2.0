@@ -13,10 +13,13 @@ class CreateIncome
   end
 
   def call
+    Rails.logger.info("creating income")
+    Rails.logger.info("service income: #{@service_income}")
     income = @balance.incomes.create!(description: @service_income[:description],
                                       amount: calculate_amount(@service_income[:amount]))
     if @is_invoice
       get_data_from_invoice
+
       income.create_invoice!(income: income,
                              invoice_id: @invoice_id,
                              date: @invoice_date,

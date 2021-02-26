@@ -1,4 +1,4 @@
-class CalculateTaxesInInvoice
+class CalculateDiscountsInInvoice
   prepend Service
 
   attr_accessor :alegra_invoice, :balance, :invoice, :trm
@@ -12,14 +12,12 @@ class CalculateTaxesInInvoice
 
   def call
 
-    Rails.logger.info("calculating taxes in invoices")
-    Rails.logger.info("Alegra invoice: #{@alegra_invoice}")
+    Rails.logger.info("calculating discounts in invoices")
     items = consolidate_items
     Rails.logger.info("items : #{items}")
-    taxes = consolidate_taxes(items).values
-    Rails.logger.info("taxes: #{taxes}")
-    save_taxes(taxes)
-    save_discounts(items)
+    # taxes = consolidate_taxes(items).values
+    # Rails.logger.info("taxes: #{taxes}")
+    # save_taxes(taxes)
 
   rescue StandardError => error
     puts error
@@ -36,23 +34,11 @@ class CalculateTaxesInInvoice
     @balance.save!
   end
 
-  def save_discounts(items)
-    total_discounts = 0
-    items.each do |item|
-      total_discounts+= item[:total_discount]
-    end
-
-    if(total_discounts > 0)
-      @balance.expenses.create!(description: "Descuentos en factura #{@alegra_invoice["id"]}",amount: total_discounts)
-    end
-  end
-
   def consolidate_items
     @alegra_invoice['items'].map do |item|
-      item_summary = calculate_total_item(item)
-      item_summary[:taxes]  = find_taxes_per_item(item, item_summary[:total_item])
-
-      item_summary
+      total_item = calculate_total_item(item)
+      taxes = find_taxes_per_item(item, total_item)
+      {id: item['id'], total_item: total_item, taxes: taxes}
     end
 
   end
@@ -89,21 +75,14 @@ class CalculateTaxesInInvoice
   end
 
   def calculate_total_item(item)
-    item_summary = {id: item['id']}
     discount_factor = 1
     if item['discount'].to_f > 0
       discount_factor -= (item['discount'].to_f/100)
     end
 
     one_hundred_total = item['price'] * item['quantity'].to_f * discount_factor
-    discount_total = item['price'] * item['quantity'].to_f * (1-discount_factor)
-    total_for_balance = calculate_percentage(one_hundred_total,@invoice.percentage)
-    discount_total_for_balance = calculate_percentage(discount_total,@invoice.percentage)
-    item_summary[:total_item] = total_for_balance
-    item_summary[:total_discount] = discount_total_for_balance
-    item_summary[:discount] = item['discount'].to_f
-
-    item_summary
+    total_for_balance = calculate_percentage(one_hundred_total, @invoice.percentage)
+    total_for_balance
   end
 
   #TODO duplicated
