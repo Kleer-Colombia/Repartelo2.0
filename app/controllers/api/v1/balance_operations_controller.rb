@@ -54,6 +54,16 @@ module Api
         end
       end
 
+      def find_expenses
+        validate_parameters [:id], params do
+          begin
+            send_response @actions.find_expenses_balance(params[:id])
+          rescue
+            halt_message("We can't find expenses: #{e.message}", :internal_server_error)
+          end
+        end
+      end
+
       def delete_expense
         validate_parameters [:id, :idExpense], params do
           begin

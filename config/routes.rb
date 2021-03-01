@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       post '/balance/:id/income', to: 'balance_operations#add_income'
       delete '/balance/:id/income/:idIncome', to: 'balance_operations#delete_income'
       post '/balance/:id/expense', to: 'balance_operations#add_expense'
+      get '/balance/:id/expense', to: 'balance_operations#find_expenses'
       delete '/balance/:id/expense/:idExpense', to: 'balance_operations#delete_expense'
       post '/balance/:id/percentages', to: 'balance_operations#update_percentages'
 

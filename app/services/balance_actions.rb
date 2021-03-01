@@ -31,6 +31,14 @@ class BalanceActions
             }
   end
 
+  def find_expenses_balance(id)
+    balance = Balance.find(id)
+    return { expenses: balance.expenses,
+             total: balance.total_expenses
+    }
+
+  end
+
   #TODO refactor, this method was duplicated on distribute_balance
   def prepare_distributions distributions
     data = []

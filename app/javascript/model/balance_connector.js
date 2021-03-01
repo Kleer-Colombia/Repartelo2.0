@@ -1,6 +1,7 @@
 import axios from 'axios'
 import util from './util'
 import router from '../router'
+import { EventBus } from '../packs/application'
 
 const API_URL = util.apiUrl()
 const BALANCE_URL = API_URL + '/balance'
@@ -128,6 +129,21 @@ export default {
       util.processErrorMsgs(error, context)
     })
   },
+
+  findExpenses (context, idBalance) {
+    axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
+    axios({
+      method: 'get',
+      url: BALANCE_URL + '/' + idBalance + '/expense'
+    }).then(function (response) {
+      let answer = response.data.response
+      console.log(answer)
+      context.realExpenses = answer.expenses
+    })
+      .catch(function (error) {
+        util.processErrorMsgs(error, context)
+      })
+  },
   addIncome (context, id, nextFunction) {
     axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
     axios({
@@ -138,6 +154,7 @@ export default {
       var answer = response.data.response
       context.realIncomes = answer.incomes
       context.$emit('updateTaxes')
+      EventBus.$emit('updateExpenses')
       context.income.description = ''
       context.income.amount = ''
       context.income.trm = 1
@@ -219,7 +236,7 @@ export default {
         context.distribution.kleerers[i].selected = false
         context.distribution.kleerers[i].value = 0
       }
-     if (nextFunction) {
+      if (nextFunction) {
         nextFunction(context)
       }
     })

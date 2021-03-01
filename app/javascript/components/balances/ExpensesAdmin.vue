@@ -43,6 +43,7 @@
   import util from '../../model/util'
   import InputMoney from '../base/InputMoney'
   import balanceConnector from '../../model/balance_connector'
+  import { EventBus } from '../../packs/application'
 
   export default {
     components: {InputMoney},
@@ -73,6 +74,10 @@
     },
     created: function () {
       this.realExpenses = this.allExpenses
+
+      EventBus.$on('updateExpenses', () => {
+        balanceConnector.findExpenses(this, this.$route.params.id)
+      })
     },
     methods: {
       showExpense () {

@@ -21,6 +21,8 @@ Vue.use(ElementUI, { locale })
 Vue.use(money, {precision: 2})
 Vue.http.options.emulateJSON = true
 
+export const EventBus = new Vue()
+
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.body.appendChild(document.createElement('application'))
   const app = new Vue({
