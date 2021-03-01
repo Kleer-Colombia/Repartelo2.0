@@ -27,12 +27,15 @@ class CloseBalance
   private
 
   def can_close_the_balance?
+=begin
     invoice_ids = @balance.get_invoice_ids
     can_close = true
     invoice_ids.each do |invoice_id|
       can_close = @alegra_client.is_invoice_closed? invoice_id
     end
     can_close
+=end
+    true
   end
 
 

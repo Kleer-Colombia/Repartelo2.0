@@ -13,10 +13,11 @@ class CalculateTaxesInInvoice
   def call
 
     Rails.logger.info("calculating taxes in invoices")
-    Rails.logger.info("Alegra invoice: #{@alegra_invoice}")
     items = consolidate_items
     Rails.logger.info("items : #{items}")
     taxes = consolidate_taxes(items).values
+
+    taxes += add_invoice_taxes(@alegra_invoice).values
     Rails.logger.info("taxes: #{taxes}")
     save_taxes(taxes)
     save_discounts(items)
@@ -74,6 +75,17 @@ class CalculateTaxesInInvoice
                                 )
         end
       end
+    end
+    taxes
+  end
+
+  def add_invoice_taxes(invoice)
+    taxes = {}
+    invoice['retentions'].each do |retention|
+      taxes[retention['name']] = Tax.new(name: retention['name'],
+              amount: calculate_percentage( retention['amount'].to_f * @trm,@invoice.percentage),
+              percentage: retention['percentage'],
+              invoice: @invoice)
     end
     taxes
   end
