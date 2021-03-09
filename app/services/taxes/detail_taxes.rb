@@ -4,7 +4,7 @@ class DetailTaxes < TaxesHelper
   def call
     data = []
     TaxMaster.taxes_to_show.each do |tax_master|
-      taxesDetail = Tax.all.select{ |tax| tax.name == tax_master.name and !tax.balance.editable and tax.amount != 0}.map do |tax|
+      taxesDetail = Tax.all.select{ |tax| tax.name.split(' (')[0] == tax_master.name and !tax.balance.editable and tax.amount != 0}.map do |tax|
         prepare_tax_registry(tax)
       end
 

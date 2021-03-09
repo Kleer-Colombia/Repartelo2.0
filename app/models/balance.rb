@@ -99,7 +99,7 @@ class Balance < ApplicationRecord
     total = 0
     find_in_invoice_taxes.each do |tax|
 
-      tax.name = TaxMaster.translate_tax_name(tax.name)
+      tax.name = tax.name.split(' (')[0] #removed the last name of the alegra taxes RETEFUENTE (Honorarios y comisiones)
 
       if resume[tax.name]
         resume[tax.name] += tax.amount.to_f
