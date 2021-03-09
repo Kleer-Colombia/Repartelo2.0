@@ -31,6 +31,8 @@ class CalculateTaxes
     result['Egresos'] = @expenses
     result['Utilidad'] = utility
 
+    Rails.logger.info("Resumed taxes: #{result}")
+
     @save_in ? @save_in.resume : result
   end
 

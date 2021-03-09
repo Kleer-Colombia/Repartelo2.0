@@ -4,6 +4,37 @@ class TaxMaster < ApplicationRecord
   validates :type_tax, presence: true
   has_many :manual_taxes
 
+  INVOICE_TAX_GROUPS = {
+    IVA: ['iva','IVA'],
+    RETEIVA: ['ReteIVA', 'Reteiva 11% - Especial','RETEIVA'],
+    RETEICA: ['RETEICABOGOTA','RETEICA_MEDELLIN','RETEICA MEDELLIN','RETEICA BOG2','ReteICA Cali', 'RETEICA'],
+    RETEFUENTE: ['Arrendamiento de bienes muebles',
+                  'Arrendamiento de bienes raíces',
+                'Compras',
+                'Honorarios y comisiones',
+                'Servicios de aseo y vigilancia',
+                'Servicios de hoteles y restaurantes',
+                'Servicios en general',
+                'Servicios en general',
+                'Transporte de carga',
+                'Retefuente Mexico',
+                'Honorarios en Perú',
+                'Honorarios Argentina',
+                 'RETEFUENTE'
+                ]
+  }
+
+  def self.translate_tax_name (in_invoice_tax_name)
+    traslated_name = ""
+    INVOICE_TAX_GROUPS.each do |new_name, values|
+      if values.include? in_invoice_tax_name
+        traslated_name = new_name
+        break
+      end
+    end
+    Rails.logger.info("traslated #{in_invoice_tax_name} => #{traslated_name}")
+    traslated_name
+  end
 
   def self.find_taxes(type)
     where(type_tax: type)

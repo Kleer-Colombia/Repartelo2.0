@@ -37,6 +37,7 @@ class Balance < ApplicationRecord
     resume_utility, total_utility = find_tax(:utility)
     resume.merge!(resume_utility)
     resume[:utilidad] = resume[:pre_utilidad] - total_utility
+    Rails.logger.info("Resumed taxes IN BALANCE: #{resume}")
     return resume
   end
 
@@ -97,6 +98,9 @@ class Balance < ApplicationRecord
     resume = {}
     total = 0
     find_in_invoice_taxes.each do |tax|
+
+      tax.name = TaxMaster.translate_tax_name(tax.name)
+
       if resume[tax.name]
         resume[tax.name] += tax.amount.to_f
         total += tax.amount.to_f

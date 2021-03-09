@@ -84,7 +84,7 @@ class CalculateTaxesInInvoice
 
   def add_invoice_taxes(invoice)
     taxes = {}
-    invoice['retentions'].each do |retention|
+    invoice['retentions']&.each do |retention|
       taxes[retention['name']] = Tax.new(name: retention['name'],
               amount: calculate_percentage( retention['amount'].to_f * @trm,@invoice.percentage),
               percentage: retention['percentage'],
