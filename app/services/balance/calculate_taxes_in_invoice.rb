@@ -18,7 +18,7 @@ class CalculateTaxesInInvoice
     taxes = consolidate_taxes(items).values
 
     taxes += add_invoice_taxes(@alegra_invoice).values
-    Rails.logger.info("taxes: #{taxes}")
+
     save_taxes(taxes)
     save_discounts(items)
 
@@ -32,9 +32,12 @@ class CalculateTaxesInInvoice
   private
 
   def save_taxes(taxes)
-    @invoice.taxes.each(&:destroy)
-    @balance.taxes += taxes
+    @balance.taxes.each(&:destroy)
+    @balance.taxes = taxes
+    Rails.logger.info("---before save taxes: #{@balance.taxes.map(&:name)}")
+    @balance.taxes.each(&:save!)
     @balance.save!
+    Rails.logger.info("---after taxes: #{@balance.taxes.map(&:name)}")
   end
 
   def save_discounts(items)
@@ -87,6 +90,7 @@ class CalculateTaxesInInvoice
               percentage: retention['percentage'],
               invoice: @invoice)
     end
+    Rails.logger.info("--- invoice taxes #{taxes}")
     taxes
   end
 

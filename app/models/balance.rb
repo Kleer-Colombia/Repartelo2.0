@@ -102,9 +102,10 @@ class Balance < ApplicationRecord
         total += tax.amount.to_f
       else
         resume[tax.name] = tax.amount.to_f
-        total = tax.amount.to_f
+        total += tax.amount.to_f
       end
     end
+    Rails.logger.info("Resume in invoice taxes #{resume}, total: #{total}")
     return resume, total
   end
 

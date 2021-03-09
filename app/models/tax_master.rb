@@ -10,7 +10,7 @@ class TaxMaster < ApplicationRecord
   end
 
   def self.taxes_names_to_calculate
-    where.not(name: 'IVA').map(&:name)
+    where.not(type_tax: 'in_alegra').map(&:name)
   end
 
   def self.taxes_to_show
