@@ -87,9 +87,16 @@ class CalculateTaxesInInvoice
     invoice['retentions']&.each do |retention|
 
       name = TaxMaster.translate_tax_name(retention['name'])
+      amount = calculate_percentage( retention['amount'].to_f * @trm,@invoice.percentage)
+
+      if(name.to_s == "RETEIVA")
+        puts "minus"
+        amount = amount * -1
+      end
+
       name = "#{name} (#{retention['name']})"
       taxes[name] = Tax.new(name: name,
-              amount: calculate_percentage( retention['amount'].to_f * @trm,@invoice.percentage),
+              amount: amount,
               percentage: retention['percentage'],
               invoice: @invoice)
     end
