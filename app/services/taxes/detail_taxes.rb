@@ -3,16 +3,30 @@ class DetailTaxes < TaxesHelper
 
   def call
     data = []
+    taxes_preconsolidated = {} #{ica: {id: ... ,data[]},Donaciones: {id: ... ,data[]}}
+    groups = {"RETEICA" => "Ica", "RETEFUENTE" => "Reserva Retefuente", "RETEIVA" => "IVA"}
+
     TaxMaster.taxes_to_show.each do |tax_master|
       taxesDetail = Tax.all.select{ |tax| tax.name.split(' (')[0] == tax_master.name and !tax.balance.editable and tax.amount != 0}.map do |tax|
         prepare_tax_registry(tax)
       end
-
       manualTaxesDetail = tax_master.manual_taxes.map do |manual_tax|
         prepare_manual_tax_registry(manual_tax)
       end
       total_taxes = taxesDetail + manualTaxesDetail
-      data.push({name: tax_master.name, id: tax_master.id, years: order_taxes_by_year(total_taxes)})
+
+      tax_key_to_group = groups[tax_master.name] ? groups[tax_master.name] : tax_master.name
+
+      if taxes_preconsolidated[tax_key_to_group]
+        taxes_preconsolidated[tax_key_to_group][:data] += total_taxes
+      else
+        taxes_preconsolidated[tax_key_to_group] = {id: tax_master.id, data: total_taxes}
+      end
+    end
+
+    taxes_preconsolidated.each do |key, value|
+      puts "key: #{key}, Value: #{value[:id]}, size: #{value[:data].size}"
+      data.push({name: key, id: value[:id], years: order_taxes_by_year(value[:data])})
     end
   data
   rescue StandardError => error
