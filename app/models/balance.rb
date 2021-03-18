@@ -116,11 +116,11 @@ class Balance < ApplicationRecord
 
       if resume[tax.name]
         resume[tax.name] += tax.amount.to_f
-        total += tax.amount.to_f
       else
         resume[tax.name] = tax.amount.to_f
-        total += tax.amount.to_f
       end
+
+      total += tax.amount.to_f if tax.amount.to_f > 0 # doesn't add reteIVA
     end
     Rails.logger.info("Resume in invoice taxes #{resume}, total: #{total}")
     return resume, total

@@ -20,6 +20,7 @@ class TaxMaster < ApplicationRecord
                   'Retefuente Mexico',
                   'Honorarios en Perú',
                   'Honorarios Argentina',
+                 'ReteFuente Mexico',
                    'RETEFUENTE'
                 ]
   }
