@@ -18,7 +18,7 @@ class Balance < ApplicationRecord
   end
 
   def calculate_profit
-    profit = resume[:utilidad] - find_tax_value(:kleerCo)
+    profit = resume[:utilidad] - find_taxes_value(:post_utility)
     if(profit < 0)
       raise StandardError, 'Nothing to distribute!'
     end
@@ -46,6 +46,17 @@ class Balance < ApplicationRecord
     tax ? tax.amount.to_f : 0
   end
 
+  def find_taxes_value(type)
+
+    type_names = TaxMaster.where(type_tax: type).map(&:name)
+    taxes = self.taxes.select { |e| type_names.include? e.name }
+    total = 0
+    taxes.each do |tax|
+      total += tax ?  tax.amount.to_f : 0
+    end
+    total
+  end
+
   def find_tax_percentage(name)
     tax = self.taxes.detect { |e| e.name == name.to_s }
     tax ? tax.percentage.to_f : 0 #percentage
@@ -53,7 +64,9 @@ class Balance < ApplicationRecord
 
   def distribute(profit, kleerCoCustom = nil)
     kleerCo = Kleerer.find_by(name: "KleerCo")
-    kleerCoCustom ? forKleerCo = kleerCoCustom : forKleerCo = find_tax_value(:kleerCo)
+
+    forKleerCo = kleerCoCustom ? forKleerCo : find_tax_value(:kleerCo)
+
     distributions = {kleerCo.id => forKleerCo}
 
     percentages.each do |percentage|
@@ -121,6 +134,16 @@ class Balance < ApplicationRecord
     data.join('||')
   end
 
+  def prepare_distributions distributions
+    data = []
+    distributions.each do |distribution|
+      data.push({kleerer: Kleerer.find(distribution.kleerer_id).name,
+                 amount: distribution.amount})
+    end
+    data = add_other_post_utility data
+    return data
+  end
+
   private
 
   def plus_data(data)
@@ -140,6 +163,19 @@ class Balance < ApplicationRecord
     end
     return resume, total
   end
+
+  def add_other_post_utility data
+    post_utility_names = TaxMaster.where(type_tax: :post_utility).where('name != ?', :kleerCo).map(&:name)
+    taxes_founded = taxes.select { |tax| post_utility_names.include? tax.name }
+
+    taxes_founded.each do |tax|
+      data.push({kleerer: tax.name,
+                 amount: tax.amount})
+    end
+    data
+  end
+
+
 
 
 

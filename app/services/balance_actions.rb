@@ -20,15 +20,16 @@ class BalanceActions
 
   def find_complete_balance(id)
     balance = Balance.find(id)
-    return {balance: balance,
+    balance_info = {balance: balance,
             incomes: {incomes: balance.incomes,
                       total: balance.total_incomes},
             expenses: {expenses: balance.expenses,
                       total: balance.total_expenses},
-            distributions: prepare_distributions(balance.distributions),
+            distributions: balance.prepare_distributions(balance.distributions),
             percentages: balance.percentages,
             resume: balance.resume
             }
+    balance_info
   end
 
   def find_expenses_balance(id)
@@ -39,15 +40,6 @@ class BalanceActions
 
   end
 
-  #TODO refactor, this method was duplicated on distribute_balance
-  def prepare_distributions distributions
-    data = []
-    distributions.each do |distribution|
-      data.push({kleerer: distribution.kleerer.name,
-                 amount: distribution.amount})
-    end
-    return data
-  end
 
   def update_kleerers_percentages(id, kleerers)
     balance = Balance.find(id)

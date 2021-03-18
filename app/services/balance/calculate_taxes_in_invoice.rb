@@ -90,7 +90,6 @@ class CalculateTaxesInInvoice
       amount = calculate_percentage( retention['amount'].to_f * @trm,@invoice.percentage)
 
       if(name.to_s == "RETEIVA")
-        puts "minus"
         amount = amount * -1
       end
 

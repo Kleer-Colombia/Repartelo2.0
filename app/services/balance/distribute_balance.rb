@@ -12,7 +12,8 @@ class DistributeBalance
     raise StandardError.new("How to distribute?") if balance.percentages.empty?
 
     result = distribute(balance)
-    prepare_distributions(result)
+    data = balance.prepare_distributions(result)
+    data
   rescue StandardError => error
     errors.add(:messages, "error on distribution balance: #{error.message}")
     errors.add(:error_code, :not_acceptable)
@@ -42,14 +43,6 @@ class DistributeBalance
     balance.save!
   end
 
-  def prepare_distributions distributions
-    data = []
-    distributions.each do |distribution|
-      data.push({kleerer: Kleerer.find(distribution.kleerer_id).name,
-                 amount: distribution.amount})
-    end
-    return data
-  end
 
 
 end
