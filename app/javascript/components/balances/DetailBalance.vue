@@ -5,50 +5,15 @@
             <h1> Cargando ... </h1>
         </div>
         <div v-else>
-            <el-card class="box-card">
-                <el-row>
-                    <el-col :offset="2" :span="2">
-                        <div class="grid-content">
-                            <p>ID: {{balance.id}}</p>
-                        </div>
-                    </el-col>
-                    <el-col :span="4">
-                        <div class="grid-content">
-                            <p>Cliente: <span id="client">{{balance.client}}</span></p>
-                        </div>
-                    </el-col>
-                    <el-col :span="4">
-                        <div class="grid-content">
-                            <p>Project: <span id="project">{{balance.project}}</span></p>
-                        </div>
-                    </el-col>
-                    <el-col :span="3">
-                        <div class="grid-content">
-                            <p>Fecha: <span id="date">{{balance.date}}</span></p>
-                        </div>
-                    </el-col>
-                    <el-col :span="4">
-                        <div class="grid-content">
-                            <p>Description: <span id="description">{{balance.description}}</span></p>
-                        </div>
-                    </el-col>
-                    <el-col :span="3" v-if="balance.balance_type === 'standard-international'">
-                        <div class="grid-content">
-                            <p>Retención a aplicar: <span id="retencion">{{balance.retencion}}</span></p>
-                        </div>
-                    </el-col>
-                    <el-col :span="3" v-else>
-                    
-                    </el-col>
-                    <el-col :span="2">
-                        <el-button type="danger" id="Borrar" @click="deleteBalance()"
-                                   :disabled="!balance.editable">
-                            Borrar
-                        </el-button>
-                    </el-col>
-
-                </el-row>
-            </el-card>
+            <properties-balance :id="balance.id"
+                                :client="balance.client"
+                                :project="balance.project"
+                                :description="balance.description"
+                                :balance_type="balance.balance_type"
+                                :retencion="balance.retencion"
+                                :date="balance.date"
+                                :editable="balance.editable"
+            />
             <el-row id="row-money">
                 <el-col :span="6">
                     <div v-if="checkFlag('balance-incomes')">
@@ -162,6 +127,7 @@
 <script>
 
   import balanceConnector from '../../model/balance_connector'
+  import propertiesBalance from './PropertiesBalance.vue'
   import util from '../../model/util'
   import SafeBody from '../base/SafeBody.vue'
   import IncomesAdmin from './IncomesAdmin'
@@ -177,7 +143,8 @@
       IncomesAdmin,
       ExpensesAdmin,
       SafeBody,
-      invoiceSelector
+      invoiceSelector,
+      propertiesBalance
     },
     name: 'detailBalance',
     data () {
@@ -235,22 +202,6 @@
             this.$message({
               type: 'info',
               message: 'verificalo bien ;-)'
-            })
-          })
-      },
-      deleteBalance () {
-        this.$confirm('Esto borrará permanentemente todos los datos asociados a este balance, ¿Desea continuar?',
-          'Cuidado!', {
-            confirmButtonText: 'Aceptar',
-            cancelButtonText: 'Cancelar',
-            type: 'warning',
-            center: true
-          }).then(() => {
-            balanceConnector.deleteBalance(this, this.$route.params.id)
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: 'Borrado cancelado'
             })
           })
       },

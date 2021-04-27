@@ -19,10 +19,9 @@ module Api
 
             retencion = 0
             if balance['balance_type'] == 'standard-international'
-              retefuente = TaxMaster.find_by(name: 'Retefuente').value
+              retefuente = TaxMaster.find_by(name: 'RETEFUENTE').value
               retencion = (balance['retencion'].to_f < retefuente) ? retefuente : balance['retencion'].to_f
             end
-
             result = Balance.create!(
               project: balance['project'],
               client: balance['client'],
