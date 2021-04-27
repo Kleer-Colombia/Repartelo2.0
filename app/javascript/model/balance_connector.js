@@ -77,6 +77,25 @@ export default {
       util.processErrorMsgs(error, context)
     })
   },
+  editBalance (context, properties) {
+    axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
+    axios({
+      method: 'post',
+      url: BALANCE_URL + '/' + properties.id,
+      data: properties
+    }).then(function (response) {
+      if (response.status === 200) {
+        context.$message({
+          type: 'success',
+          message: 'ajustes hechos'
+        })
+      }
+    })
+      .catch(function (error) {
+        util.processErrorMsgs(error, context)
+      })
+  },
+
   createBalance (context, balance) {
     axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
     axios({

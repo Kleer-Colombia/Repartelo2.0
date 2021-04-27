@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       post '/balance/new', to: 'balance#create'
       get '/balance/', to: 'balance#find_all'
       get '/balance/:id', to: 'balance#find'
+      post '/balance/:id', to: 'balance#edit_properties'
       delete '/balance/:id', to: 'balance#delete'
 
       post '/balance/', to: 'balance_operations#distribute'

@@ -1,28 +1,53 @@
 <template>
     <el-card class="box-card">
         <el-row>
-            <el-col :offset="2" :span="2">
+            <el-col :offset="1" :span="2">
                 <div class="grid-content">
                     <p>ID: {{idB}}</p>
                 </div>
             </el-col>
             <el-col :span="4">
-                <div class="grid-content">
-                    <p>Cliente: <span id="client">{{clientB}}</span></p>
+                <div v-if="editMode" class="grid-content">
+                    <p>Cliente:  <el-input name="client"
+                                           placeholder="Cliente"
+                                           v-model="clientB"></el-input></p>
                 </div>
+              <div v-else class="grid-content">
+                <p>Cliente: <span id="client">{{clientB}}</span></p>
+              </div>
             </el-col>
             <el-col :span="4">
-                <div class="grid-content">
+              <div v-if="editMode" class="grid-content">
+                <p>Project: <el-input name="client"
+                                      placeholder="Cliente"
+                                      v-model="projectB"></el-input></p>
+              </div>
+                <div v-else class="grid-content">
                     <p>Project: <span id="project">{{projectB}}</span></p>
                 </div>
             </el-col>
-            <el-col :span="3">
-                <div class="grid-content">
+            <el-col :span="2">
+              <div v-if="editMode" class="grid-content">
+                <p>Fecha: <el-date-picker
+                    v-model="dateB"
+                    type="date"
+                    v-bind:id="'date'"
+                    placeholder="Fecha">
+                </el-date-picker></p>
+              </div>
+                <div v-else class="grid-content">
                     <p>Fecha: <span id="date">{{dateB}}</span></p>
                 </div>
             </el-col>
             <el-col :span="4">
-                <div class="grid-content">
+              <div v-if="editMode" class="grid-content">
+                <p>Description: <el-input type="textarea"
+                                          :rows="3"
+                                          placeholder="Descripción"
+                                          name="description"
+                                          v-model="descriptionB"></el-input></p>
+              </div>
+                <div v-else class="grid-content">
                     <p>Description: <span id="description">{{descriptionB}}</span></p>
                 </div>
             </el-col>
@@ -34,10 +59,18 @@
             <el-col :span="3" v-else>
 
             </el-col>
-            <el-col :span="2">
+            <el-col :span="4">
+              <el-button v-if="editMode" type="success" id="Guardar" @click="saveBalance()"
+                         :disabled="!editableB">
+                Guardar
+              </el-button>
+              <el-button v-else type="primary" id="Editar" @click="editBalance()"
+                         :disabled="!editableB">
+                Editar
+              </el-button>
                 <el-button type="danger" id="Borrar" @click="deleteBalance()"
                            :disabled="!editableB">
-                    Borrar
+                  Borrar
                 </el-button>
             </el-col>
 
@@ -103,7 +136,8 @@
         balance_typeB: '',
         retencionB: 0,
         dateB: null,
-        editableB: true
+        editableB: true,
+        editMode: false
       }
     },
     created: function () {
@@ -132,6 +166,19 @@
               message: 'Borrado cancelado'
             })
           })
+      },
+      editBalance () {
+        this.editMode = true
+      },
+      saveBalance () {
+        balanceConnector.editBalance(this, {
+          id: this.idB,
+          client: this.clientB,
+          project: this.projectB,
+          description: this.descriptionB,
+          date: this.dateB
+        })
+        this.editMode = false
       }
     }
   }

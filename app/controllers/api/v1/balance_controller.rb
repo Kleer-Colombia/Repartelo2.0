@@ -57,6 +57,14 @@ module Api
         end
       end
 
+      def edit_properties
+        begin
+          send_response @actions.edit_properties_balance(params[:balance])
+        rescue ActiveRecord::RecordInvalid => e
+          halt_message("We can't edit balance: #{e.message}", :internal_server_error)
+        end
+      end
+
     end
   end
 end

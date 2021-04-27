@@ -63,4 +63,13 @@ class BalanceActions
     end
   end
 
+  def edit_properties_balance(properties)
+    balance = Balance.find(properties['id'])
+    balance.client = properties['client']
+    balance.project = properties['project']
+    balance.description = properties['description']
+    balance.date = Date.strptime(properties['date'], '%Y-%m-%d')
+    balance.save!
+  end
+
 end
