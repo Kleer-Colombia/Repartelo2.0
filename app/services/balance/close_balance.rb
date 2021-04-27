@@ -28,6 +28,7 @@ class CloseBalance
 
   def can_close_the_balance?
     if ENV["RAILS_ENV"] == "development"
+      puts "dev- closing"
       true
     else
       invoice_ids = @balance.get_invoice_ids
