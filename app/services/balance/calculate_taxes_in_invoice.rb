@@ -43,7 +43,7 @@ class CalculateTaxesInInvoice
   def save_discounts(items)
     total_discounts = 0
     items.each do |item|
-      total_discounts+= item[:total_discount]
+      total_discounts+= item[:total_discount] * @trm
     end
 
     if(total_discounts > 0)
