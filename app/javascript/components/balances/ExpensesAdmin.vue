@@ -89,8 +89,21 @@
         this.newExpense = false
       },
       removeExpense (expenseId) {
-        this.error = ''
-        balanceConnector.removeExpense(this, this.$route.params.id, expenseId)
+        this.$confirm('¿Esta seguro de querer borrar este gasto?, no podrá recuperarlo si acepta.',
+            'Cuidado!', {
+              confirmButtonText: 'Aceptar',
+              cancelButtonText: 'Cancelar',
+              type: 'warning',
+              center: true
+            }).then(() => {
+              this.error = ''
+              balanceConnector.removeExpense(this, this.$route.params.id, expenseId)
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: 'verificalo bien ;-)'
+              })
+            })
       },
       formatPrice (value) {
         return util.formatPrice(value)
