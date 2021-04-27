@@ -96,7 +96,7 @@
             amount: '',
             concept: '',
             date: '',
-            tax_id: this.tax.id
+            taxId: this.tax.id
           }
         }
         this.dialogFormVisible = false

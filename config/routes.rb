@@ -43,7 +43,7 @@ Rails.application.routes.draw do
       post '/balance/:id/coachingSessions/summary', to: 'coaching_sessions#summary'
 
       get '/taxes/', to: 'taxes#resume_taxes'
-      get '/taxes/:tax_id/:tax_year', to: 'taxes#resume_one_tax'
+      get '/taxes/:taxId/:tax_year', to: 'taxes#resume_one_tax'
       post '/taxes/', to: 'taxes#add_tax'
 
       get '/reports/financial', to: 'reports#financial_report'

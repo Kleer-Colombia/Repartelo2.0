@@ -7,12 +7,13 @@ class AddManualTax
   end
 
   def call
-
-    tax = ManualTax.new(amount: @taxInfo[:amount],
-                        tax_master_id: @taxInfo[:taxId],
-                        concept: @taxInfo[:concept],
-                        date: @taxInfo[:date],
-                        payment_date: @taxInfo[:paymentDate])
+    tax_data = {amount: @taxInfo[:amount],
+                tax_master_id: @taxInfo[:taxId],
+                concept: @taxInfo[:concept],
+                date: @taxInfo[:date],
+                payment_date: @taxInfo[:paymentDate]}
+    Rails.logger.info("tax data: #{tax_data}")
+    tax = ManualTax.new(tax_data)
     tax.save!
 
 
