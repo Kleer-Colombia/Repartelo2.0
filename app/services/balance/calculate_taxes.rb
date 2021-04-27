@@ -47,7 +47,9 @@ class CalculateTaxes
   end
 
   def save_taxes(taxes)
+    Rails.logger.info("actual taxes: #{@save_in.taxes.map(&:name)}")
     @save_in.taxes -= @save_in.find_master_taxes
+    Rails.logger.info("after remove master taxes: #{@save_in.taxes.map(&:name)}")
     taxes.each do |name, value|
       @save_in.taxes.push(Tax.new(name: name,
                                   amount: value,

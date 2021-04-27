@@ -32,9 +32,10 @@ class CalculateTaxesInInvoice
   private
 
   def save_taxes(taxes)
-    @balance.taxes.each(&:destroy)
-    @balance.taxes = taxes
-    Rails.logger.info("---before save taxes: #{@balance.taxes.map(&:name)}")
+    Rails.logger.info("---before destroy taxes: #{@balance.taxes.map(&:name)}")
+    @balance.taxes.where("invoice_id IS ?", nil).each(&:destroy)
+    Rails.logger.info("---after destroy taxes: #{@balance.taxes.map(&:name)}")
+    @balance.taxes += taxes
     @balance.taxes.each(&:save!)
     @balance.save!
     Rails.logger.info("---after taxes: #{@balance.taxes.map(&:name)}")
