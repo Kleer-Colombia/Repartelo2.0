@@ -26,7 +26,6 @@ module Api
 
       def close
         validate_parameters [:balanceId], params do
-          puts "closeee"
           execute_command(CloseBalance.new(params[:balanceId]))
         end
       end

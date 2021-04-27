@@ -13,8 +13,7 @@ class AddManualTax
                 date: @taxInfo[:date],
                 payment_date: @taxInfo[:paymentDate]}
     Rails.logger.info("tax data: #{tax_data}")
-    tax = ManualTax.new(tax_data)
-    tax.save!
+    tax = ManualTax.create!(tax_data)
 
 
   rescue StandardError => error

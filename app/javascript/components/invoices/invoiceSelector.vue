@@ -128,9 +128,9 @@
   import invoiceConnector from '../../model/invoices_connector'
   import util from '../../model/util'
   import balanceConnector from '../../model/balance_connector'
-  import InputMoney from "../base/InputMoney";
+  import InputMoney from '../base/InputMoney'
 
-  export default {
+export default {
     name: 'invoice-selector',
     components: {InputMoney},
     props: {
@@ -204,8 +204,8 @@
 	      let decimalPart = 0
 	      if (info.length === 2) {
 	        let stringDecimal = info[1]
-         
-	        if(stringDecimal.length === 1) {
+  
+	        if (stringDecimal.length === 1) {
             stringDecimal = stringDecimal + '0'
 	        }
 	        decimalPart = parseInt(stringDecimal)
@@ -214,38 +214,36 @@
         this.percentageSelector.digit = this.percentageSelector.max
         this.percentageSelector.maxDecimal = 100 - decimalPart
         this.percentageSelector.decimals = this.percentageSelector.maxDecimal
-	      
+
         this.percentageSelector.canAddDigits = this.percentageSelector.max > 0
         this.percentageSelector.canAddDecimals = this.percentageSelector.maxDecimal > 0
-        
+  
         this.calculatePercentageTotal()
-        
       },
-	    calculatePercentageTotal () {
-
+      calculatePercentageTotal () {
         let decimals = this.percentageSelector.decimals / 100
         this.percentageSelector.percentageTotal = this.percentageSelector.digit + decimals
-		    
+
         let totalForSelect = this.percentageSelector.max + (this.percentageSelector.maxDecimal / 100)
-		    if (this.percentageSelector.percentageTotal > totalForSelect) {
-		      this.percentageSelector.decimals = 0
-          this.percentageSelector.percentageTotal = this.percentageSelector.max
-		    }
-	    },
+        if (this.percentageSelector.percentageTotal > totalForSelect) {
+          this.percentageSelector.decimals = 0
+        this.percentageSelector.percentageTotal = this.percentageSelector.max
+        }
+      },
       addToBalance () {
-        this.income.description = 'Factura ' + this.selectedInvoice.numberTemplate.number + '  (' + this.selectedInvoice.id + ' - ' + this.percentageSelector.percentageTotal +'%) '
-	      let trm = 1
-	      console.log('currency: ' + this.selectedInvoice.currency)
-	      if (this.selectedInvoice.currency) {
+        this.income.description = 'Factura ' + this.selectedInvoice.numberTemplate.number + '  (' + this.selectedInvoice.id + ' - ' + this.percentageSelector.percentageTotal + '%) '
+        let trm = 1
+
+        if (this.selectedInvoice.currency) {
           trm = this.trm
-		      this.income.description += '[ TRM: ' + this.formatPrice(trm) + ' ]'
-	      }
-	      
+          this.income.description += '[ TRM: ' + this.formatPrice(trm) + ' ]'
+        }
+
         this.income.amount = this.selectedInvoice.total * trm
-	      this.income.trm = trm
+        this.income.trm = trm
         this.income.invoiceId = this.selectedInvoice.id
         this.income.date = this.selectedInvoice.date
-	      this.income.invoicePercentageToUse = this.percentageSelector.percentageTotal
+        this.income.invoicePercentageToUse = this.percentageSelector.percentageTotal
         balanceConnector.addIncome(this, this.$route.params.id, function (context) {
           context.loaded = false
           context.visible = false
