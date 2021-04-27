@@ -12,10 +12,12 @@ class CalculateTaxes
   end
 
   def call
-
+    Rails.logger.info("incomes: #{@incomes}")
     result = calculate_taxes(:invoiced, @incomes)
 
-    adjust_incomes_with_in_invoice_taxes if @save_in
+    resume_in_invoice = adjust_incomes_with_in_invoice_taxes if @save_in
+
+    result.merge!(calculate_taxes(:post_iva, @incomes))
 
     pre_utility = calculate_utility(result)
 
@@ -41,6 +43,7 @@ class CalculateTaxes
   def adjust_incomes_with_in_invoice_taxes
     resume_in_invoice, total_taxes_in_invoice = @save_in.resume_in_invoice_tax
     @incomes -= total_taxes_in_invoice
+    resume_in_invoice
   end
 
   def save_taxes(taxes)

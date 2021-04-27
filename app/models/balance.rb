@@ -31,6 +31,9 @@ class Balance < ApplicationRecord
     resume_in_invoice, total_in_invoice = resume_in_invoice_tax
     resume.merge!(resume_in_invoice)
     resume_invoiced, total = find_tax(:invoiced)
+    resume_invoiced_a, total_a = find_tax(:post_iva)
+    resume_invoiced.merge!(resume_invoiced_a)
+    total += total_a
     resume.merge!(resume_invoiced)
     resume[:egresos] = total_expenses
     resume[:pre_utilidad] = resume[:ingresos] - resume[:egresos] - total - total_in_invoice

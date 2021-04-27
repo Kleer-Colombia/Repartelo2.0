@@ -71,7 +71,7 @@ class DataFactory
                          type_tax: :invoiced)
     TaxMaster.create!(name: 'Chanchito',
                                value: 2.5,
-                               type_tax: :invoiced)
+                               type_tax: :post_iva)
     TaxMaster.create!(name: 'Retefuente',
                                 value: 26,
                                 type_tax: :utility)
