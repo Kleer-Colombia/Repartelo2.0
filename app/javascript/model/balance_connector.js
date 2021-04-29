@@ -81,7 +81,7 @@ export default {
     axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
     axios({
       method: 'post',
-      url: BALANCE_URL + '/' + properties.id,
+      url: BALANCE_URL + '/edit/' + properties.id,
       data: properties
     }).then(function (response) {
       if (response.status === 200) {
