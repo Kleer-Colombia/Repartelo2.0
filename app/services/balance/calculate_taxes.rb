@@ -17,7 +17,10 @@ class CalculateTaxes
 
     resume_in_invoice = adjust_incomes_with_in_invoice_taxes if @save_in
 
-    result.merge!(calculate_taxes(:post_iva, @incomes))
+    retefuente = resume_in_invoice["RETEFUENTE"] != nil ? resume_in_invoice["RETEFUENTE"] :0
+    reteica = resume_in_invoice["RETEICA"] != nil ? resume_in_invoice["RETEICA"] :0
+
+    result.merge!(calculate_taxes(:post_iva, @incomes + retefuente + reteica))
 
     pre_utility = calculate_utility(result)
 
