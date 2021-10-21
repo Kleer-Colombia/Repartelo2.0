@@ -10,6 +10,10 @@ end
 gem 'rails', '~> 5.2.3'
 gem 'pg', '>= 0.19.0.beta'
 
+#Old repositories
+gem 'mimemagic', github: 'mimemagicrb/mimemagic', ref: '01f92d86d15d85cfd0f20dabd025dcbd36a8a60f'
+gem 'bcrypt', git: 'https://github.com/codahale/bcrypt-ruby.git', :require => 'bcrypt'
+
 gem 'puma', '3.12.0'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
@@ -18,7 +22,7 @@ gem 'foreman', '~> 0.64.0'
 gem 'coffee-rails', '~> 4.2'
 gem 'wdm', '>= 0.1.0' if Gem.win_platform?
 # Use ActiveModel has_secure_password
-gem 'bcrypt', '~> 3.1.7'
+#gem 'bcrypt', '~> 3.1.7' --- now in old repositories
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 gem 'money-rails'
