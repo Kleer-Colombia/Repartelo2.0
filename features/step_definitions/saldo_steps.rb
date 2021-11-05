@@ -9,7 +9,7 @@ And(/^I see the data for all kleerers$/) do
 end
 
 And(/^I see the money distribution for all of them$/) do
-  @balances_data[:output].each_key do |kleerer|
+  @balances_data[:output].keys do |kleerer|
     @actual_page.select_kleerer kleerer
       expect(@actual_page.find_total).to eq @balances_data[:output][kleerer][:total]
       expect(@actual_page.find_ingresos).to eq @balances_data[:output][kleerer][:ingresos]

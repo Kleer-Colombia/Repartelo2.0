@@ -9,7 +9,7 @@ module SimpleCommand
     end
 
     def add_multiple_errors(errors_hash)
-      errors_hash.each do |key, values|
+      errors_hash.each_pair do |key, values|
         values.each { |value| add key, value }
       end
     end
