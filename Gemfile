@@ -34,8 +34,10 @@ gem 'faraday', '~> 0.15.4'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'capybara', '~> 3.28'
-  gem 'selenium-webdriver'
+  gem "pry-rails"
+  gem "pry-byebug"
+  gem 'capybara', '~> 2.7', '>= 2.7.1'
+  gem 'selenium-webdriver', '~> 2.53', '>= 2.53.4'
   gem 'cucumber-rails', require: false
   # database_cleaner is not required, but highly recommended
   gem 'database_cleaner'

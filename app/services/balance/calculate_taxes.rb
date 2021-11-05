@@ -15,7 +15,8 @@ class CalculateTaxes
     Rails.logger.info("incomes: #{@incomes}")
     result = calculate_taxes(:invoiced, @incomes)
 
-    resume_in_invoice = adjust_incomes_with_in_invoice_taxes if @save_in
+    resume_in_invoice = {}
+    resume_in_invoice.merge!(adjust_incomes_with_in_invoice_taxes) if @save_in
 
     retefuente = resume_in_invoice["RETEFUENTE"] != nil ? resume_in_invoice["RETEFUENTE"] :0
     reteica = resume_in_invoice["RETEICA"] != nil ? resume_in_invoice["RETEICA"] :0

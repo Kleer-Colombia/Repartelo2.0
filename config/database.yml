@@ -23,14 +23,11 @@ default: &default
 development: &development
   <<: *default
   database: repartelo2_0_development
-  username: postgres
-  password: k4m4l30n
   host: localhost
 
 test:
   <<: *development
   database: repartelo2_0_test
-
 
 production:
   <<: *default
