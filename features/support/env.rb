@@ -28,26 +28,36 @@ def poltergeist
 end
 
 def chrome
-  caps = Selenium::WebDriver::Remote::Capabilities.chrome("chromeOptions" => {"args" => [ "--start-maximized" ]})
+  driver_class = Selenium::WebDriver
+  capabilities = driver_class::Remote::Capabilities.chrome
+  options      = driver_class::Chrome::Options.new(args: %w{start-maximized})
+
   Capybara.register_driver :chrome do |app|
-    Capybara::Selenium::Driver.new(app,
-                                   :browser => :chrome,
-                                   :desired_capabilities => caps)
+    driver_options = {
+      browser: :chrome,
+      capabilities: [capabilities, options]
+    }
+
+    Capybara::Selenium::Driver.new(app, driver_options)
   end
+
   Capybara.javascript_driver = :chrome
 end
 
 def headless_chrome
+  driver_class = Selenium::WebDriver
+  capabilities = driver_class::Remote::Capabilities.chrome
+  options      = driver_class::Chrome::Options.new(args: %w{headless disable-gpu start-maximized})
+
   Capybara.register_driver(:headless_chrome) do |app|
-    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-        chromeOptions: { args: %w[headless disable-gpu start-maximized] }
-    )
-    Capybara::Selenium::Driver.new(
-        app,
-        browser: :chrome,
-        desired_capabilities: capabilities
-    )
+    driver_options = {
+      browser: :chrome,
+      capabilities: [capabilities, options]
+    }
+
+    Capybara::Selenium::Driver.new(app, driver_options)
   end
+
   Capybara.javascript_driver = :headless_chrome
 end
 
@@ -61,7 +71,7 @@ if(ENV['RAILS_ENV']=='acceptance_test')
     Capybara::Selenium::Driver.new(app,
                                    :browser => :remote,
                                    :url => "http://localhost:4444/wd/hub",
-                                   :desired_capabilities => caps)
+                                   :capabilities => caps)
   end
 else
   if ENV['BROWSER'] == 'headless-chrome'
@@ -71,6 +81,8 @@ else
     chrome
   end
 end
+
+Capybara.server = :puma, { Silent: true }
 
 # Capybara defaults to CSS3 selectors rather than XPath.
 # If you'd prefer to use XPath, just uncomment this line and adjust any
