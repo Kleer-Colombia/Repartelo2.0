@@ -12,6 +12,12 @@ require 'capybara/poltergeist'
 
 module Phantomjs
   class Platform
+    class << self
+      def system_phantomjs_path
+        nil
+      end
+    end
+
     class Win32x86_64 < Win32
       class << self
         def useable?
@@ -43,7 +49,7 @@ end
 def chrome
   driver_class = Selenium::WebDriver
   capabilities = driver_class::Remote::Capabilities.chrome
-  options      = driver_class::Chrome::Options.new(args: %w{start-maximized})
+  options      = driver_class::Chrome::Options.new(args: %w{start-maximized log-level=3})
 
   Capybara.register_driver :chrome do |app|
     driver_options = {
@@ -60,7 +66,7 @@ end
 def headless_chrome
   driver_class = Selenium::WebDriver
   capabilities = driver_class::Remote::Capabilities.chrome
-  options      = driver_class::Chrome::Options.new(args: %w{headless disable-gpu start-maximized})
+  options      = driver_class::Chrome::Options.new(args: %w{headless disable-gpu start-maximized log-level=3})
 
   Capybara.register_driver(:headless_chrome) do |app|
     driver_options = {
