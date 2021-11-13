@@ -10,6 +10,19 @@ require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
 
+module Phantomjs
+  class Platform
+    class Win32x86_64 < Win32
+      class << self
+        def useable?
+          host_os.include?('mingw32') and architecture.include?('x86_64')
+        end
+      end
+    end
+  end
+end
+
+Phantomjs.available_platforms << Phantomjs::Platform::Win32x86_64
 
 def poltergeist
   Capybara.register_driver :poltergeist do |app|
