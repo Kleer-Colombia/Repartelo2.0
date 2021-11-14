@@ -19,10 +19,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup Ruby and install gems
+      - name: Setup Ruby
         uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
+
+      - name: Install Gems
+        run: bundle install
 
       - name: Install postgres client
         run: sudo apt-get install libpq-dev
