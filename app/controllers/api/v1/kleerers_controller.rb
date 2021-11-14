@@ -11,6 +11,8 @@ module Api
         send_response(prepare_info(Kleerer.where.not(name: 'KleerCo')))
       end
 
+      #TODO: function to find just kleerCo
+
       private
 
       def prepare_info(kleerers)
