@@ -61,6 +61,7 @@ class BalanceDetailPageObject < APageObject
 
   def remove_expense expense
     @page.click_button("removeExpense#{expense}")
+    @page.click_button("Aceptar")
   end
 
   def select_kleerer kleerer
