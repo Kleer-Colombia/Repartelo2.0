@@ -11,5 +11,5 @@ ActiveAdmin.register Kleerer do
 #   permitted << :other if params[:action] == 'create' && current_user.admin?
 #   permitted
 # end
-  permit_params :name, :option
+  permit_params :name, :option_id
 end
