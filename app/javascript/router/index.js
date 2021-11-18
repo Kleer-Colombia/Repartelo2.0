@@ -7,6 +7,7 @@ import DetailBalance from '../components/balances/DetailBalance'
 import Saldos from '../components/saldos/Saldos'
 import Taxes from '../components/taxes/Taxes'
 import Reports from '../components/reports/Reports'
+import DynamicReports from '../components/dynamic_reports/DynamicReports'
 
 Vue.use(Router)
 
@@ -50,6 +51,11 @@ export default new Router({
       path: '/reportes',
       name: 'reportes',
       component: Reports
+    },
+    {
+      path: '/reportes-dinamicos',
+      name: 'reportes-dinamicos',
+      component: DynamicReports
     }
   ]
 })
