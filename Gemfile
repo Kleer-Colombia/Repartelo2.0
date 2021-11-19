@@ -17,7 +17,7 @@ gem 'bcrypt', git: 'https://github.com/codahale/bcrypt-ruby.git', :require => 'b
 gem 'puma', '3.12.0'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
-gem 'webpacker', '>= 4.0.x'
+gem 'webpacker', '~> 5.x'
 gem 'foreman', '~> 0.64.0'
 gem 'coffee-rails', '~> 4.2'
 gem 'wdm', '>= 0.1.0' if Gem.win_platform?
