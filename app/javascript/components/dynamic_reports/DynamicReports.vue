@@ -33,7 +33,7 @@
 
 <script>
 import SafeBody from '../base/SafeBody'
-import dynamic_report_connector from '../../model/dynamic_report_connector'
+import DynamicReportConnector from '../../model/dynamic_report_connector'
 import util from '../../model/util'
 
 export default {
@@ -51,7 +51,7 @@ export default {
   },
   created () {
     console.log('creado')
-    dynamic_report_connector.getData(this, context => {
+    DynamicReportConnector.getData(this, context => {
       context.loaded = true
       console.log(this.kleerCo.meses)
     })
