@@ -15,6 +15,8 @@
                 </el-menu-item>
                 <el-menu-item index="reporte" id="Reportes" style="float: left;" @click="route_to('/reportes')">Reportes
                 </el-menu-item>
+                <el-menu-item index="reporte" id="Reportes dinamicos" style="float: left;" @click="route_to('/reportes-dinamicos')">Reportes dinamicos
+                </el-menu-item>
                 <el-menu-item style="float: right;" id="Logout" @click="logout()" index="logout">Logout</el-menu-item>
             </div>
         </el-menu>
