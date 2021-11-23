@@ -45,6 +45,8 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.7.1'
   gem 'phantomjs'
   gem 'poltergeist'
+  gem 'capistrano', '~> 3.3.0'
+  gem 'capistrano-figaro-yml', '~> 1.0.2'
 end
 
 group :development do
