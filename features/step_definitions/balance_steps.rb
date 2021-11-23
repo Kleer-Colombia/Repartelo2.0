@@ -202,6 +202,7 @@ Then(/^I could not edit the balance$/) do
   expect(@actual_page.editable? 'Enviar a saldos').to eq false
   Kleerer.all.each do |kleerer|
     unless kleerer.name == "KleerCo"
+      sleep(1)
       expect(@actual_page.editable?("check#{kleerer.name}")).to eq false
     end
   end

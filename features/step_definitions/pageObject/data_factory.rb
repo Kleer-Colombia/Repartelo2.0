@@ -110,6 +110,7 @@ class DataFactory
   end
 
   def self.load_taxes
+    #left invoices
     load_file('taxes.tsv',Tax)
   end
 
@@ -121,9 +122,16 @@ class DataFactory
     puts "Entity: #{entity}, size: #{entity.all.size}"
     csv_text = File.read("#{Dir.pwd}/features/data/#{filename}")
     csv = CSV.parse(csv_text, :headers => true, :col_sep => "\t")
+
+    puts "invoices: #{Invoice.all.size}"
+
     csv.each do |row|
-      entity.create!(row.to_hash)
+      begin
+        entity.create!(row.to_hash)
+      rescue Exception => error
+        puts error
+      end
     end
     puts "Entity: #{entity}, loaded: #{entity.all.size}"
-  end
+    end
 end
