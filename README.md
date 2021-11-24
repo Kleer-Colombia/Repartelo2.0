@@ -28,7 +28,7 @@
         - gem install bcrypt --platform=ruby
 
     iniciar la base de datos
-        
+        bundle exec figaro install - <and set env variables in config/application.yml>
         bundle exec rails db:create
         bundle exec rails db:migrate
 
