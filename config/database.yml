@@ -19,13 +19,13 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: postgres
-  password: 1603
+  username: <%= ENV.fetch("DB_USERNAME") %>
+  password: <%= ENV.fetch("DB_PASSWORD") %>
 
 development: &development
   <<: *default
   database: repartelo2_0_development
-  host: localhost
+  host: <%= ENV.fetch("DB_HOST") %>
 
 test:
   <<: *development
