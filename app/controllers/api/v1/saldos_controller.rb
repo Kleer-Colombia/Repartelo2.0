@@ -29,6 +29,13 @@ module Api
             end
         end
       end
+
+      # def find_balance_saldos_kleerCo
+      #   begin
+      #     response = @actions.
+      #   rescue
+      #   end
+      # end
     end
   end
 end
