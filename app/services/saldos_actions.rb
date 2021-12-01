@@ -10,6 +10,7 @@ class SaldosActions
 
   #refactor
   def find_saldos_of_balances kleerer_id
+    puts 'entra'
     data = Saldo.where(kleerer_id: kleerer_id).order(created_at: :desc)
     summary = { total: 0, ingresos: 0, egresos: 0}
     summary = calculate_totals_of_balances data,summary
