@@ -14,6 +14,7 @@ export default {
       if (response.status === 200) {
         context.taxes = response.data.response
       }
+      console.log(context.taxes)
     })
       .catch(function (error) {
         util.processErrorMsgs(error, context)
