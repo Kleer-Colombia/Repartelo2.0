@@ -10,7 +10,6 @@ class SaldosActions
 
   #refactor
   def find_saldos_of_balances kleerer_id
-    puts 'entra'
     data = Saldo.where(kleerer_id: kleerer_id).order(created_at: :desc)
     summary = { total: 0, ingresos: 0, egresos: 0}
     summary = calculate_totals_of_balances data,summary
@@ -64,7 +63,7 @@ class SaldosActions
   def calculate_totals_by_month data, all_saldos
     month_array = []
 
-    if all_saldos
+    if all_saldos == true
       months = separate_in_months data
     else
       months = separate_in_months_with_balance data
