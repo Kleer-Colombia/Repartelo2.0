@@ -3,7 +3,7 @@ import until from './util'
 
 const kleerCoIndex = 5
 const API_URL = until.apiUrl()
-const kleerCoURL = `${API_URL}/saldos/${kleerCoIndex}`
+const kleerCoURL = `${API_URL}/objectives`
 
 export default {
   getData(context, nextFunction) {
@@ -15,7 +15,6 @@ export default {
       context.kleerCo = response.data.response
       console.log(response.data.response)
       if (nextFunction) {
-        console.log('entra al if')
         nextFunction(context)
       }
     }).catch(error => {

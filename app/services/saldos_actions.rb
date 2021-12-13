@@ -3,8 +3,18 @@ class SaldosActions
   def find_saldos kleerer_id
     data = Saldo.where(kleerer_id: kleerer_id).order(created_at: :desc)
     summary = { total: 0, ingresos: 0, egresos: 0}
-    summary = calculate_totals data,summary
-    summary[:meses] = calculate_totals_by_month data
+    summary = calculate_totals data, summary
+    summary[:meses] = calculate_totals_by_month data, all_saldos: true
+    return summary
+  end
+
+  #refactor
+  def find_saldos_of_balances kleerer_id
+    puts 'entra'
+    data = Saldo.where(kleerer_id: kleerer_id).order(created_at: :desc)
+    summary = { total: 0, ingresos: 0, egresos: 0}
+    summary = calculate_totals_of_balances data,summary
+    summary[:meses] = calculate_totals_by_month data, all_saldos: false
     return summary
   end
 
@@ -17,6 +27,8 @@ class SaldosActions
       raise StandardError,"invalid options for add saldo #{options}"
     end
   end
+
+
 
   private
 
@@ -35,7 +47,7 @@ class SaldosActions
     saldo.save!
   end
 
-  def calculate_totals data,summary
+  def calculate_totals data, summary
     data.each do |saldo|
       if saldo.amount < 0
         summary[:egresos] += saldo.amount
@@ -47,10 +59,17 @@ class SaldosActions
     return summary
   end
 
-  def calculate_totals_by_month data
+
+
+  def calculate_totals_by_month data, all_saldos
     month_array = []
 
-    months = separete_in_months data
+    if all_saldos
+      months = separate_in_months data
+    else
+      months = separate_in_months_with_balance data
+    end
+
     months.each do |month_name, data|
       month = { total: 0, ingresos: 0, egresos: 0, fecha: month_name}
       month = calculate_totals data, month
@@ -61,14 +80,10 @@ class SaldosActions
     return month_array
   end
 
-  def separete_in_months data
+  def separate_in_months data
     months = {}
     data.each do |saldo|
-      date = saldo.created_at.strftime('%Y-%m')
-      unless months[date]
-        months[date] = []
-      end
-      months[date].push saldo
+      months = get_one_month_saldos saldo, months
     end
     return months
   end
@@ -88,4 +103,43 @@ class SaldosActions
     end
     return details
   end
+
+  #Saldos with balance
+
+  def calculate_totals_of_balances data, summary
+    data.each do |saldo|
+      if saldo.balance
+        if saldo.amount < 0
+          summary[:egresos] += saldo.amount
+        else
+          summary[:ingresos] += saldo.amount
+        end
+        summary[:total] += saldo.amount
+      end
+    end
+    return summary
+  end
+
+  def separate_in_months_with_balance data
+    months = {}
+    data.each do |saldo|
+      if saldo.balance
+        months = get_one_month_saldos saldo, months
+      end
+    end
+    return months
+  end
+
+  # Generals
+  def get_one_month_saldos saldo, months
+    date = saldo.created_at.strftime('%Y-%m')
+    unless months[date]
+      months[date] = []
+    end
+    months[date].push saldo
+
+    return months
+  end
+
+
 end
