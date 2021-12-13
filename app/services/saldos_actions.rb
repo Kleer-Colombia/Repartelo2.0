@@ -4,7 +4,7 @@ class SaldosActions
     data = Saldo.where(kleerer_id: kleerer_id).order(created_at: :desc)
     summary = { total: 0, ingresos: 0, egresos: 0}
     summary = calculate_totals data, summary
-    summary[:meses] = calculate_totals_by_month data, all_saldos: true
+    summary[:meses] = calculate_totals_by_month data, true
     return summary
   end
 
@@ -13,7 +13,7 @@ class SaldosActions
     data = Saldo.where(kleerer_id: kleerer_id).order(created_at: :desc)
     summary = { total: 0, ingresos: 0, egresos: 0}
     summary = calculate_totals_of_balances data,summary
-    summary[:meses] = calculate_totals_by_month data, all_saldos: false
+    summary[:meses] = calculate_totals_by_month data, false
     return summary
   end
 
@@ -63,9 +63,11 @@ class SaldosActions
   def calculate_totals_by_month data, all_saldos
     month_array = []
 
-    if all_saldos == true
+    if all_saldos
       months = separate_in_months data
+      puts 'todos'
     else
+      puts 'se va por el otro'
       months = separate_in_months_with_balance data
     end
 
