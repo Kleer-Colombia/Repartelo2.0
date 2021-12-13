@@ -4,7 +4,7 @@ class DetailTaxes < TaxesHelper
   def call
     data = []
     taxes_preconsolidated = {} #{ica: {id: ... ,data[]},Donaciones: {id: ... ,data[]}}
-    groups = {"RETEICA" => "Ica", "RETEFUENTE" => "Reserva Retefuente",  "RETEIVA" => "IVA", "Retefuente" => "Reserva Retefuente"}
+    groups = {"RETEICA" => "Ica","Retefuente" => "Reserva Retefuente", "RETEFUENTE" => "Reserva Retefuente",  "RETEIVA" => "IVA", }
 
     TaxMaster.taxes_to_show.each do |tax_master|
       puts tax_master.name
