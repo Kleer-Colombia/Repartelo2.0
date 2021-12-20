@@ -4,7 +4,7 @@ class DetailTaxes < TaxesHelper
   def call
     data = []
     taxes_preconsolidated = {} #{ica: {id: ... ,data[]},Donaciones: {id: ... ,data[]}}
-    groups = {"RETEICA" => "Ica","Retefuente" => "Reserva Retefuente", "RETEFUENTE" => "Reserva Retefuente",  "RETEIVA" => "IVA", }
+    groups = {"RETEICA" => "Ica", "RETEFUENTE" => "Reserva Retefuente",  "RETEIVA" => "IVA","Retefuente" => "Reserva Retefuente" }
 
     TaxMaster.taxes_to_show.each do |tax_master|
       puts tax_master.name
@@ -22,11 +22,6 @@ class DetailTaxes < TaxesHelper
       else
         taxes_preconsolidated[tax_key_to_group] = {id: tax_master.id, data: total_taxes}
       end
-      if taxes_preconsolidated['Reserva Retefuente']
-        puts taxes_preconsolidated['Reserva Retefuente']
-        elsif puts "[]"
-      end
-
     end
 
     taxes_preconsolidated.each do |key, value|

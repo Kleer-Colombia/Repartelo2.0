@@ -8,5 +8,5 @@ Feature: visualizar informes dinamicos
     And I have data for balances
     And I logged
     When I go to the "Reportes-dinamicos" option
-    When I should see the total for KleerCo
+    Then I should see the total for KleerCo
 
