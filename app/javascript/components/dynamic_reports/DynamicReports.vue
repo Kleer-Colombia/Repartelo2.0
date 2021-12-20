@@ -22,7 +22,7 @@
                 <div slot="header" class="clearfix">
                   <h2>Ingresos anuales</h2>
                 </div>
-                <h2>{{ this.filter() }}</h2>
+                <h2 id="ingresos-kleerco">{{ this.filter() }}</h2>
               </el-card>
             </el-col>
           </el-row>
