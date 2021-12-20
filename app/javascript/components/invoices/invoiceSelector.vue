@@ -159,7 +159,7 @@ export default {
           date: '',
 	        trm: ''
         },
-	      percentageSelector: {
+	    percentageSelector: {
           max: 100,
 		      min: 0,
 		      digit: 0,
@@ -169,7 +169,11 @@ export default {
 		      percentageTotal: 0,
 		      canAddDigits: false,
           canAddDecimals: false
-	      }
+	    },
+		percentageUsed: {
+			digitPart: 0,
+			decimalPart: 0
+		}
       }
     },
     created: function () {
@@ -185,7 +189,7 @@ export default {
         this.loaded = false
 	      this.cleanSelection()
       },
-	    cleanSelection () {
+		cleanSelection () {
         this.canAddInvoice = false
         this.selectedInvoice = false
         this.percentageSelector.digit = 0
@@ -198,21 +202,21 @@ export default {
 	    },
       handleSelectInvoice (row) {
         this.selectedInvoice = row
-	      this.canAddInvoice = true
-	      let info = (this.selectedInvoice.percentageUsed + '').split('.')
-        let digitPart = parseInt(info[0])
-	      let decimalPart = 0
-	      if (info.length === 2) {
-	        let stringDecimal = info[1]
+	    this.canAddInvoice = true
+	    let info = (this.selectedInvoice.percentageUsed + '').split('.')
+        this.percentageUsed.digitPart = parseInt(info[0])
+	    this.percentageUsed.decimalPart = 0
+	    if (info.length === 2) {
+	    	let stringDecimal = info[1]
   
 	        if (stringDecimal.length === 1) {
             stringDecimal = stringDecimal + '0'
 	        }
-	        decimalPart = parseInt(stringDecimal)
+	        this.percentageUsed.decimalPart = parseInt(stringDecimal)
 	      }
-	      this.percentageSelector.max = 99 - digitPart
+	    this.percentageSelector.max = 99 - this.percentageUsed.digitPart
         this.percentageSelector.digit = this.percentageSelector.max
-        this.percentageSelector.maxDecimal = 100 - decimalPart
+        this.percentageSelector.maxDecimal = 100 - this.percentageUsed.decimalPart
         this.percentageSelector.decimals = this.percentageSelector.maxDecimal
 
         this.percentageSelector.canAddDigits = this.percentageSelector.max > 0
@@ -221,6 +225,7 @@ export default {
         this.calculatePercentageTotal()
       },
       calculatePercentageTotal () {
+		this.updateSliderLimits()
         let decimals = this.percentageSelector.decimals / 100
         this.percentageSelector.percentageTotal = this.percentageSelector.digit + decimals
 
@@ -254,7 +259,14 @@ export default {
       },
       formatPrice (value) {
         return util.formatPrice(value)
-      }
+      },
+	  updateSliderLimits(){
+		  if (this.percentageSelector.digit < this.percentageSelector.max ) {
+			  this.percentageSelector.maxDecimal = 100
+		  } else {
+			  this.percentageSelector.maxDecimal = 100 - this.percentageUsed.decimalPart
+		  }
+	  }
 
     }
   }
