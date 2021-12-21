@@ -12,8 +12,9 @@ Then(/^I should see the Impuestos home page$/) do
 end
 
 And(/^I see the data for all taxes$/) do
+  # sleep(60)
   expect(@actual_page.find_total_for('Ica')).to eq '$3.231.133,76'
   expect(@actual_page.find_total_for('Chanchito')).to eq '$7.343.485,80'
-  expect(@actual_page.find_total_for('Retefuente')).to eq '$69.783.409,79'
+  expect(@actual_page.find_total_for('Reserva\ Retefuente')).to eq '$69.783.409,79'
   expect(@actual_page.find_total_for('IVA')).to eq '$48.287.902,82'
 end
