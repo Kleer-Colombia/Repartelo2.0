@@ -14,9 +14,11 @@ export default {
     }).then(response => {
       context.kleerCo = response.data.response.total
       context.kleerers = response.data.response.kleerers
-      console.log(context)
       if (nextFunction) {
+        console.log('before nextFunction')
+        console.log(response.data.response)
         nextFunction(context)
+        console.log('after nextFunction')
       }
     }).catch(error => {
       until.processErrorMsgs(error)

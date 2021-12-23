@@ -28,7 +28,7 @@ module Api
         kleerCo = Kleerer.find_by(name: "KleerCo")
         kleerers = []
         Kleerer.all.each do |kleerer|
-          if kleerer.option.name.include? "meta"
+          if kleerer.name != kleerCo.name
             kleerers.push(kleerer)
           end
         end
@@ -55,14 +55,18 @@ module Api
           saldos.each do |saldo|
             #that could be better
             if saldo.balance_id
-              balance_input = Saldo.find_by(kleerer_id: kleerCo.id, balance_id: saldo.balance_id)
-              percentage = Percentage.find_by(kleerer_id: kleerer.id, balance_id: saldo.balance_id)
-              input = balance_input.amount * (percentage.value / 100)
-              date = saldo.created_at.strftime('%Y').to_i
-              inputs.each do |year_input|
-                if year_input[:year] == date
-                  year_input[:input] = year_input[:input] + input
+              begin
+                balance_input = Saldo.find_by(kleerer_id: kleerCo.id, balance_id: saldo.balance_id)
+                percentage = Percentage.find_by(kleerer_id: kleerer.id, balance_id: saldo.balance_id)
+                input = balance_input.amount * (percentage.value / 100)
+                date = saldo.created_at.strftime('%Y').to_i
+                inputs.each do |year_input|
+                  if year_input[:year] == date
+                    year_input[:input] = year_input[:input] + input
+                  end
                 end
+              rescue
+                break
               end
             end
           end
@@ -88,23 +92,6 @@ module Api
         unless years.include? date
           years.push(date)
         end
-        years
-      end
-
-      def calculate_totals_by_year data
-        month_array = []
-        puts 'metodo'
-
-        years = separate_in_years data
-
-        years.each do |year_name, data|
-          puts year_name
-          if data[0]
-            puts data[0]
-          end
-
-        end
-
         years
       end
       end
