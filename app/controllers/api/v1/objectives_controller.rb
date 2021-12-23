@@ -13,7 +13,11 @@ module Api
         begin
           kleerCo = Kleerer.find_by(name: "KleerCo")
           kleerCo_id = kleerCo.id
-          response = @actions.find_saldos_of_balances kleerCo_id
+          response = {
+            total: @actions.find_saldos_of_balances(kleerCo_id),
+            kleerers: find_kleerers_inputs
+          }
+
           send_response response
         rescue StandardError => error
           halt_message("can't find kleerCo report: #{error.message}", :internal_server_error)
@@ -21,47 +25,88 @@ module Api
       end
 
       def find_kleerers_inputs
+        kleerCo = Kleerer.find_by(name: "KleerCo")
         kleerers = []
         Kleerer.all.each do |kleerer|
           if kleerer.option.name.include? "meta"
-            kleerers.push({
-                            name: kleerer.name,
-                            inputs: []
-                          })
-
+            kleerers.push(kleerer)
           end
+        end
+
+        kleerers_inputs = []
+        kleerers.each do |kleerer|
+          complete_kleerer_input = {
+                  name: kleerer.name,
+                  inputs: []
+                }
 
           saldos = Saldo.where(kleerer_id: kleerer.id)
-          saldos_by_year = separate_in_years saldos
+          puts "#{kleerer.id} #{kleerer.name}"
 
-          puts saldos_by_year
+          inputs = []
+          years = separate_in_years saldos
+          years.each do |year|
+            inputs.push({
+                          year: year,
+                          input: 0
+                        })
+          end
+
+          saldos.each do |saldo|
+            #that could be better
+            if saldo.balance_id
+              balance_input = Saldo.find_by(kleerer_id: kleerCo.id, balance_id: saldo.balance_id)
+              percentage = Percentage.find_by(kleerer_id: kleerer.id, balance_id: saldo.balance_id)
+              input = balance_input.amount * (percentage.value / 100)
+              date = saldo.created_at.strftime('%Y').to_i
+              inputs.each do |year_input|
+                if year_input[:year] == date
+                  year_input[:input] = year_input[:input] + input
+                end
+              end
+            end
+          end
+          complete_kleerer_input[:inputs] = inputs
+          kleerers_inputs.push(complete_kleerer_input)
+
         end
-        puts kleerers
+        kleerers_inputs
       end
 
       private
 
-      #TODO: year and month saldos as a service
       def separate_in_years data
-        years = {}
+        years = []
         data.each do |saldo|
-          years = get_one_year_saldos saldo, years
+          years = get_one_year_distributions saldo, years
         end
-        return years
+        years
       end
 
-      def get_one_year_saldos saldo, years
-        date = saldo.created_at.strftime('%Y')
-        unless years[date]
-          years[date] = []
+      def get_one_year_distributions saldo, years
+        date = saldo.created_at.strftime('%Y').to_i
+        unless years.include? date
+          years.push(date)
         end
-        if saldo.balance
-          years[date].push saldo
-        end
-
-        return years
+        years
       end
 
+      def calculate_totals_by_year data
+        month_array = []
+        puts 'metodo'
+
+        years = separate_in_years data
+
+        years.each do |year_name, data|
+          puts year_name
+          if data[0]
+            puts data[0]
+          end
+
+        end
+
+        years
+      end
+      end
     end
-  end
 end

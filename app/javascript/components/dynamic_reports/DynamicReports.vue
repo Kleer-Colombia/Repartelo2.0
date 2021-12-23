@@ -45,6 +45,7 @@ export default {
     return{
       loaded: false,
       kleerCo: {},
+      kleerers: [],
       years: {
         disponibleYears: [],
         filteredYear: 2021
