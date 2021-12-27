@@ -12,10 +12,13 @@ export default {
       method: 'get',
       url: kleerCoURL
     }).then(response => {
-      context.kleerCo = response.data.response
-      console.log(response.data.response)
+      context.kleerCo = response.data.response.total
+      context.kleerers = response.data.response.kleerers
       if (nextFunction) {
+        console.log('before nextFunction')
+        console.log(response.data.response)
         nextFunction(context)
+        console.log('after nextFunction')
       }
     }).catch(error => {
       until.processErrorMsgs(error)

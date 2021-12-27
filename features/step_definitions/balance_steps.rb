@@ -91,6 +91,7 @@ Then(/^I should see "([^"]*)" for total "([^"]*)"$/) do |total, operation|
   else
     @actual_page.find_total_profit
                end
+  sleep(2)
   expect(real_value).to eq total
 end
 
