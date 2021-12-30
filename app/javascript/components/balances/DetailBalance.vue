@@ -1,10 +1,6 @@
 <template>
     <safe-body>
-
-        <div v-if="!loaded">
-            <h1> Cargando ... </h1>
-        </div>
-        <div v-else>
+        <div v-loading="!loaded">
             <properties-balance :id="balance.id"
                                 :client="balance.client"
                                 :project="balance.project"

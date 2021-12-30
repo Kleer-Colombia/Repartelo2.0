@@ -24,10 +24,10 @@
 
 		<el-dialog title="Facturas abiertas en alegra" :visible.sync="visible" width="90%"
 		           center>
-			<div v-if="!loaded">
-				<h3> Consultando facturas en alegra ... </h3>
-			</div>
-			<div v-else>
+<!--			<div v-if="!loaded">-->
+<!--				<h3> Consultando facturas en alegra ... </h3>-->
+<!--			</div>-->
+			<div v-loading="!loaded">
 				<el-row id="tableInvoice">
 					<el-table highlight-current-row @current-change="handleSelectInvoice"
 					          :data="invoices" height="300" size="small">
@@ -64,13 +64,13 @@
 					</el-table>
 				</el-row>
 			</div>
-			
+
 			<el-row>
 				<el-col :span="2" style="padding-top: 10px; text-align: center">
 					 {{percentageSelector.min}}%
 				</el-col>
 				<el-col :span="8">
-				
+
 				<el-slider
 								v-model="percentageSelector.digit"
 								:max="percentageSelector.max"
@@ -79,33 +79,33 @@
 								:disabled="!percentageSelector.canAddDigits"
 								>
 				</el-slider>
-				
+
 				</el-col>
 				<el-col :span="2" style="padding-top: 10px; text-align: center">
 					   {{percentageSelector.max}}%
 				</el-col>
-				
+
 				<el-col :span="2" style="padding-top: 10px; text-align: center">
 					Decimales .{{percentageSelector.minDecimal}}
 				</el-col>
 				<el-col :span="8">
-					
+
 					<el-slider
 									v-model="percentageSelector.decimals"
 									:max="percentageSelector.maxDecimal"
 									:min="percentageSelector.minDecimal"
 									@change="calculatePercentageTotal()"
 									:disabled="!percentageSelector.canAddDecimals"
-									
+
 					>
 					</el-slider>
-				
+
 				</el-col>
 				<el-col :span="2" style="padding-top: 10px; text-align: center">
 					. {{percentageSelector.maxDecimal}}
 				</el-col>
 			</el-row>
-			
+
 			<el-row>
 				<el-col :offset="3" :span="10" style="padding-top: 10px; text-align: center">
 					TRM: (solo se aplica a monedas diferentes a COP, por favor usa la pactada en el banco)
@@ -114,7 +114,7 @@
 					<input-money name="trm" v-model="trm"></input-money>
 				</el-col>
 			</el-row>
-			
+
 			<span slot="footer" class="dialog-footer">
 				<el-button  type="primary" :disabled="!canAddInvoice || !editable"
 				           @click='addToBalance()' icon="el-icon-success">Agregar</el-button>
@@ -208,7 +208,7 @@ export default {
 	    this.percentageUsed.decimalPart = 0
 	    if (info.length === 2) {
 	    	let stringDecimal = info[1]
-  
+
 	        if (stringDecimal.length === 1) {
             stringDecimal = stringDecimal + '0'
 	        }
@@ -221,7 +221,7 @@ export default {
 
         this.percentageSelector.canAddDigits = this.percentageSelector.max > 0
         this.percentageSelector.canAddDecimals = this.percentageSelector.maxDecimal > 0
-  
+
         this.calculatePercentageTotal()
       },
       calculatePercentageTotal () {
