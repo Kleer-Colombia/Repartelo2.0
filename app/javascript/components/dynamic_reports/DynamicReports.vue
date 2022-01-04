@@ -15,6 +15,7 @@
               </el-radio-group>
             </el-col>
           </el-row>
+          <el-button @click="addObjective()">objetivo</el-button>
           <el-row>
             <el-col :span="12" :offset="2">
               <el-card class="box-card">
@@ -88,7 +89,7 @@ export default {
       this.getDisponibleYears();
       this.filter();
       this.filterKleerers();
-      console.log(this.kleerers);
+      console.log(this.years);
     });
   },
   methods: {
@@ -130,10 +131,19 @@ export default {
     getDisponibleYears() {
       let actualYear = new Date().getFullYear();
       this.kleerCo.meses.forEach((date) => {
-        if (date.fecha.includes(actualYear)) {
+        if (date.fecha.includes(actualYear) || date.fecha.includes(actualYear - 1)) {
+          console.log(`incluido ${actualYear}`);
           this.years.disponibleYears.push(actualYear--);
         }
       });
+    },
+
+    addObjective() {
+      console.log("addObjective");
+      DynamicReportConnector.addObjective(this, {objective: {
+        amount: 1000000,
+        kleerer_id: 5
+      }});
     },
   },
 };

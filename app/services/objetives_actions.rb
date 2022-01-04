@@ -1,7 +1,6 @@
 class ObjetivesActions
 
   def find_kleerers_inputs kleerCo
-
     kleerers_inputs = []
     kleerers = []
 
@@ -16,6 +15,12 @@ class ObjetivesActions
       kleerers_inputs.push(input)
     end
     kleerers_inputs
+  end
+
+  def add_objective objective
+    objective = objective[:objective]
+    objective = Objective.new(amount: objective[:amount], kleerer_id: objective[:kleerer_id])
+    objective.save!
   end
 
   private

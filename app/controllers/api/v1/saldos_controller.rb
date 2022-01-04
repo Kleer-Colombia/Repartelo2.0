@@ -20,7 +20,9 @@ module Api
       end
 
       def add_saldo
+          puts params
           validate_parameters [:saldo], params do
+
             begin
               response = @actions.add_saldo saldo: params[:saldo]
               send_response response
