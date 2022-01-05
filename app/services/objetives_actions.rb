@@ -17,6 +17,30 @@ class ObjetivesActions
     kleerers_inputs
   end
 
+  def find_objectives kleerer_id
+    all_objectives = Objective.where(kleerer_id: kleerer_id)
+    years = separate_in_years all_objectives
+    objectives = []
+    puts all_objectives.max_by{|h| h[:created_at]}.id
+    years.each do |year|
+      year_objectives = []
+
+      all_objectives.each do |objective|
+        if objective.created_at.to_s.include? year.to_s
+          year_objectives.push(objective)
+        end
+      end
+
+      objectives.push({
+                   year: year,
+                   objectives: year_objectives
+                 })
+      puts year
+      puts year_objectives
+    end
+
+  end
+
   def add_objective objective
     objective = objective[:objective]
     objective = Objective.new(amount: objective[:amount], kleerer_id: objective[:kleerer_id])
