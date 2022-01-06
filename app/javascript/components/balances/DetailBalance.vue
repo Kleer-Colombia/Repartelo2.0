@@ -16,12 +16,15 @@
                         <incomes-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
                                        :allIncomes="incomes.realIncomes"/>
                     </div>
-                    <div v-if="checkFlag('balance-invoices')">
-                    <invoice-selector v-on:updateTaxes="updateTaxes" :editable="balance.editable"
-                                      :allIncomes="incomes.realIncomes"/>
+                    <div v-if="loaded">
+                      <div v-if="checkFlag('balance-invoices')">
+                      <invoice-selector v-on:updateTaxes="updateTaxes" :editable="balance.editable"
+                                        :allIncomes="incomes.realIncomes"/>
+                      </div>
+                      <expenses-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
+                                      :allExpenses="expenses.realExpenses"/>
                     </div>
-                    <expenses-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
-                                    :allExpenses="expenses.realExpenses"/>
+                    
                 </el-col>
                 <el-col :span="18">
                     <el-card class="box-card">
