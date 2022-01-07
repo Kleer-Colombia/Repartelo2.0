@@ -2,7 +2,7 @@
   <SafeBody tittle="Aporte por ventas a Kleer Colombia">
     <div v-loading="!loaded">
       <el-row :gutter="20">
-        <el-col :span="18" :offset="6">
+        <el-col :span="20" :offset="2">
           <el-row :gutter="20">
             <el-col :span="9" style="padding-top: 10px">
               <el-radio-group v-model="years.filteredYear" @change="filter()">
@@ -14,19 +14,46 @@
           </el-row>
           <el-button @click="addObjective()">objetivo</el-button>
           <el-row>
-            <el-col :span="12" :offset="2">
+            <el-col :span="10" :offset="1">
               <el-card class="box-card">
                 <div slot="header" class="clearfix">
                   <h2>Ingresos anuales</h2>
                 </div>
-                <h2 id="ingresos-kleerco">{{ this.ingresos_kleerco }}</h2>
+                <h2 id="ingresos-kleerco">{{ this.formatPrice(this.kleerCoIncome) }}</h2>
+              </el-card>
+            </el-col>
+            <el-col :span="10" :offset="1">
+              <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                  <h2>Objetivo anual</h2>
+                </div>
+                <h2 id="objetivo">{{ this.formatPrice(this.yearObjective) }}</h2>
+              </el-card>
+            </el-col>
+            <el-col :span="10" :offset="1">
+              <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                  <h2>Saldo a favor</h2>
+                </div>
+                <h2 id="saldo-favor">{{ this.formatPrice(this.getPositiveBalance()) }}</h2>
+              </el-card>
+            </el-col>
+            <el-col :span="10" :offset="1">
+              <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                  <h2>Saldo pendiente</h2>
+                </div>
+                <h2 id="saldo-pendiente">{{ this.formatPrice(this.getOutstandingBalance()) }}</h2>
               </el-card>
             </el-col>
           </el-row>
         </el-col>
       </el-row>
+      <br />
+      
       <el-row :gutter="20">
         <el-col :span="20" :offset="2" style="padding-top: 10px">
+          <h2>Aportes por kleerer</h2>
           <el-table
             :id="kleerers"
             :data="filteredKleerers"
@@ -35,16 +62,13 @@
             style="width: 100%"
           >
             <el-table-column prop="name" label="Kleerer"> </el-table-column>
-            <el-table-column label="Aporte a Kleer Colombia" prop="input">
+            <el-table-column label="Aporte a Kleer Colombia" prop="inputFormat">
             </el-table-column>
-            <el-table-column label="Meta anual">
-              No disponible
+            <el-table-column label="Meta anual" prop="anualMeta">
             </el-table-column>
-            <el-table-column label="Saldo pendiente">
-              No disponible
+            <el-table-column label="Saldo pendiente" prop="outstandingBalance">
             </el-table-column>
-            <el-table-column label="Saldo a favor">
-              No disponible
+            <el-table-column label="Saldo a favor" prop="positiveBalance">
             </el-table-column>
           </el-table>
         </el-col>
@@ -66,45 +90,66 @@ export default {
       loaded: false,
       kleerCo: {},
       kleerers: [],
-      ingresos_kleerco: 0,
+      objectives: [],
+      kleerCoIncome: 0,
+      yearObjective: 0,
+      objectiveByKleerer: 0,
       filteredKleerers: [
         {
           kleerer: "",
-          input: 0,
+          inputFormat: 0,
         },
       ],
       years: {
         disponibleYears: [],
-        filteredYear: 2021,
+        filteredYear: new Date().getFullYear(),
       },
     };
   },
   created() {
     DynamicReportConnector.getData(this, (context) => {
       context.loaded = true;
-      console.log(context.loaded);
+      
       this.getDisponibleYears();
       this.filter();
-      this.filterKleerers();
-      console.log(this.years);
     });
   },
   methods: {
     filter() {
+      this.filterKleerCoIncome();
+      this.filterObjectives();
       this.filterKleerers();
-      const totalIncome = this.kleerCo.meses.reduce((total, month) => {
+      
+    },
+
+    filterKleerCoIncome(){
+      this.kleerCoIncome = this.kleerCo.meses.reduce((total, month) => {
         if (month.fecha.includes(this.years.filteredYear.toString())) {
           return total + parseFloat(month.ingresos);
         }
         return total + 0;
       }, 0);
-      // this.filterKleerers()
-      this.ingresos_kleerco = util.formatPrice(totalIncome);
     },
 
     filterKleerers() {
+      const kleerersWithMeta = this.kleerers.filter(kleerer => {
+        return kleerer.hasMeta;
+      }).length;
+
+      this.objectiveByKleerer = this.yearObjective / kleerersWithMeta;
+
       this.filteredKleerers = this.kleerers
         .map((kleerer) => {
+          const anualMeta = kleerer.hasMeta ? this.formatPrice(this.objectiveByKleerer) : 'No tiene meta';
+
+          const positiveBalance = kleerer.hasMeta ? (totalIncome - this.objectiveByKleerer > 0 ? 
+                              this.formatPrice(totalIncome - this.objectiveByKleerer) : this.formatPrice(0))
+                              : 'No tiene meta';
+
+          const outstandingBalance = kleerer.hasMeta ? (this.objectiveByKleerer - totalIncome > 0 ? 
+                              this.formatPrice(this.objectiveByKleerer - totalIncome) : this.formatPrice(0))
+                              : 'No tiene meta';
+
           let totalIncome = 0;
           if (kleerer.inputs.length !== 0) {
             try {
@@ -117,14 +162,27 @@ export default {
           }
           return {
             name: kleerer.name,
-            input: util.formatPrice(totalIncome),
+            inputFormat: this.formatPrice(totalIncome),
+            input: totalIncome,
+            hasMeta: kleerer.hasMeta,
+            anualMeta: anualMeta,
+            positiveBalance: positiveBalance,
+            outstandingBalance: outstandingBalance                 
           };
         })
         .filter((kleerer) => {
-          return kleerer.input !== "$0,00";
+          return kleerer.input !== 0 || kleerer.hasMeta;
         });
     },
 
+    filterObjectives(){
+      const objective = this.objectives.find((objective) => {
+        return objective.year === this.years.filteredYear;
+      }).actual.amount;
+      
+      this.yearObjective = objective;
+    },
+    
     getDisponibleYears() {
       let actualYear = new Date().getFullYear();
       this.kleerCo.meses.forEach((date) => {
@@ -135,12 +193,27 @@ export default {
       });
     },
 
+    getPositiveBalance(){
+      const balance = this.kleerCoIncome - this.yearObjective;
+      return balance > 0 ? balance : 0;
+    },
+
+    getOutstandingBalance(){
+      const balance = this.yearObjective - this.kleerCoIncome;
+      console.log(this.kleerCoIncome + " - " + this.yearObjective);
+      return balance > 0 ? balance : 0;
+    },
+
     addObjective() {
       console.log("addObjective");
       DynamicReportConnector.addObjective(this, {objective: {
         amount: 1000000,
         kleerer_id: 5
       }});
+    },
+
+    formatPrice(price) {
+      return util.formatPrice(price);
     },
   },
 };

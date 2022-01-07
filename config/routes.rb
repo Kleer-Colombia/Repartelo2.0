@@ -53,7 +53,6 @@ Rails.application.routes.draw do
 
       post '/objectives/', to: 'objectives#add_objective'
       get '/objectives/reports', to: 'objectives#find_kleerco_reports'
-      # post '/objectives/', to: ''
 
 
     end

@@ -30,15 +30,16 @@ class ObjetivesActions
           year_objectives.push(objective)
         end
       end
-
+      actual_objective = year_objectives.max_by{|h| h[:created_at]}
       objectives.push({
                    year: year,
-                   objectives: year_objectives
+                   objectives: year_objectives,
+                   actual: actual_objective
                  })
       puts year
       puts year_objectives
     end
-
+    objectives
   end
 
   def add_objective objective
@@ -52,6 +53,7 @@ class ObjetivesActions
   def get_one_kleerer_input kleerer, kleerCo
     complete_kleerer_input = {
       name: kleerer.name,
+      hasMeta: kleerer.option.name.include?("meta"),
       inputs: []
     }
 

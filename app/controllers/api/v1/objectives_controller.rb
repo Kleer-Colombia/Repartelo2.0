@@ -10,33 +10,19 @@ module Api
       end
 
       def find_kleerco_reports
-        # begin
-          kleerCo = Kleerer.find_by(name: "KleerCo")
-          kleerCo_id = kleerCo.id
-
-          response = {
-            total: @saldo_actions.find_saldos_of_balances(kleerCo_id),
-            kleerers: @objectives_actions.find_kleerers_inputs(kleerCo)
-          }
-          @objectives_actions.find_objectives(kleerCo_id)
-          send_response response
-        # rescue StandardError => error
-        #   halt_message("can't find kleerCo report: #{error.message}", :internal_server_error)
-        # end
-      end
-
-      def find_objectives
         begin
           kleerCo = Kleerer.find_by(name: "KleerCo")
           kleerCo_id = kleerCo.id
 
           response = {
-            objectives: @objectives_actions.find_objectives(kleerer_id)
+            total: @saldo_actions.find_saldos_of_balances(kleerCo_id),
+            kleerers: @objectives_actions.find_kleerers_inputs(kleerCo),
+            objectives: @objectives_actions.find_objectives(kleerCo_id)
           }
-
+          @objectives_actions.find_objectives(kleerCo_id)
           send_response response
-        rescue
-          halt_message("can't find kleerCo objectives: #{error.message}", :internal_server_error)
+        rescue StandardError => error
+          halt_message("can't find kleerCo report: #{error.message}", :internal_server_error)
         end
       end
 
