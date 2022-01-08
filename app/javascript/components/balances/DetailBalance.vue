@@ -1,6 +1,7 @@
 <template>
     <safe-body>
         <div v-loading="!loaded">
+          <div v-if="loaded">
             <properties-balance :id="balance.id"
                                 :client="balance.client"
                                 :project="balance.project"
@@ -10,6 +11,7 @@
                                 :date="balance.date"
                                 :editable="balance.editable"
             />
+            
             <el-row id="row-money">
                 <el-col :span="6">
                     <div v-if="checkFlag('balance-incomes')">
@@ -105,7 +107,7 @@
             </el-row>
         </div>
 
-
+        </div>
     </safe-body>
 </template>
 <style>
