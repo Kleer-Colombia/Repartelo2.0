@@ -27,7 +27,10 @@
                 <div slot="header" class="clearfix">
                   <h2>Objetivo anual</h2>
                 </div>
-                <h2 id="objetivo">{{ this.formatPrice(this.yearObjective) }}</h2>
+                <div class="objective-container">
+                  <h2 id="objetivo">{{ this.formatPrice(this.yearObjective) }}</h2>
+                  <add-objective-button />
+                </div>
               </el-card>
             </el-col>
             <el-col :span="10" :offset="1">
@@ -81,10 +84,11 @@
 import SafeBody from "../base/SafeBody";
 import DynamicReportConnector from "../../model/dynamic_report_connector";
 import util from "../../model/util";
+import AddObjectiveButton from './AddObjectiveButton.vue';
 
 export default {
   name: "DynamicReports",
-  components: { SafeBody },
+  components: { SafeBody, AddObjectiveButton },
   data() {
     return {
       loaded: false,
@@ -220,4 +224,9 @@ export default {
 </script>
 
 <style scoped>
+.objective-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
 </style>

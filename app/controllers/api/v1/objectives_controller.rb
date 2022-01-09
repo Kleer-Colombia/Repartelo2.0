@@ -26,10 +26,12 @@ module Api
         end
       end
 
-      def add_objective
+      def add_objective_kleerco
         validate_parameters [:objective], params do
           begin
-            response = @objectives_actions.add_objective objective: params[:objective]
+            kleerCo = Kleerer.find_by(name: "KleerCo")
+
+            response = @objectives_actions.add_objective(params[:objective], kleerCo.id)
             send_response response
           rescue StandardError => error
             halt_message("can't add objective: #{error.message}", :internal_server_error)

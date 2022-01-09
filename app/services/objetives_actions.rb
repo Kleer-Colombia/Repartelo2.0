@@ -42,9 +42,11 @@ class ObjetivesActions
     objectives
   end
 
-  def add_objective objective
-    objective = objective[:objective]
-    objective = Objective.new(amount: objective[:amount], kleerer_id: objective[:kleerer_id])
+  def add_objective objective, kleerer_id
+    # objective = objective[:objective]
+    puts 'objective'
+    puts objective
+    objective = Objective.new(amount: objective[:amount], kleerer_id: kleerer_id)
     objective.save!
   end
 
