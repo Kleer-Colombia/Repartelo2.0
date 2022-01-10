@@ -29,7 +29,9 @@
                 </div>
                 <div class="objective-container">
                   <h2 id="objetivo">{{ this.formatPrice(this.yearObjective) }}</h2>
-                  <add-objective-button />
+                  <div v-if="this.years.filteredYear === this.years.currentYear">
+                    <add-objective-button />
+                  </div>
                 </div>
               </el-card>
             </el-col>
@@ -107,6 +109,7 @@ export default {
       years: {
         disponibleYears: [],
         filteredYear: new Date().getFullYear(),
+        currentYear: new Date().getFullYear(),
       },
     };
   },
@@ -169,7 +172,7 @@ export default {
             inputFormat: this.formatPrice(totalIncome),
             input: totalIncome,
             hasMeta: kleerer.hasMeta,
-            anualMeta: anualMeta,
+            anualMeta: anualMeta ? anualMeta : 'No meta disponible',
             positiveBalance: positiveBalance,
             outstandingBalance: outstandingBalance                 
           };
@@ -180,18 +183,24 @@ export default {
     },
 
     filterObjectives(){
-      const objective = this.objectives.find((objective) => {
-        return objective.year === this.years.filteredYear;
-      }).actual.amount;
+      let objective 
+
+      try{
+        objective = this.objectives.find((objective) => {
+          return objective.year === this.years.filteredYear;
+        }).actual.amount;
+
+        this.yearObjective = objective;
+      }catch(e){
+        this.yearObjective = 'No hay metas disponibles para este año'
+      }
       
-      this.yearObjective = objective;
     },
     
     getDisponibleYears() {
       let actualYear = new Date().getFullYear();
       this.kleerCo.meses.forEach((date) => {
         if (date.fecha.includes(actualYear) || date.fecha.includes(actualYear - 1)) {
-          console.log(`incluido ${actualYear}`);
           this.years.disponibleYears.push(actualYear--);
         }
       });
@@ -204,12 +213,10 @@ export default {
 
     getOutstandingBalance(){
       const balance = this.yearObjective - this.kleerCoIncome;
-      console.log(this.kleerCoIncome + " - " + this.yearObjective);
       return balance > 0 ? balance : 0;
     },
 
     addObjective() {
-      console.log("addObjective");
       DynamicReportConnector.addObjective(this, {objective: {
         amount: 1000000,
         kleerer_id: 5
@@ -217,7 +224,12 @@ export default {
     },
 
     formatPrice(price) {
-      return util.formatPrice(price);
+      const formattedPrice = util.formatPrice(price);
+      if(formattedPrice !== '$NaN'){
+        return formattedPrice;
+      }else{
+        return price;
+      }
     },
   },
 };

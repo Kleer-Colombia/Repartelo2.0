@@ -21,7 +21,6 @@ class ObjetivesActions
     all_objectives = Objective.where(kleerer_id: kleerer_id)
     years = separate_in_years all_objectives
     objectives = []
-    puts all_objectives.max_by{|h| h[:created_at]}.id
     years.each do |year|
       year_objectives = []
 
