@@ -42,9 +42,6 @@ class ObjetivesActions
   end
 
   def add_objective objective, kleerer_id
-    # objective = objective[:objective]
-    puts 'objective'
-    puts objective
     objective = Objective.new(amount: objective[:amount], kleerer_id: kleerer_id)
     objective.save!
   end
@@ -57,10 +54,7 @@ class ObjetivesActions
       hasMeta: kleerer.option.name.include?("meta"),
       inputs: []
     }
-
     saldos = Saldo.where(kleerer_id: kleerer.id)
-    puts "#{kleerer.id} #{kleerer.name}"
-
     inputs = []
     years = separate_in_years saldos
     years.each do |year|
@@ -69,7 +63,6 @@ class ObjetivesActions
                     input: 0
                   })
     end
-
     saldos.each do |saldo|
       #that could be better
       if saldo.balance_id
