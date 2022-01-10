@@ -12,7 +12,6 @@
               </el-radio-group>
             </el-col>
           </el-row>
-          <el-button @click="addObjective()">objetivo</el-button>
           <el-row>
             <el-col :span="10" :offset="1">
               <el-card class="box-card">
@@ -126,7 +125,6 @@ export default {
       this.filterKleerCoIncome();
       this.filterObjectives();
       this.filterKleerers();
-      
     },
 
     filterKleerCoIncome(){
@@ -177,9 +175,9 @@ export default {
             outstandingBalance: outstandingBalance                 
           };
         })
-        .filter((kleerer) => {
-          return kleerer.input !== 0 || kleerer.hasMeta;
-        });
+      .filter((kleerer) => {
+        return kleerer.input !== 0 || kleerer.hasMeta;
+      });
     },
 
     filterObjectives(){
@@ -214,13 +212,6 @@ export default {
     getOutstandingBalance(){
       const balance = this.yearObjective - this.kleerCoIncome;
       return balance > 0 ? balance : 0;
-    },
-
-    addObjective() {
-      DynamicReportConnector.addObjective(this, {objective: {
-        amount: 1000000,
-        kleerer_id: 5
-      }});
     },
 
     formatPrice(price) {
