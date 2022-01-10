@@ -51,7 +51,9 @@ Rails.application.routes.draw do
       get '/reports/expenses', to: 'reports#expenses_report'
       get '/reports/saldos', to: 'reports#saldos_report'
 
-      get '/objectives/', to: 'objectives#find_kleerco_reports'
+      post '/objectives/', to: 'objectives#add_objective_kleerco'
+      get '/objectives/reports', to: 'objectives#find_kleerco_reports'
+
 
     end
   end

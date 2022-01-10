@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_08_185257) do
+ActiveRecord::Schema.define(version: 2021_12_30_144242) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -137,6 +137,14 @@ ActiveRecord::Schema.define(version: 2020_01_08_185257) do
     t.datetime "updated_at", null: false
     t.date "payment_date", null: false
     t.index ["tax_master_id"], name: "index_manual_taxes_on_tax_master_id"
+  end
+
+  create_table "objectives", force: :cascade do |t|
+    t.decimal "amount"
+    t.bigint "kleerer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["kleerer_id"], name: "index_objectives_on_kleerer_id"
   end
 
   create_table "options", force: :cascade do |t|

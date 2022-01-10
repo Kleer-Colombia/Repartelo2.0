@@ -1,7 +1,6 @@
 class ObjetivesActions
 
   def find_kleerers_inputs kleerCo
-
     kleerers_inputs = []
     kleerers = []
 
@@ -18,17 +17,44 @@ class ObjetivesActions
     kleerers_inputs
   end
 
+  def find_objectives kleerer_id
+    all_objectives = Objective.where(kleerer_id: kleerer_id)
+    years = separate_in_years all_objectives
+    objectives = []
+    years.each do |year|
+      year_objectives = []
+
+      all_objectives.each do |objective|
+        if objective.created_at.to_s.include? year.to_s
+          year_objectives.push(objective)
+        end
+      end
+      actual_objective = year_objectives.max_by{|h| h[:created_at]}
+      objectives.push({
+                   year: year,
+                   objectives: year_objectives,
+                   actual: actual_objective
+                 })
+      puts year
+      puts year_objectives
+    end
+    objectives
+  end
+
+  def add_objective objective, kleerer_id
+    objective = Objective.new(amount: objective[:amount], kleerer_id: kleerer_id)
+    objective.save!
+  end
+
   private
 
   def get_one_kleerer_input kleerer, kleerCo
     complete_kleerer_input = {
       name: kleerer.name,
+      hasMeta: kleerer.option.name.include?("meta"),
       inputs: []
     }
-
     saldos = Saldo.where(kleerer_id: kleerer.id)
-    puts "#{kleerer.id} #{kleerer.name}"
-
     inputs = []
     years = separate_in_years saldos
     years.each do |year|
@@ -37,7 +63,6 @@ class ObjetivesActions
                     input: 0
                   })
     end
-
     saldos.each do |saldo|
       #that could be better
       if saldo.balance_id

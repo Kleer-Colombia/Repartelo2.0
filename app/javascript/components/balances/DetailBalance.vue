@@ -16,7 +16,7 @@
                 <el-col :span="6">
                     <div v-if="checkFlag('balance-incomes')">
                         <incomes-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
-                                       :allIncomes="incomes.realIncomes"/>
+                                      :allIncomes="incomes.realIncomes"/>
                     </div>
                     <div v-if="loaded">
                       <div v-if="checkFlag('balance-invoices')">
