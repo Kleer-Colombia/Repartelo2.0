@@ -145,16 +145,7 @@ export default {
 
       this.filteredKleerers = this.kleerers
         .map((kleerer) => {
-          const anualMeta = kleerer.hasMeta ? this.formatPrice(this.objectiveByKleerer) : 'No tiene meta';
-
-          const positiveBalance = kleerer.hasMeta ? (totalIncome - this.objectiveByKleerer > 0 ? 
-                              this.formatPrice(totalIncome - this.objectiveByKleerer) : this.formatPrice(0))
-                              : 'No tiene meta';
-
-          const outstandingBalance = kleerer.hasMeta ? (this.objectiveByKleerer - totalIncome > 0 ? 
-                              this.formatPrice(this.objectiveByKleerer - totalIncome) : this.formatPrice(0))
-                              : 'No tiene meta';
-
+          
           let totalIncome = 0;
           if (kleerer.inputs.length !== 0) {
             try {
@@ -165,6 +156,16 @@ export default {
               totalIncome = 0;
             }
           }
+          const anualMeta = kleerer.hasMeta ? this.formatPrice(this.objectiveByKleerer) : 'No tiene meta';
+
+          const positiveBalance = kleerer.hasMeta ? (totalIncome - this.objectiveByKleerer > 0 ? 
+                              this.formatPrice(totalIncome - this.objectiveByKleerer) : this.formatPrice(0))
+                              : 'No tiene meta';
+
+          const outstandingBalance = kleerer.hasMeta ? (this.objectiveByKleerer - totalIncome > 0 ? 
+                              this.formatPrice(this.objectiveByKleerer - totalIncome) : this.formatPrice(0))
+                              : 'No tiene meta';
+
           return {
             name: kleerer.name,
             inputFormat: this.formatPrice(totalIncome),
@@ -178,6 +179,7 @@ export default {
       .filter((kleerer) => {
         return kleerer.input !== 0 || kleerer.hasMeta;
       });
+      console.log(this.filteredKleerers);
     },
 
     filterObjectives(){
