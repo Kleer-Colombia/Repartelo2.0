@@ -178,6 +178,9 @@ export default {
         })
       .filter((kleerer) => {
         return kleerer.input !== 0 || kleerer.hasMeta;
+      })
+      .sort((a,b) => {
+        return b.input - a.input;
       });
       console.log(this.filteredKleerers);
     },

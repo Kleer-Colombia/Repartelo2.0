@@ -58,8 +58,8 @@
                             </div>
                             <div v-else>
                                 <kleerers-distribution v-model="distribution.result" :editable="balance.editable"
-                                                       :balancePercentages="distribution.balancePercentages"
-                                                       key="kleerers-distribution"/>
+                                                      :balancePercentages="distribution.balancePercentages"
+                                                      key="kleerers-distribution"/>
                             </div>
 
                         </el-row>
@@ -92,7 +92,7 @@
                             <el-row>
                                 <el-col :offset="8">
                                     <el-button type="success" id="Enviar a saldos" @click="close()"
-                                               :disabled="!balance.editable">Enviar a saldos
+                                              :disabled="!balance.editable">Enviar a saldos
                                     </el-button>
                                 </el-col>
                             </el-row>

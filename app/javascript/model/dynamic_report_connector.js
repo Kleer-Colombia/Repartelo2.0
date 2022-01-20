@@ -21,9 +21,9 @@ export default {
                     nextFunction(context)
                 }
             })
-            // .catch(error => {
-            //     util.processErrorMsgs(error)
-            // })
+            .catch(error => {
+                util.processErrorMsgs(error)
+            })
     },
 
     addObjective(context, objective) {

@@ -18,8 +18,8 @@
             <el-col :offset="2" :span="4">
                 <div v-show="kleerer.selected">
                     <el-input-number v-model="kleerer.value" @change="formatValue(kleerer, $event)"
-                                     :name="'inputPercentage' + kleerer.name" :disabled="!editable"
-                                     :min="1" :max="100">
+                                    :name="'inputPercentage' + kleerer.name" :disabled="!editable"
+                                    :min="1" :max="100">
                     </el-input-number>
                 </div>
             </el-col>
@@ -27,7 +27,7 @@
         <el-row :gutter="10">
             <el-col :offset="8" :span="4">
                 <el-button type="success" id="Distribuir" @click="distribute()"
-                           :disabled="!editable || !checkFlag('balance-distribute')">Distribuir
+                          :disabled="!editable || !checkFlag('balance-distribute')">Distribuir
                 </el-button>
             </el-col>
         </el-row>
