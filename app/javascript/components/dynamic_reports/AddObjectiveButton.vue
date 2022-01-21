@@ -23,16 +23,16 @@ import InputMoney from '../base/InputMoney.vue'
 import DynamicReportConnector from "../../model/dynamic_report_connector";
 
 export default {
-  components: { InputMoney },
-    data () {
-        return {
-            format: 'expense',
-            dialogFormVisible: false,
-            objectiveInfo: {
-                amount: 0,
+    components: { InputMoney },
+        data () {
+            return {
+                format: 'expense',
+                dialogFormVisible: false,
+                objectiveInfo: {
+                    amount: 0,
+                }
             }
-        }
-    },
+        },
     methods: {
         addTax () {
             DynamicReportConnector.addObjective(this, {objective: this.objectiveInfo})

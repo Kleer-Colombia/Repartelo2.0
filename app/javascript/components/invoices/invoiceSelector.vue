@@ -2,7 +2,7 @@
 	<el-card class="box-card" :span="6">
 		<div slot="header" class="clearfix">
 			<el-button :disabled="!editable"
-			           type="primary" id='get-invoices' @click="openDialog()">Buscar factura
+			        type="primary" id='get-invoices' @click="openDialog()">Buscar factura
 			</el-button>
 		</div>
 
@@ -12,8 +12,8 @@
 					<div style="float: left">
 						<el-button-group style="margin-right: 5px;">
 							<el-button v-bind:id="'removeIncome'+income.amount" :disabled="!editable"
-							           :plain="true" size="mini" type="text" icon="el-icon-remove-outline"
-							           @click="removeIncome(income.id)"></el-button>
+							        :plain="true" size="mini" type="text" icon="el-icon-remove-outline"
+							        @click="removeIncome(income.id)"></el-button>
 						</el-button-group>
 						<label>{{ income.description }}</label>
 					</div>
@@ -23,17 +23,17 @@
 		</el-row>
 
 		<el-dialog title="Facturas abiertas en alegra" :visible.sync="visible" width="90%"
-		           center>
+		        center>
 <!--			<div v-if="!loaded">-->
 <!--				<h3> Consultando facturas en alegra ... </h3>-->
 <!--			</div>-->
 			<div v-loading="!loaded">
 				<el-row id="tableInvoice">
 					<el-table highlight-current-row @current-change="handleSelectInvoice"
-					          :data="invoices" height="300" size="small">
+					        :data="invoices" height="300" size="small">
 						<el-table-column property="id" label="Número" width="100" class="id">
 							<template slot-scope="scope">
-                 <span style="float: right;">
+                <span style="float: right;">
                     {{ scope.row.numberTemplate.number }} ({{scope.row.id}})
                 </span>
 							</template>
@@ -42,15 +42,15 @@
 						<el-table-column property="client.name" label="Cliente" width="550"></el-table-column>
 						<el-table-column property="total" label="Monto" width="120">
 							<template slot-scope="scope">
-                                 <span style="float: right;">
-                                                      {{ formatPrice(scope.row.total) }}
+                                <span style="float: right;">
+                                                    {{ formatPrice(scope.row.total) }}
                                 </span>
 							</template>
 						</el-table-column>
 						<el-table-column property="client.name" label="Moneda" width="120">
 							<template slot-scope="scope">
-                                 <span style="float: center;" v-if="scope.row.currency">
-                                  {{scope.row.currency.code}}
+                                <span style="float: center;" v-if="scope.row.currency">
+                                	{{scope.row.currency.code}}
                                 </span>
 							</template>
 						</el-table-column>
