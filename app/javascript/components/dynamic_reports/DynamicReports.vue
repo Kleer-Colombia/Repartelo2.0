@@ -28,9 +28,15 @@
                 </div>
                 <div class="objective-container">
                   <h2 id="objetivo">{{ this.formatPrice(this.yearObjective) }}</h2>
-                  <div v-if="this.years.filteredYear === this.years.currentYear">
-                    <add-objective-button />
+                  <div class="objective-buttons">
+                    <div v-if="this.years.filteredYear === this.years.currentYear">
+                      <add-objective-button/>
+                    </div>
+                    <div v-if="!yearObjective.includes('No')">
+                      <all-objectives-button v-bind:objectives="objectives" v-bind:year="years.filteredYear"/>
+                    </div>
                   </div>
+                  
                 </div>
               </el-card>
             </el-col>
@@ -62,7 +68,6 @@
             :id="kleerers"
             :data="filteredKleerers"
             border
-            :default-sort="{ prop: 'kleerer', order: 'ascending' }"
             style="width: 100%"
           >
             <el-table-column prop="name" label="Kleerer"> </el-table-column>
@@ -86,10 +91,11 @@ import SafeBody from "../base/SafeBody";
 import DynamicReportConnector from "../../model/dynamic_report_connector";
 import util from "../../model/util";
 import AddObjectiveButton from './AddObjectiveButton.vue';
+import AllObjectivesButton from './AllObjectivesButton.vue';
 
 export default {
   name: "DynamicReports",
-  components: { SafeBody, AddObjectiveButton },
+  components: { SafeBody, AddObjectiveButton, AllObjectivesButton },
   data() {
     return {
       loaded: false,
@@ -178,6 +184,9 @@ export default {
         })
       .filter((kleerer) => {
         return kleerer.input !== 0 || kleerer.hasMeta;
+      })
+      .sort((a,b) => {
+        return b.input - a.input;
       });
       console.log(this.filteredKleerers);
     },
