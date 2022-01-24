@@ -53,7 +53,7 @@ export default {
             return this.objectives.find(objective => objective.year === this.year).objectives
             .map(objective => {
                 return {
-                    created_at: objective.created_at.substr(0,9),
+                    created_at: objective.created_at.substr(0,10),
                     amount: objective.amount
                 }
             })
