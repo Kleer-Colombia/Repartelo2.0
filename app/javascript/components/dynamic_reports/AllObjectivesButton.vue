@@ -26,6 +26,7 @@
 
 import InputMoney from '../base/InputMoney.vue'
 import DynamicReportConnector from "../../model/dynamic_report_connector";
+import util from '../../model/util';
 
 export default {
     props:{
@@ -53,8 +54,8 @@ export default {
             return this.objectives.find(objective => objective.year === this.year).objectives
             .map(objective => {
                 return {
-                    created_at: objective.created_at.substr(0,9),
-                    amount: objective.amount
+                    created_at: objective.created_at.substr(0,10),
+                    amount: util.formatPrice(objective.amount)
                 }
             })
         }
