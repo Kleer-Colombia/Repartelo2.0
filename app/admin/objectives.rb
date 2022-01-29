@@ -11,6 +11,6 @@ ActiveAdmin.register Objective do
 #   permitted << :other if params[:action] == 'create' && current_user.admin?
 #   permitted
 # end
-permit_params :kleerer_id, :amount
+permit_params :kleerer_id, :amount, :created_at, :updated_at
 
 end
