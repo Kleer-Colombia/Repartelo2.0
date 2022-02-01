@@ -4,5 +4,6 @@ class Kleerer < ApplicationRecord
   has_many :saldos
   belongs_to :option
   has_and_belongs_to_many :coaching_sessions
+  has_and_belongs_to_many :objectives
 
 end

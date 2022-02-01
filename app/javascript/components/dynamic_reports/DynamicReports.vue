@@ -27,12 +27,12 @@
                   <h2>Objetivo anual</h2>
                 </div>
                 <div class="objective-container">
-                  <h2 id="objetivo">{{ this.formatPrice(this.yearObjective) }}</h2>
+                  <h2 id="objetivo">{{ this.formatPrice(this.yearObjective.amount) }}</h2>
                   <div class="objective-buttons">
                     <div v-if="this.years.filteredYear === this.years.currentYear">
                       <add-objective-button/>
                     </div>
-                    <div v-if="!yearObjective.includes('No')">
+                    <div v-if="!yearObjective.amount.includes('No')">
                       <all-objectives-button v-bind:objectives="objectives" v-bind:year="years.filteredYear"/>
                     </div>
                   </div>
@@ -54,6 +54,14 @@
                   <h2>Saldo pendiente</h2>
                 </div>
                 <h2 id="saldo-pendiente">{{ this.formatPrice(this.getOutstandingBalance()) }}</h2>
+              </el-card>
+            </el-col>
+            <el-col :span="10" :offset="1">
+              <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                  <h2>Saldo inicial</h2>
+                </div>
+                <h2 id="saldo-pendiente">{{ this.formatPrice(this.getInitialBalance()) }}</h2>
               </el-card>
             </el-col>
           </el-row>
@@ -103,7 +111,7 @@ export default {
       kleerers: [],
       objectives: [],
       kleerCoIncome: 0,
-      yearObjective: 0,
+      yearObjective: {},
       objectiveByKleerer: 0,
       filteredKleerers: [
         {
@@ -124,22 +132,25 @@ export default {
       
       this.getDisponibleYears();
       this.filter();
+      this.getInitialBalance()
     });
   },
   methods: {
     filter() {
-      this.filterKleerCoIncome();
       this.filterObjectives();
+      this.filterKleerCoIncome();
       this.filterKleerers();
     },
 
     filterKleerCoIncome(){
+      const initialBalance = typeof(this.getInitialBalance()) === 'number' ? this.getInitialBalance() : 0;
+
       this.kleerCoIncome = this.kleerCo.meses.reduce((total, month) => {
         if (month.fecha.includes(this.years.filteredYear.toString())) {
           return total + parseFloat(month.ingresos);
         }
         return total + 0;
-      }, 0);
+      }, initialBalance);
     },
 
     filterKleerers() {
@@ -147,7 +158,7 @@ export default {
         return kleerer.hasMeta;
       }).length;
 
-      this.objectiveByKleerer = this.yearObjective / kleerersWithMeta;
+      this.objectiveByKleerer = this.yearObjective.amount / kleerersWithMeta;
 
       this.filteredKleerers = this.kleerers
         .map((kleerer) => {
@@ -188,7 +199,6 @@ export default {
       .sort((a,b) => {
         return b.input - a.input;
       });
-      console.log(this.filteredKleerers);
     },
 
     filterObjectives(){
@@ -197,7 +207,7 @@ export default {
       try{
         objective = this.objectives.find((objective) => {
           return objective.year === this.years.filteredYear;
-        }).actual.amount;
+        }).actual;
 
         this.yearObjective = objective;
       }catch(e){
@@ -216,13 +226,27 @@ export default {
     },
 
     getPositiveBalance(){
-      const balance = this.kleerCoIncome - this.yearObjective;
+      const balance = this.kleerCoIncome - this.yearObjective.amount;
       return balance > 0 ? balance : 0;
     },
 
     getOutstandingBalance(){
-      const balance = this.yearObjective - this.kleerCoIncome;
+      const balance = this.yearObjective.amount - this.kleerCoIncome;
       return balance > 0 ? balance : 0;
+    },
+
+    getInitialBalance(){
+      if(!this.yearObjective.initial_balance_percentage){
+        return 'No hay porcentage inicial'
+      }
+
+      const lastObjective = this.objectives.find((objective) => {
+        return objective.year === this.years.filteredYear - 1;
+      }).actual.amount;
+      
+      const initialBalance = lastObjective * this.yearObjective.initial_balance_percentage * 0.01;
+      return initialBalance
+      
     },
 
     formatPrice(price) {

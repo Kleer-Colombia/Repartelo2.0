@@ -17,7 +17,7 @@ module Api
           response = {
             total: @saldo_actions.find_saldos_of_balances(kleerCo_id),
             kleerers: @objectives_actions.find_kleerers_inputs(kleerCo),
-            objectives: @objectives_actions.find_objectives(kleerCo_id)
+            objectives: @objectives_actions.find_objectives
           }
           send_response response
         rescue StandardError => error
@@ -28,9 +28,7 @@ module Api
       def add_objective_kleerco
         validate_parameters [:objective], params do
           begin
-            kleerCo = Kleerer.find_by(name: "KleerCo")
-
-            response = @objectives_actions.add_objective(params[:objective], kleerCo.id)
+            response = @objectives_actions.add_objective(params[:objective])
             send_response response
           rescue StandardError => error
             halt_message("can't add objective: #{error.message}", :internal_server_error)
