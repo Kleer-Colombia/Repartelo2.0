@@ -16,7 +16,7 @@ class CalculateTaxes
     Rails.logger.info("incomes: #{@incomes}")
     #ACA SE CALCULA EL ICA
     # TODO: arreglar calculo de ICA
-    result = calculate_taxes(:invoiced, @incomes_post_iva)
+    result = calculate_taxes(:invoiced, @incomes)
 
     resume_in_invoice = {}
     resume_in_invoice.merge!(adjust_incomes_with_in_invoice_taxes) if @save_in

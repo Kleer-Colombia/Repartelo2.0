@@ -24,7 +24,7 @@ const util = {
         return '$' + val
     },
     getPercentage(value, total) {
-        return (value / total * 100).toFixed(1)
+        return (value / total * 100).toFixed(2)
     },
     apiUrl() {
         return this.baseUrl() + 'api/v1'

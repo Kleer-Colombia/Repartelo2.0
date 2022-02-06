@@ -40,16 +40,16 @@
                 </div>
               </el-card>
             </el-col>
-            <el-col :span="10" :offset="1">
-              <el-card class="box-card">
+            <el-col v-if="this.getPositiveBalance()" :span="10" :offset="1">
+              <el-card class="positive box-card">
                 <div slot="header" class="clearfix">
                   <h2>Saldo a favor</h2>
                 </div>
                 <h2 id="saldo-favor">{{ this.formatPrice(this.getPositiveBalance()) }}</h2>
               </el-card>
             </el-col>
-            <el-col :span="10" :offset="1">
-              <el-card class="box-card">
+            <el-col v-if="this.getOutstandingBalance()" :span="10" :offset="1">
+              <el-card class="negative box-card">
                 <div slot="header" class="clearfix">
                   <h2>Saldo pendiente</h2>
                 </div>
@@ -61,7 +61,7 @@
                 <div slot="header" class="clearfix">
                   <h2>Saldo inicial</h2>
                 </div>
-                <h2 id="saldo-pendiente">{{ this.formatPrice(this.getInitialBalance()) }}</h2>
+                <h2 id="saldo-inicial">{{ this.formatPrice(initialBalance) }}</h2>
               </el-card>
             </el-col>
           </el-row>
@@ -83,6 +83,8 @@
             </el-table-column>
             <el-table-column label="Meta anual" prop="anualMeta">
             </el-table-column>
+            <el-table-column label="Saldo inicial" prop="initialInputFormat">
+            </el-table-column>
             <el-table-column label="Saldo pendiente" prop="outstandingBalance">
             </el-table-column>
             <el-table-column label="Saldo a favor" prop="positiveBalance">
@@ -100,6 +102,7 @@ import DynamicReportConnector from "../../model/dynamic_report_connector";
 import util from "../../model/util";
 import AddObjectiveButton from './AddObjectiveButton.vue';
 import AllObjectivesButton from './AllObjectivesButton.vue';
+import dealer from "../../model/objectives_distributions";
 
 export default {
   name: "DynamicReports",
@@ -111,8 +114,10 @@ export default {
       kleerers: [],
       objectives: [],
       kleerCoIncome: 0,
+      initialBalance: 0,
       yearObjective: {},
       objectiveByKleerer: 0,
+      lastObjectiveByKleerer: 0,
       filteredKleerers: [
         {
           kleerer: "",
@@ -138,82 +143,46 @@ export default {
   methods: {
     filter() {
       this.filterObjectives();
-      this.filterKleerCoIncome();
       this.filterKleerers();
+      this.filterKleerCoIncome();
+      this.getInitialBalance()
     },
 
     filterKleerCoIncome(){
-      const initialBalance = typeof(this.getInitialBalance()) === 'number' ? this.getInitialBalance() : 0;
-
+      
       this.kleerCoIncome = this.kleerCo.meses.reduce((total, month) => {
         if (month.fecha.includes(this.years.filteredYear.toString())) {
-          return total + parseFloat(month.ingresos);
+          return total + Number(month.ingresos);
         }
         return total + 0;
-      }, initialBalance);
+      },0);
     },
 
     filterKleerers() {
-      const kleerersWithMeta = this.kleerers.filter(kleerer => {
-        return kleerer.hasMeta;
-      }).length;
+      this.objectiveByKleerer = this.yearObjective.amount / dealer.findKleerersWithMeta(this.kleerers).length
+      this.lastObjectiveByKleerer = this.lastObjective.amount / dealer.findKleerersWithMeta(this.kleerers).length
 
-      this.objectiveByKleerer = this.yearObjective.amount / kleerersWithMeta;
-
-      this.filteredKleerers = this.kleerers
-        .map((kleerer) => {
-          
-          let totalIncome = 0;
-          if (kleerer.inputs.length !== 0) {
-            try {
-              totalIncome = kleerer.inputs.find((input) => {
-                return input.year === this.years.filteredYear;
-              }).input;
-            } catch (e) {
-              totalIncome = 0;
-            }
-          }
-          const anualMeta = kleerer.hasMeta ? this.formatPrice(this.objectiveByKleerer) : 'No tiene meta';
-
-          const positiveBalance = kleerer.hasMeta ? (totalIncome - this.objectiveByKleerer > 0 ? 
-                              this.formatPrice(totalIncome - this.objectiveByKleerer) : this.formatPrice(0))
-                              : 'No tiene meta';
-
-          const outstandingBalance = kleerer.hasMeta ? (this.objectiveByKleerer - totalIncome > 0 ? 
-                              this.formatPrice(this.objectiveByKleerer - totalIncome) : this.formatPrice(0))
-                              : 'No tiene meta';
-
-          return {
-            name: kleerer.name,
-            inputFormat: this.formatPrice(totalIncome),
-            input: totalIncome,
-            hasMeta: kleerer.hasMeta,
-            anualMeta: anualMeta ? anualMeta : 'No meta disponible',
-            positiveBalance: positiveBalance,
-            outstandingBalance: outstandingBalance                 
-          };
-        })
-      .filter((kleerer) => {
-        return kleerer.input !== 0 || kleerer.hasMeta;
+      this.filteredKleerers = dealer.filterKleerers({
+        initialBalancePercentage: this.yearObjective.initial_balance_percentage * 0.01,
+        yearObjective: this.yearObjective,
+        filteredYear: this.years.filteredYear,
+        kleerers: this.kleerers,
+        objectiveByKleerer: this.objectiveByKleerer,
+        lastObjectiveByKleerer: this.lastObjectiveByKleerer,
+        formatPrice: this.formatPrice
       })
-      .sort((a,b) => {
-        return b.input - a.input;
-      });
     },
 
     filterObjectives(){
-      let objective 
+      this.yearObjective = dealer.filterObjectives(
+        this.objectives,
+        this.years.filteredYear
+      );
 
-      try{
-        objective = this.objectives.find((objective) => {
-          return objective.year === this.years.filteredYear;
-        }).actual;
-
-        this.yearObjective = objective;
-      }catch(e){
-        this.yearObjective = 'No hay metas disponibles para este año'
-      }
-      
+      this.lastObjective = dealer.filterObjectives(
+        this.objectives,
+        this.years.filteredYear - 1
+      )
     },
     
     getDisponibleYears() {
@@ -226,27 +195,29 @@ export default {
     },
 
     getPositiveBalance(){
-      const balance = this.kleerCoIncome - this.yearObjective.amount;
-      return balance > 0 ? balance : 0;
+      const initialBalance = typeof(this.initialBalance) === 'number' ? this.initialBalance : 0;
+      
+      const balance = this.kleerCoIncome + initialBalance - this.yearObjective.amount;
+      return balance > 0 ? balance : false;
     },
 
     getOutstandingBalance(){
-      const balance = this.yearObjective.amount - this.kleerCoIncome;
-      return balance > 0 ? balance : 0;
+      const initialBalance = typeof(this.initialBalance) === 'number' ? this.initialBalance : 0;
+
+      const balance = this.yearObjective.amount - this.kleerCoIncome - initialBalance;
+      return balance > 0 ? balance : false;
     },
 
     getInitialBalance(){
       if(!this.yearObjective.initial_balance_percentage){
-        return 'No hay porcentage inicial'
+        this.initialBalance = 'No hay porcentage inicial'
+      }else{
+        const initialBalance = this.filteredKleerers.reduce((total, kleerer) => {
+                            return total + kleerer.initialInput;
+      }, 0);
+      
+      this.initialBalance = initialBalance
       }
-
-      const lastObjective = this.objectives.find((objective) => {
-        return objective.year === this.years.filteredYear - 1;
-      }).actual.amount;
-      
-      const initialBalance = lastObjective * this.yearObjective.initial_balance_percentage * 0.01;
-      return initialBalance
-      
     },
 
     formatPrice(price) {
@@ -258,6 +229,7 @@ export default {
       }
     },
   },
+  
 };
 </script>
 
@@ -267,4 +239,13 @@ export default {
   justify-content: space-between;
   width: 100%;
 }
+.positive{
+  box-shadow: 0 2px 12px 0 green !important
+}
+
+.negative{
+  box-shadow: 0 2px 12px 0 red !important
+}
 </style>
+
+
