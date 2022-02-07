@@ -19,7 +19,7 @@ export default {
                 return objective.year === year;
             }).actual;
         } catch (e) {
-            objective = 'No hay metas disponibles para este año'
+            objective = { amount: 'No hay metas disponibles para este año' }
         }
 
         return objective
@@ -61,7 +61,7 @@ export default {
 
                             initialInput = (Number(lastInput) - Number(data.lastObjectiveByKleerer)) * data.initialBalancePercentage;
 
-                            if (initialInput < 0) {
+                            if (initialInput < 0 || isNaN(initialInput)) {
                                 initialInput = 0
                             }
                         }
