@@ -221,7 +221,7 @@
           // console.log(this.getPercentages(data[objectKey], total))
 
           let percentage = util.getPercentage(data[objectKey], total)
-          if(percentage >= 100 || percentage == 0)
+          if(percentage >= 100 || percentage == 0 || percentage == 'NaN')
             percentage = ''
           else
             percentage = `(${percentage}%)`

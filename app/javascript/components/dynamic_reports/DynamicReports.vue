@@ -137,7 +137,6 @@ export default {
       
       this.getDisponibleYears();
       this.filter();
-      this.getInitialBalance()
     });
   },
   methods: {
