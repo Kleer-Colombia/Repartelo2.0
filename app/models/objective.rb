@@ -1,4 +1,3 @@
 class Objective < ApplicationRecord
-  belongs_to :kleerer
-
+  has_and_belongs_to_many :objectives
 end

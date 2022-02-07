@@ -1,10 +1,11 @@
 class CalculateTaxes
   prepend Service
 
-  attr_accessor :taxes, :expenses, :incomes, :save_in, :taxes_amounts, :taxes_percentages
+  attr_accessor :taxes, :expenses, :incomes, :save_in, :taxes_amounts, :taxes_percentages, :incomes_post_iva
   def initialize(data)
     @taxes = data[:taxes]
     @incomes = data[:incomes] ? data[:incomes] : 0
+    @incomes_post_iva = data[:incomes_post_iva] ? data[:incomes_post_iva] : 0
     @expenses = data[:expenses] ? data[:expenses] : 0
     @save_in = data[:save_in]
     @taxes_amounts = {}
@@ -13,6 +14,8 @@ class CalculateTaxes
 
   def call
     Rails.logger.info("incomes: #{@incomes}")
+    #ACA SE CALCULA EL ICA
+    # TODO: arreglar calculo de ICA
     result = calculate_taxes(:invoiced, @incomes)
 
     resume_in_invoice = {}
@@ -30,9 +33,7 @@ class CalculateTaxes
 
     result = calculate_taxes(:post_utility, utility)
     utility = calculate_utility(result)
-
     save_taxes(result) if @save_in
-
     result['Ingresos'] = @incomes
     result['Egresos'] = @expenses
     result['Utilidad'] = utility

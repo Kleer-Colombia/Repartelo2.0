@@ -206,11 +206,29 @@
             })
           })
       },
+      getPercentages(value, total){
+        return 0
+        const percentage = util.getPercentage(value, total)
+        if(percentage){
+          return percentage
+        }
+      },
       prepareResume (data) {
         let taxes = []
+        const total = data ? (data.ingresos - data['IVA']) : 0
+        
         Object.keys(data).map(function (objectKey, index) {
+          // console.log(this.getPercentages(data[objectKey], total))
+
+          let percentage = util.getPercentage(data[objectKey], total)
+          if(percentage >= 100 || percentage == 0)
+            percentage = ''
+          else
+            percentage = `(${percentage}%)`
+          
+
           let obj = {}
-          obj['tittle'] = objectKey
+          obj['tittle'] = `${objectKey} ${percentage}`
           obj['total'] = data[objectKey]
           obj['id'] = 'money' + objectKey
 

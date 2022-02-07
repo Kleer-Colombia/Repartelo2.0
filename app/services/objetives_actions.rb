@@ -17,8 +17,8 @@ class ObjetivesActions
     kleerers_inputs
   end
 
-  def find_objectives kleerer_id
-    all_objectives = Objective.where(kleerer_id: kleerer_id)
+  def find_objectives
+    all_objectives = Objective.all
     years = separate_in_years all_objectives
     objectives = []
     years.each do |year|
@@ -41,8 +41,9 @@ class ObjetivesActions
     objectives
   end
 
-  def add_objective objective, kleerer_id
-    objective = Objective.new(amount: objective[:amount], kleerer_id: kleerer_id)
+  def add_objective objective
+    # TODO: poner porcentaje inicial al crear
+    objective = Objective.new(amount: objective[:amount])
     objective.save!
   end
 

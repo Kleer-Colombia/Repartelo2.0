@@ -42,7 +42,6 @@ export default {
                 context.$emit('refresh')
             }
         }).catch(error => {
-            console.log(error)
             util.processErrorMsgs(error, context)
         })
     }

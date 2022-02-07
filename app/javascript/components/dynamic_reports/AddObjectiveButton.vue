@@ -36,7 +36,6 @@ export default {
     methods: {
         addTax () {
             DynamicReportConnector.addObjective(this, {objective: this.objectiveInfo})
-            console.log('enviar')
         },
         closeDialog (format) {
             if (format) {

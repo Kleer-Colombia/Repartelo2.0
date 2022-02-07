@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_30_144242) do
+ActiveRecord::Schema.define(version: 2022_01_30_020459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -128,6 +128,13 @@ ActiveRecord::Schema.define(version: 2021_12_30_144242) do
     t.index ["option_id"], name: "index_kleerers_on_option_id"
   end
 
+  create_table "kleerers_objectives", id: false, force: :cascade do |t|
+    t.bigint "kleerer_id"
+    t.bigint "objective_id"
+    t.index ["kleerer_id"], name: "index_kleerers_objectives_on_kleerer_id"
+    t.index ["objective_id"], name: "index_kleerers_objectives_on_objective_id"
+  end
+
   create_table "manual_taxes", force: :cascade do |t|
     t.string "concept", null: false
     t.decimal "amount", null: false
@@ -141,10 +148,9 @@ ActiveRecord::Schema.define(version: 2021_12_30_144242) do
 
   create_table "objectives", force: :cascade do |t|
     t.decimal "amount"
-    t.bigint "kleerer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["kleerer_id"], name: "index_objectives_on_kleerer_id"
+    t.float "initial_balance_percentage"
   end
 
   create_table "options", force: :cascade do |t|
@@ -207,5 +213,7 @@ ActiveRecord::Schema.define(version: 2021_12_30_144242) do
     t.boolean "admin", default: false
   end
 
+  add_foreign_key "kleerers_objectives", "kleerers"
+  add_foreign_key "kleerers_objectives", "objectives"
   add_foreign_key "taxes", "invoices"
 end

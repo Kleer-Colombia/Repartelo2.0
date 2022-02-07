@@ -23,12 +23,10 @@ class DistributeBalance
   private
 
   def distribute(balance)
-
       profit = balance.calculate_profit
       distributions = balance.distribute(profit)
       save_distributions(balance, distributions)
       balance.distributions
-
   end
 
   def clean_distributions balance
@@ -42,7 +40,4 @@ class DistributeBalance
     end
     balance.save!
   end
-
-
-
 end

@@ -249,6 +249,7 @@ export default {
         this.income.invoiceId = this.selectedInvoice.id
         this.income.date = this.selectedInvoice.date
         this.income.invoicePercentageToUse = this.percentageSelector.percentageTotal
+		console.log(this.income)
         balanceConnector.addIncome(this, this.$route.params.id, function (context) {
           context.loaded = false
           context.visible = false

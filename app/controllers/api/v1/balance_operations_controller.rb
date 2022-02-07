@@ -17,8 +17,12 @@ module Api
       def calculate_taxes
         validate_parameters [:balanceId], params do
           balance = Balance.find(params[:balanceId])
+          balance_iva = balance.taxes.find { |e| e.name == 'IVA' }
+          iva = balance_iva ? balance_iva.amount : 0
+
           execute_command(CalculateTaxes.new(taxes: TaxMaster.all_taxes(balance),
                                              incomes: balance.total_incomes,
+                                             incomes_post_iva: (balance.total_incomes - iva),
                                              expenses: balance.total_expenses,
                                              save_in: balance))
         end
