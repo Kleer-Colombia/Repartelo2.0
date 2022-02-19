@@ -1,5 +1,70 @@
 class ObjetivesActions
 
+  def find_filtered_kleerers kleerCo, kleerers, objectives
+    kleerers_with_meta = kleerers.select{|e| e[:hasMeta]}.length
+    kleerers_by_year = []
+
+    objectives.each do |objective|
+      year = objective[:year]
+      objective_amount = objective[:actual].amount
+      initial_percentage = objective[:actual].initial_balance_percentage || 0
+      personal_objective = objective_amount / kleerers_with_meta
+      filtered_kleerers = []
+
+      kleerers.each do |kleerer|
+        partial_income = 0
+        initial_income = 0
+        balance = 0
+
+        if kleerer[:inputs].length != 0
+          partial_income = kleerer[:inputs].find{|e| e[:year] == year}
+          partial_income = partial_income ? partial_income[:input] : 0
+
+          if kleerer[:hasMeta] #this will be in other table
+            total_income = partial_income - initial_income
+            balance = total_income - personal_objective
+          end
+        end
+
+        filtered_kleerers.push({
+                        name: kleerer[:name],
+                        income: partial_income,
+                        balance: balance,
+                        hasMeta: kleerer[:hasMeta],
+                        anualMeta: personal_objective,
+                        initial_percentage: initial_percentage * 0.01,
+                        initial_income: 0,
+                        total_income: 0
+                      })
+      end
+      kleerers_by_year.push({
+                              year: year,
+                              kleerers: filtered_kleerers
+                            })
+    end
+
+    kleerers_by_year = kleerers_by_year.sort{|a,b| a[:year] <=> b[:year] }
+    kleerers_by_year.each do |year_of_incomes|
+      year = year_of_incomes[:year]
+      kleerers = year_of_incomes[:kleerers]
+
+      last_year_kleerers = kleerers_by_year.find{|e| e[:year] == year - 1}
+      if last_year_kleerers
+        last_year_kleerers = last_year_kleerers[:kleerers]
+
+        kleerers.each do |kleerer|
+          last_income = last_year_kleerers.find{|e| e[:name] == kleerer[:name]}
+          last_income = last_income ? last_income[:total_income] : 0
+
+          kleerer[:initial_income] = last_income * kleerer[:initial_percentage]
+          kleerer[:total_income] = kleerer[:initial_income] + kleerer[:income]
+        end
+      end
+    end
+
+    kleerers_by_year
+  end
+
   def find_kleerers_inputs kleerCo
     kleerers_inputs = []
     kleerers = []
@@ -35,14 +100,12 @@ class ObjetivesActions
                    objectives: year_objectives,
                    actual: actual_objective
                  })
-      puts year
-      puts year_objectives
     end
     objectives
   end
 
+
   def add_objective objective
-    # TODO: poner porcentaje inicial al crear
     objective = Objective.new(amount: objective[:amount], initial_balance_percentage: objective[:percentage])
     objective.save!
   end
