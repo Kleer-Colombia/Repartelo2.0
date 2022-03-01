@@ -12,5 +12,5 @@ ActiveAdmin.register Balance do
 #   permitted
 # end
 #
-  permit_params :client, :project, :date, :description, :editable
+  permit_params :client, :project, :date, :description, :editable, :kleerer_id
 end

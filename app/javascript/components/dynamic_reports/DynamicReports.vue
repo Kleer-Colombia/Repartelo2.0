@@ -1,5 +1,9 @@
 <template>
   <SafeBody tittle="Aporte por ventas a Kleer Colombia">
+    <div v-if="loaded == false">
+      <h1>cargando</h1>
+    </div>
+
     <div v-loading="!loaded">
       <el-row :gutter="20">
         <el-col :span="20" :offset="2">

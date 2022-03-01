@@ -149,7 +149,8 @@ export default {
           isIndeterminate: true
         },
         balances: [],
-        filteredBalances: []
+        filteredBalances: [],
+        kleerers: []
       }
     },
     created: function () {

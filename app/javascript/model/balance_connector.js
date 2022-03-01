@@ -132,9 +132,9 @@ export default {
                     nextFunction(context)
                 }
             })
-            // .catch(function(error) {
-            //     util.processErrorMsgs(error, context)
-            // })
+            .catch(function(error) {
+                util.processErrorMsgs(error, context)
+            })
     },
     findBalances(context) {
         axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
@@ -142,7 +142,8 @@ export default {
                 method: 'get',
                 url: BALANCE_URL
             }).then(function(response) {
-                context.balances = response.data.response
+                context.balances = response.data.response.balances
+                context.kleerers = response.data.response.kleerers
                 context.filteredBalances = context.balances
             })
             .catch(function(error) {
