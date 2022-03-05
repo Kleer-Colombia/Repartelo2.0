@@ -59,8 +59,9 @@ jobs:
           PGPORT: ${{ job.services.postgres.ports[5432] }}
         run: |
           cp config/database.ci.yml config/database.yml
-          bin/rails db:setup
           bin/rails db:migrate
+          bin/rails db:setup
+
 
       - name: Run tests
         env:
