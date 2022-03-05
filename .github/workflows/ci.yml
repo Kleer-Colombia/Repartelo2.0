@@ -52,10 +52,10 @@ jobs:
       - name: Setup test database
         env:
           RAILS_ENV: test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
           POSTGRES_DB: repartelo2_0_test
-          PG_HOST: localhost
+          DB_HOST: localhost
           PGPORT: ${{ job.services.postgres.ports[5432] }}
         run: |
           bin/rails db:migrate RAILS_ENV=test
