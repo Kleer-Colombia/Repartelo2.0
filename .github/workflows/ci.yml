@@ -60,6 +60,7 @@ jobs:
         run: |
           cp config/database.ci.yml config/database.yml
           bin/rails db:setup
+          bin/rails db:migrate
 
       - name: Run tests
         env:
