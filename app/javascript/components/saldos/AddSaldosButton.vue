@@ -26,7 +26,9 @@
                   v-model="saldo.date"
                   type="date"
                   v-bind:id="'saldo_date'"
-                  placeholder="Fecha">
+                  placeholder="Fecha"
+                  :picker-options="startDatePicker">
+                  
           </el-date-picker>
         </el-form-item>
       </el-form>
@@ -58,6 +60,17 @@
       return {
         dialogFormVisible: false,
         format: "income",
+        startDatePicker: {
+          disabledDate(time) {
+            const today = new Date()
+            const todayDay = today.getDate()
+            if(todayDay >= 10){
+              return time.getTime() < new Date(today.getFullYear(), today.getMonth(), 10).getTime()
+            }else{
+              return time.getTime() < new Date(today.getFullYear(), today.getMonth() - 1, 10).getTime()
+            }
+          }
+        },
         saldo: {
           amount: '',
           reference: '',
@@ -89,7 +102,12 @@
           }
         }
         this.dialogFormVisible = false
+      },
+      validateDate(date){
+        console.log(date)
+        return false
       }
-    }
+    },
+    
   }
 </script>
