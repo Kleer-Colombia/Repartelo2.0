@@ -16,6 +16,8 @@ export default {
                 context.kleerCo = response.data.response.total
                 context.kleerers = response.data.response.kleerers
                 context.objectives = response.data.response.objectives
+
+                context.kleerersByYears = response.data.response.filtered_kleerers
                 if (nextFunction) {
                     console.log(response.data.response)
                     nextFunction(context)
