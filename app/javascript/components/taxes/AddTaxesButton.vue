@@ -84,9 +84,9 @@
               const today = new Date()
               const todayDay = today.getDate()
               if(todayDay >= 10){
-                return time.getTime() < new Date(today.getFullYear(), today.getMonth(), 10).getTime()
+                return time.getTime() < new Date(today.getFullYear(), today.getMonth(), 1).getTime()
               }else{
-                return time.getTime() < new Date(today.getFullYear(), today.getMonth() - 1, 10).getTime()
+                return time.getTime() < new Date(today.getFullYear(), today.getMonth() - 1, 1).getTime()
               }
             }
           },
