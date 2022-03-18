@@ -83,7 +83,7 @@
             </el-table-column>
             <el-table-column label="Meta anual" prop="anualMeta">
             </el-table-column>
-            <el-table-column label="Saldo inicial" prop="initialIncome">
+            <el-table-column label="Saldo inicial" prop="formatInitialIncome">
             </el-table-column>
             <el-table-column label="Saldo pendiente" prop="outstandingBalance">
             </el-table-column>
@@ -145,14 +145,6 @@ export default {
       
       this.getDisponibleYears();
       this.filter();
-
-      // console.log('kleerers filtrados en front')
-      console.log(this.filteredKleerers)
-      console.log(this.kleerersByYears)
-      console.log('------------')
-      // console.log(this.objectives)
-      // console.log(this.kleerCo)
-      // console.log(this.yearObjective)
     });
   },
   methods: {
@@ -177,16 +169,6 @@ export default {
       this.objectiveByKleerer = this.yearObjective.amount / dealer.findKleerersWithMeta(this.kleerers).length
       this.lastObjectiveByKleerer = this.lastObjective.amount / dealer.findKleerersWithMeta(this.kleerers).length
 
-      this.filteredKleerers = dealer.filterKleerers({
-        initialBalancePercentage: this.yearObjective.initial_balance_percentage * 0.01,
-        yearObjective: this.yearObjective,
-        filteredYear: this.years.filteredYear,
-        kleerers: this.kleerers,
-        objectiveByKleerer: this.objectiveByKleerer,
-        lastObjectiveByKleerer: this.lastObjectiveByKleerer,
-        formatPrice: this.formatPrice
-      })
-
       this.filteredKleerers2 = this.kleerersByYears
         .find((kleerer) => kleerer.year === this.years.filteredYear).kleerers
         .filter((kleerer) => kleerer.hasMeta)
@@ -196,16 +178,14 @@ export default {
             anualMeta: this.formatPrice(kleerer.anualMeta),
             hasMeta: kleerer.hasMeta,
             income: this.formatPrice(kleerer.income),
-            initialIncome: this.formatPrice(kleerer.initial_income),
+            initialIncome: kleerer.initial_income,
+            formatInitialIncome: this.formatPrice(kleerer.initial_income),
             positiveBalance: kleerer.balance > 0 ? this.formatPrice(kleerer.balance) : this.formatPrice(0),
             outstandingBalance: kleerer.balance < 0 ? this.formatPrice(kleerer.balance * -1) : this.formatPrice(0),
           }
         })
 
-      console.log(this.filteredKleerers2)
-
-      console.log('ejem')
-      console.log(this.kleerersByYears.find(kleerer => kleerer.year === this.years.filteredYear).kleerers)
+      
     },
 
     filterObjectives(){
@@ -248,8 +228,9 @@ export default {
         this.initialBalance = 'No hay porcentage inicial'
       }else{
         //hay que meter variable al back los datos generales
-        const initialBalance = this.filteredKleerers.reduce((total, kleerer) => {
-                            return total + kleerer.initialInput;
+        const initialBalance = this.filteredKleerers2.reduce((total, kleerer) => {
+
+                            return total + parseFloat(kleerer.initialIncome);
       }, 0);
       
       this.initialBalance = initialBalance
