@@ -2,11 +2,13 @@ class Balance < ApplicationRecord
   validates :client, presence: true, allow_blank: false
   validates :project, presence: true, allow_blank: false
   validates :balance_type, presence: true, allow_blank: false
+  belongs_to :kleerer, optional: true
   has_many :incomes, dependent: :destroy
   has_many :expenses, dependent: :destroy
   has_many :taxes, dependent: :destroy
   has_many :distributions, dependent: :destroy
   has_many :percentages, dependent: :destroy
+
 
 
   def total_incomes
@@ -94,7 +96,7 @@ class Balance < ApplicationRecord
   def get_invoice_ids
     incomes.select {|income| income.invoice&.invoice_id}.map {|income| income.invoice&.invoice_id}
   end
-  
+
   # by default select the most older date
   def find_invoice_date
     incomes_ids = incomes.map { |income| income.id }

@@ -19,6 +19,7 @@ export default {
     },
 
     addSaldo(context, saldo) {
+
         console.log(saldo)
         axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
         axios({

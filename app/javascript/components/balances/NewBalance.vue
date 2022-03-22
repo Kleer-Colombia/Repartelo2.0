@@ -35,6 +35,16 @@
                 <el-radio id="coaching" v-model="balance.balance_type" label="coaching">Coaching</el-radio>
                 <el-radio id="standard-international" v-model="balance.balance_type" label="standard-international">Servicio Internacional</el-radio>
             </el-form-item>
+            <el-form-item label="Responsable">
+              <el-select v-model="balance.responsible" placeholder="Responsable">
+                <el-option
+                  v-for="kleerer in kleerers"
+                  :key="kleerer.id"
+                  :label="kleerer.name"
+                  :value="kleerer.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
           <el-form-item label="Retención" v-show="balance.balance_type === 'standard-international'">
             <el-input
                       placeholder="Retención (No será menor al monto previamente acordado como previsión)"
@@ -54,6 +64,7 @@
 <script>
 
 import balanceConnector from '../../model/balance_connector'
+import kleerersConnector from '../../model/kleerers_connector'
 import SafeBody from '../base/SafeBody.vue'
 
 export default {
@@ -69,12 +80,21 @@ export default {
         description: '',
         date: '',
         balance_type: '',
-        retencion: 0
-      }
+        retencion: 0,
+        responsible: '',
+      },
+      kleerers: [{
+          name: '',
+          id: ''
+        }]
     }
+  },
+  created: function() {
+    kleerersConnector.getKleerers(this)
   },
   methods: {
     guardar () {
+      console.log(this.balance)
       balanceConnector.createBalance(this, {balance: this.balance})
     }
   }

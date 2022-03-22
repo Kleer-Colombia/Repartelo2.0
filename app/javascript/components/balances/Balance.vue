@@ -9,6 +9,7 @@
 		          <el-radio label="client">Cliente</el-radio>
 		          <el-radio label="project">Proyecto</el-radio>
 		          <el-radio label="description">Descripción</el-radio>
+              <el-radio label="kleerer_id">Responsable</el-radio>
 		          <el-radio label="id">Id</el-radio>
 	          </el-radio-group>
            
@@ -97,6 +98,17 @@
             </template>
           </el-table-column>
           <el-table-column
+                  prop="kleerer_id"
+                  label="Responsable"
+                  min-width="150"
+          >
+            <template slot-scope="scope">
+              <span :id="'responsible'+scope.row.id">
+                {{ getKleerer(scope.row.kleerer_id) }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
                   label="Opciones"
                   min-width="80">
             <template slot-scope="scope">
@@ -149,7 +161,8 @@ export default {
           isIndeterminate: true
         },
         balances: [],
-        filteredBalances: []
+        filteredBalances: [],
+        kleerers: []
       }
     },
     created: function () {
@@ -160,17 +173,40 @@ export default {
         router.push('/balance/new')
       },
       filter () {
+        console.log(this.filters)
+
         if (this.showing.checkedBalances.length === 0) {
           this.filteredBalances = []
         } else if (this.showing.checkedBalances.length === 2) {
-          this.filteredBalances = this.balances.filter(balance =>
-            balance[this.filters.active].toString().toLowerCase().includes(this.filters.keyword.toString().toLowerCase()))
+          if(this.filters.active == 'kleerer_id') {
+            this.filteredBalances = this.balances.filter(balance => {
+              if(balance[this.filters.active]){
+                console.log(this.getKleererId(this.filters.keyword.toLowerCase()))
+                return balance[this.filters.active] == this.getKleererId(this.filters.keyword.toLowerCase())
+              }
+            })
+          } else {
+            this.filteredBalances = this.balances.filter(balance =>
+              balance[this.filters.active].toString().toLowerCase().includes(this.filters.keyword.toString().toLowerCase()))
+          }
+          
         } else {
           let editableFilter = this.filters.showEditable[this.showing.checkedBalances[0]]
-          this.filteredBalances = this.balances.filter(balance =>
-            balance[this.filters.active].toString().toLowerCase().includes(this.filters.keyword.toString().toLowerCase()) &&
-          balance.editable === editableFilter)
+          if(this.filters.active == 'kleerer_id') {
+            this.filteredBalances = this.balances.filter(balance => {
+              if(balance[this.filters.active]){
+                console.log(this.getKleererId(this.filters.keyword.toLowerCase()))
+                return balance[this.filters.active] == this.getKleererId(this.filters.keyword.toLowerCase()) && balance.editable === editableFilter
+              }
+            })
+          } else {
+            this.filteredBalances = this.balances.filter(balance =>
+              balance[this.filters.active].toString().toLowerCase().includes(this.filters.keyword.toString().toLowerCase()) &&
+            balance.editable === editableFilter)
+          }
+          
         }
+        console.log('saliendo del filtro')
       },
       setClassName ({row, rowIndex}) {
         if (row.editable) {
@@ -190,6 +226,16 @@ export default {
         this.showing.checkAll = checkedCount === this.showing.show.length
         this.showing.isIndeterminate = checkedCount > 0 && checkedCount < this.showing.show.length
         this.filter()
+      },
+      getKleerer(id) {
+        const kleerer = this.kleerers.find(kleerer => kleerer.id === id)
+        return kleerer ? kleerer.name : ''
+      },
+      getKleererId(kleerer_name){
+        const kleererId = this.kleerers.find(kleerer => {
+          return kleerer.name.toLowerCase().includes(kleerer_name)
+        })
+        return kleererId ? kleererId.id : ''
       }
     }
   }

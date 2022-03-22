@@ -13,7 +13,6 @@ export default {
         }
         this.consult(context, url)
     },
-
     consult(context, url) {
         axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
         axios({
