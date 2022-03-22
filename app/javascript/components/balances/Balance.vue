@@ -162,7 +162,7 @@ export default {
         },
         balances: [],
         filteredBalances: [],
-        kleerers: []
+        kleerers: [],
       }
     },
     created: function () {
@@ -173,8 +173,6 @@ export default {
         router.push('/balance/new')
       },
       filter () {
-        console.log(this.filters)
-
         if (this.showing.checkedBalances.length === 0) {
           this.filteredBalances = []
         } else if (this.showing.checkedBalances.length === 2) {
@@ -206,7 +204,6 @@ export default {
           }
           
         }
-        console.log('saliendo del filtro')
       },
       setClassName ({row, rowIndex}) {
         if (row.editable) {

@@ -38,7 +38,7 @@
             <el-form-item label="Responsable">
               <el-select v-model="balance.responsible" placeholder="Responsable">
                 <el-option
-                  v-for="kleerer in kleerers"
+                  v-for="kleerer in filteredKleerers"
                   :key="kleerer.id"
                   :label="kleerer.name"
                   :value="kleerer.id">
@@ -74,6 +74,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       balance: {
         client: '',
         project: '',
@@ -85,18 +86,29 @@ export default {
       },
       kleerers: [{
           name: '',
-          id: ''
+          id: '',
+          option: ''
+        }],
+      filteredKleerers: [{
+          name: '',
+          id: '',
+          option: ''
         }]
     }
   },
-  created: function() {
-    kleerersConnector.getKleerers(this)
+  beforeCreate: function() {
+    this.loading = true
+    kleerersConnector.getKleerers(this,false, () => {
+      this.loading = false
+      this.filteredKleerers = this.kleerers.filter(kleerer => {
+        return kleerer.option.includes('meta')
+      })
+    })
   },
   methods: {
     guardar () {
-      console.log(this.balance)
       balanceConnector.createBalance(this, {balance: this.balance})
-    }
+    },
   }
 }
 </script>
