@@ -13,7 +13,6 @@ export default {
         }
         this.consult(context, url)
     },
-
     consult(context, url) {
         axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
         axios({
@@ -21,7 +20,6 @@ export default {
             url: url
         }).then(function(response) {
             context.kleerers = response.data.response
-
             console.log(context.kleerers)
         }).catch(function(error) {
             util.processErrorMsgs(error, context)

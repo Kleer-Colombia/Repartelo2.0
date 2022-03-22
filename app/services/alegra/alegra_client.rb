@@ -1,8 +1,8 @@
 require 'base64'
 
 class AlegraClient
-  #TODO puts in ENV
-  TOKEN = Base64.encode64('info@sparkta.co:d8a1429b1e0247f0e390')
+
+  TOKEN = Base64.strict_encode64("#{ENV['ALEGRA_EMAIL']}:#{ENV['ALEGRA_TOKEN']}")
   API_INVOICES = 'https://app.alegra.com/api/v1/invoices/'
 
   def get_invoices(status)

@@ -8,27 +8,29 @@
                 <input-money name="amount" :format="'income'" v-model="objectiveInfo.amount"></input-money>
             </el-form-item>
             </el-form>
-            <el-col :offset="4">
+            <el-row>
+                <el-col :offset="4">
                 <h5>Porcentaje de saldo inicial</h5>
-            </el-col>
-            <el-col :span="2" :offset="4" style="padding-top: 10px; text-align: center">
-                
-					{{percentageSelector.min}}%
-			</el-col>
-			<el-col :span="10">
-				<el-slider
-								v-model="objectiveInfo.percentage"
-								:max="percentageSelector.max"
-								:min="percentageSelector.min"
-								>
-				</el-slider>
+                </el-col>
+                <el-col :span="2" :offset="4" style="padding-top: 10px; text-align: center">
+                    
+                        {{percentageSelector.min}}%
+                </el-col>
+                <el-col :span="10">
+                    <el-slider
+                                    v-model="objectiveInfo.percentage"
+                                    :max="percentageSelector.max"
+                                    :min="percentageSelector.min"
+                                    >
+                    </el-slider>
 
-			</el-col>
-			<el-col :span="2" style="padding-top: 10px; text-align: center">
-					{{percentageSelector.max}}%
-			</el-col>
+                </el-col>
+                <el-col :span="2" style="padding-top: 10px; text-align: center">
+                        {{percentageSelector.max}}%
+                </el-col>
+            </el-row>
             
-            
+        
             <span slot="footer" class="dialog-footer">
                 <el-button @click="closeDialog(false)">Cancelar</el-button>
                 <el-button type="primary" @click="addTax()">Guardar</el-button>
