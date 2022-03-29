@@ -6,21 +6,22 @@ const KLEERERS_URL = API_URL + '/kleerers'
 
 export default {
 
-    getKleerers(context, filter) {
+    getKleerers(context, filter, actions = () => {}) {
         let url = KLEERERS_URL
         if (filter) {
             url += '/filter'
         }
-        this.consult(context, url)
+        this.consult(context, url, actions)
     },
-    consult(context, url) {
+
+    consult(context, url, actions) {
         axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
         axios({
             method: 'get',
             url: url
         }).then(function(response) {
             context.kleerers = response.data.response
-            console.log(context.kleerers)
+            actions()
         }).catch(function(error) {
             util.processErrorMsgs(error, context)
         })

@@ -2,16 +2,16 @@
   <safe-body tittle='Nuevo balance'>
     <el-row :gutter="20">
     <el-col :span="10" :offset="7">
-       
+
       <el-card class="box-card">
         <el-form  label-width="100px">
             <el-form-item label="Cliente">
-                <el-input name="client" 
+                <el-input name="client"
                         placeholder="Cliente"
                         v-model="balance.client"></el-input>
             </el-form-item>
             <el-form-item label="Proyecto">
-                <el-input name="project"  
+                <el-input name="project"
                         placeholder="Proyecto"
                         v-model="balance.project"></el-input>
             </el-form-item>
@@ -25,9 +25,9 @@
             </el-form-item>
             <el-form-item label="Descripción">
                 <el-input type="textarea"
-                        :rows="3"   
+                        :rows="3"
                         placeholder="Descripción"
-                        name="description"  
+                        name="description"
                         v-model="balance.description"></el-input>
             </el-form-item>
             <el-form-item label="Tipo">
@@ -38,7 +38,7 @@
             <el-form-item label="Responsable">
               <el-select v-model="balance.responsible" placeholder="Responsable">
                 <el-option
-                  v-for="kleerer in kleerers"
+                  v-for="kleerer in filteredKleerers"
                   :key="kleerer.id"
                   :label="kleerer.name"
                   :value="kleerer.id">
@@ -74,6 +74,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       balance: {
         client: '',
         project: '',
@@ -85,18 +86,31 @@ export default {
       },
       kleerers: [{
           name: '',
-          id: ''
+          id: '',
+          option: ''
+        }],
+      filteredKleerers: [{
+          name: '',
+          id: '',
+          option: ''
         }]
     }
   },
-  created: function() {
-    kleerersConnector.getKleerers(this)
+  beforeCreate: function() {
+    this.loading = true
+    kleerersConnector.getKleerers(this,false, () => {
+      this.loading = false
+      this.filteredKleerers = this.kleerers.filter(kleerer => {
+        console.log(kleerer.name)
+        console.log(kleerer.option)
+        return kleerer.option.includes('meta')
+      })
+    })
   },
   methods: {
     guardar () {
-      console.log(this.balance)
       balanceConnector.createBalance(this, {balance: this.balance})
-    }
+    },
   }
 }
 </script>
