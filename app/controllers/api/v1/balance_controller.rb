@@ -9,7 +9,7 @@ module Api
       end
 
       def find_all
-        send_response({ balances: Balance.all, kleerers: Kleerer.all }, :ok)
+        send_response({ balances: @actions.find_all_balances, kleerers: Kleerer.all }, :ok)
       end
 
       def create

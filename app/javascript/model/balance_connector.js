@@ -124,10 +124,10 @@ export default {
                 context.expenses.totalExpenses = balance.expenses.total
                 context.prepareResume(balance.resume)
                 context.distribution.balancePercentages = balance.percentages
-                console.log(balance.resume)
                 if (balance.distributions.length > 0) {
                     context.distribution.result = balance.distributions
                 }
+                console.log(context.incomes)
                 if (nextFunction) {
                     nextFunction(context)
                 }
@@ -145,6 +145,7 @@ export default {
                 context.balances = response.data.response.balances
                 context.kleerers = response.data.response.kleerers
                 context.filteredBalances = context.balances
+                console.log(context.balances)
             })
             .catch(function(error) {
                 util.processErrorMsgs(error, context)
@@ -158,7 +159,6 @@ export default {
                 url: BALANCE_URL + '/' + idBalance + '/expense'
             }).then(function(response) {
                 let answer = response.data.response
-                console.log(answer)
                 context.realExpenses = answer.expenses
             })
             .catch(function(error) {
