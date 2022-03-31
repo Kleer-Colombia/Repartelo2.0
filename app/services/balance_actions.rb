@@ -18,8 +18,24 @@ class BalanceActions
             total:balance.total_expenses}
   end
 
+  def find_all_balances()
+    balances = Balance.all
+    hashed_balances = []
+    balances.each do |balance|
+      balance_to_hash = balance.attributes
+      balance_to_hash[:incomes] = balance.incomes
+      hashed_balances.push(balance_to_hash)
+
+    end
+    hashed_balances
+  end
+
   def find_complete_balance(id)
     balance = Balance.find(id)
+    puts "facturas asociadas"
+    balance.incomes.each do |income|
+      puts income.description
+    end
     balance_info = {balance: balance,
             incomes: {incomes: balance.incomes,
                       total: balance.total_incomes},

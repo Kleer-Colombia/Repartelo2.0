@@ -10,6 +10,7 @@
 		          <el-radio label="project">Proyecto</el-radio>
 		          <el-radio label="description">Descripción</el-radio>
               <el-radio label="kleerer_id">Responsable</el-radio>
+              <el-radio label="invoice">Factura</el-radio>
 		          <el-radio label="id">Id</el-radio>
 	          </el-radio-group>
            
@@ -193,7 +194,6 @@ export default {
           if(this.filters.active == 'kleerer_id') {
             this.filteredBalances = this.balances.filter(balance => {
               if(balance[this.filters.active]){
-                console.log(this.getKleererId(this.filters.keyword.toLowerCase()))
                 return balance[this.filters.active] == this.getKleererId(this.filters.keyword.toLowerCase()) && balance.editable === editableFilter
               }
             })
@@ -230,10 +230,12 @@ export default {
       },
       getKleererId(kleerer_name){
         const kleererId = this.kleerers.find(kleerer => {
-          return kleerer.name.toLowerCase().includes(kleerer_name)
+          return kleerer.name.toLowerCase().includes(kleerer_name) && !kleerer.name.toLowerCase().includes('meta')
         })
         return kleererId ? kleererId.id : ''
-      }
+      },
+      filterByKleerer(){},
+      filterByInvoice(){}
     }
   }
 </script>
