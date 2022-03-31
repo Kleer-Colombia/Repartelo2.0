@@ -225,8 +225,11 @@ export default {
       },
       getKleererId(kleerer_name){
         const kleererId = this.kleerers.find(kleerer => {
-          return kleerer.name.toLowerCase().includes(kleerer_name) && !kleerer.name.toLowerCase().includes('meta')
+          return kleerer.name.toLowerCase().includes(kleerer_name) && 
+                !kleerer.name.toLowerCase().includes('reserva') && 
+                !kleerer.name.toLowerCase().includes('kleerco')
         })
+        console.log('---')
         return kleererId ? kleererId.id : ''
       },
       filterByKleerer(editableFilter = null){
