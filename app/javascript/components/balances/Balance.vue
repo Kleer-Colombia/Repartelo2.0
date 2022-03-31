@@ -178,13 +178,10 @@ export default {
           this.filteredBalances = []
         } else if (this.showing.checkedBalances.length === 2) {
           if(this.filters.active == 'kleerer_id') {
-            this.filteredBalances = this.balances.filter(balance => {
-              if(balance[this.filters.active]){
-                console.log(this.getKleererId(this.filters.keyword.toLowerCase()))
-                return balance[this.filters.active] == this.getKleererId(this.filters.keyword.toLowerCase())
-              }
-            })
-          } else {
+            this.filteredBalances = this.filterByKleerer()
+          } else if(this.filters.active == 'invoice') {
+            this.filteredBalances = this.filterByInvoice()
+          }else {
             this.filteredBalances = this.balances.filter(balance =>
               balance[this.filters.active].toString().toLowerCase().includes(this.filters.keyword.toString().toLowerCase()))
           }
@@ -192,11 +189,9 @@ export default {
         } else {
           let editableFilter = this.filters.showEditable[this.showing.checkedBalances[0]]
           if(this.filters.active == 'kleerer_id') {
-            this.filteredBalances = this.balances.filter(balance => {
-              if(balance[this.filters.active]){
-                return balance[this.filters.active] == this.getKleererId(this.filters.keyword.toLowerCase()) && balance.editable === editableFilter
-              }
-            })
+            this.filteredBalances = this.filterByKleerer(editableFilter)
+          } else if(this.filters.active == 'invoice') {
+            this.filteredBalances = this.filterByInvoice()
           } else {
             this.filteredBalances = this.balances.filter(balance =>
               balance[this.filters.active].toString().toLowerCase().includes(this.filters.keyword.toString().toLowerCase()) &&
@@ -230,12 +225,31 @@ export default {
       },
       getKleererId(kleerer_name){
         const kleererId = this.kleerers.find(kleerer => {
-          return kleerer.name.toLowerCase().includes(kleerer_name) && !kleerer.name.toLowerCase().includes('meta')
+          return kleerer.name.toLowerCase().includes(kleerer_name) && 
+                !kleerer.name.toLowerCase().includes('reserva') && 
+                !kleerer.name.toLowerCase().includes('kleerco')
         })
+        console.log('---')
         return kleererId ? kleererId.id : ''
       },
-      filterByKleerer(){},
-      filterByInvoice(){}
+      filterByKleerer(editableFilter = null){
+        return this.balances.filter(balance => {
+              if(balance[this.filters.active]){
+                if(editableFilter){
+                  return balance[this.filters.active] == this.getKleererId(this.filters.keyword.toLowerCase()) && balance.editable === editableFilter
+                }else{
+                  return balance[this.filters.active] == this.getKleererId(this.filters.keyword.toLowerCase())
+                } 
+              }
+            })
+      },
+      filterByInvoice(){
+        return this.balances.filter(balance => {
+          return balance.incomes.some(income => {
+            return income.description.includes('Factura') && income.description.includes(this.filters.keyword.toLowerCase())
+          })
+        })
+      }
     }
   }
 </script>
