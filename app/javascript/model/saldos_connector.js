@@ -18,10 +18,7 @@ export default {
         })
     },
 
-    addSaldo(context, saldo) {
-
-        console.log(saldo)
-        axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
+    addSaldo(context, saldo) {axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
         axios({
             method: 'post',
             url: SALDOS_URL,
@@ -38,5 +35,7 @@ export default {
         }).catch(function(error) {
             util.processErrorMsgs(error, context)
         })
-    }
+    },
+
+
 }
