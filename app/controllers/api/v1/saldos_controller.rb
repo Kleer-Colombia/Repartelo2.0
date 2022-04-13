@@ -21,7 +21,6 @@ module Api
       end
 
       def add_saldo
-          puts params
           validate_parameters [:saldo], params do
 
             begin
@@ -30,6 +29,16 @@ module Api
             rescue StandardError => error
               halt_message("can't add saldo: #{error.message}", :internal_server_error)
             end
+        end
+      end
+
+      def add_saldos_pack
+        validate_parameters [:saldos_pack], params do
+          # begin
+            response @actions.add_saldos_pack(params[:saldos_pack])
+          # rescue StandardError => error
+          #   halt_message("can't add saldos: #{error.message}", :internal_server_error)
+          # end
         end
       end
 

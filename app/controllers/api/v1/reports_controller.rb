@@ -3,6 +3,11 @@ module Api
     class ReportsController < ApiController
 
       respond_to :csv
+      before_action :set_actions
+
+      def set_actions
+        @actions ||= DataLoadActions.new
+      end
 
       def financial_report
         command = FinancialReport.new()
@@ -17,6 +22,17 @@ module Api
       def saldos_report
         command = SaldosReport.new()
         call(command,"saldosReport-#{Date.today}.csv")
+      end
+
+      def expenses_load
+        validate_parameters [:saldos_pack], params do
+          # begin
+          response = @actions.load_expenses(params[:saldos_pack])
+          send_response response
+          # rescue StandardError => error
+          #   halt_message("can't add saldos: #{error.message}", :internal_server_error)
+          # end
+        end
       end
 
       private
