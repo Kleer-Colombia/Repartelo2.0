@@ -32,7 +32,9 @@ export default {
             url: REPORTS_URL + '/expenses-load',
             data: data
         }).then(response => {
-            console.log(response)
+            console.log(response.data.response)
+            context.report = response.data.response
+            context.loading = false
         }).catch(error => {
             util.processErrorMsgs(error, context)
         })
