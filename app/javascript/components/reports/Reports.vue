@@ -49,7 +49,10 @@
 					<br />
 					Errores {{report.errors}}
 					<br />
-					Detalles {{report.detail_errors}}
+					Detalles:
+					<div v-for="error in report.detail_errors" :key="error">
+						<ul>{{error}}</ul>
+					</div>
 				</div>
 			</el-col>
 			
