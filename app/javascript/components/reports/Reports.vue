@@ -32,10 +32,28 @@
 			</el-col>
 			
 			<el-col :span="8" :offset="2">
-				<input type="file" class="file-input" @change="loadData"><input>
+				<input type="file" class="file-input" @change="loadData" />
 			</el-col>
 			<el-col :span="8" :offset="2">
-				<el-button type="primary" @click="sendSaldos()">Carga de datos</el-button>
+				<el-button type="primary" @click="sendSaldos()" :disabled="loading">Carga de datos</el-button>
+			</el-col>
+			<el-col :span="15" :offset="2">
+				<h3>Reporte de carga</h3>
+				<div v-if="!report" v-loading="loading">
+					Sin reporte
+				</div>
+				<div v-if="report" v-loading="loading">
+				    Saldos agregados {{report.saldos_added}}
+					<br />
+					Impuestos agregados {{report.taxes_added}}
+					<br />
+					Errores {{report.errors}}
+					<br />
+					Detalles:
+					<div v-for="error in report.detail_errors" :key="error">
+						<ul>{{error}}</ul>
+					</div>
+				</div>
 			</el-col>
 			
 		</el-row>
@@ -43,9 +61,9 @@
 </template>
 
 <style>
-	.file-input {
-		width: 400px !important;
-		height: 50px !important;
+	.file-input::-webkit-file-upload-button {
+		width: 150px !important;
+		height: 30px !important;
 	}
 	.el-input__inner{
 		height: 100% !important;
@@ -89,7 +107,9 @@
             action: '/saldos'
           }
         ],
-		saldos: []
+		saldos: [],
+		report: null,
+		loading: false
       }
     },
     methods: {
@@ -97,7 +117,21 @@
 			reportConnector.downloadReport(this, action)
 		},
 		sendSaldos(){
-			reportConnector.addExpensesPack(this, {saldos_pack: this.saldos})
+			this.$confirm(`¿Está seguro de querer cargar este archivo?`, {
+              confirmButtonText: 'Aceptar',
+              cancelButtonText: 'Cancelar',
+              type: 'warning',
+              center: true
+            }).then(()=> {
+				this.loading = true
+				reportConnector.addExpensesPack(this, {saldos_pack: this.saldos})
+			}).catch(()=> {
+				this.$message({
+					type: 'info',
+					message: 'Operación cancelada'
+				})
+			})
+			
 		},
 		transformData(data){
 			const rows = data.split('\r\n')
@@ -105,15 +139,15 @@
 			this.saldos = rows.map((row, key) => {
 				if(key === 0) return
 				if(row.length < 10) return
-				console.log(row)
-				return this.structData(row)
+				return this.structData(row, key)
 			});
 
 			
 		},
-		structData(row){
+		structData(row, key){
 			const cols = row.split(';')
 			const gasto = {
+				id: key + 1,
 				date: cols[1],
 				kleerer: cols[3],
 				concept: cols[4],
@@ -123,6 +157,7 @@
 			return gasto
 		},
 		loadData (e) {
+			
 		  	const reader = new FileReader()
             reader.onload = (e) => {
                 this.transformData(e.target.result)

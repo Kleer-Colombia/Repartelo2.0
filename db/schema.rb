@@ -154,14 +154,6 @@ ActiveRecord::Schema.define(version: 2022_02_20_211138) do
     t.float "initial_balance_percentage"
   end
 
-  create_table "objetives", force: :cascade do |t|
-    t.decimal "amount"
-    t.bigint "kleerer_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["kleerer_id"], name: "index_objetives_on_kleerer_id"
-  end
-
   create_table "options", force: :cascade do |t|
     t.string "name"
     t.decimal "value"
