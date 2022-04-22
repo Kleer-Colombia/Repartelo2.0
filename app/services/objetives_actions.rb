@@ -110,7 +110,7 @@ class ObjetivesActions
     objective.save!
   end
 
-  private
+  # private
 
   def get_one_kleerer_input kleerer, kleerCo
     complete_kleerer_input = {
@@ -155,6 +155,14 @@ class ObjetivesActions
       years = get_one_year_distributions saldo, years
     end
     years
+  end
+
+  def by_years(objectives)
+    # objectives.map {|o| o.created_at.strftime('%Y').to_i}.sort.uniq
+    objectives.group_by{|o| o.created_at.strftime('%Y')}
+              .keys
+              .map(&:to_i)
+              .sort
   end
 
   def get_one_year_distributions saldo, years
