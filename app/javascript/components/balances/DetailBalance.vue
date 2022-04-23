@@ -25,6 +25,9 @@
                       </div>
                       <expenses-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
                                       :allExpenses="expenses.realExpenses"/>
+
+                      <clearing-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
+                                      :allExpenses="[]"/>
                     </div>
                     
                 </el-col>
@@ -133,6 +136,7 @@
   import SafeBody from '../base/SafeBody.vue'
   import IncomesAdmin from './IncomesAdmin'
   import ExpensesAdmin from './ExpensesAdmin'
+  import ClearingAdmin from '../clearing/ClearingAdmin'
   import KleerersDistribution from './kleerersDistribution'
   import AdminCoachingLog from '../coachingLog/AdminCoachingLogButton'
   import invoiceSelector from '../invoices/invoiceSelector'
@@ -143,6 +147,7 @@
       KleerersDistribution,
       IncomesAdmin,
       ExpensesAdmin,
+      ClearingAdmin,
       SafeBody,
       invoiceSelector,
       propertiesBalance

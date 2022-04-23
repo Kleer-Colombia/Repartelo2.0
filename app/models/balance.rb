@@ -5,6 +5,7 @@ class Balance < ApplicationRecord
   belongs_to :kleerer, optional: true
   has_many :incomes, dependent: :destroy
   has_many :expenses, dependent: :destroy
+  has_many :clearings, dependent: :destroy
   has_many :taxes, dependent: :destroy
   has_many :distributions, dependent: :destroy
   has_many :percentages, dependent: :destroy
