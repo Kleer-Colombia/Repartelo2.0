@@ -124,10 +124,11 @@ export default {
                 context.expenses.totalExpenses = balance.expenses.total
                 context.prepareResume(balance.resume)
                 context.distribution.balancePercentages = balance.percentages
+                context.countries = balance.disponible_countries
                 if (balance.distributions.length > 0) {
                     context.distribution.result = balance.distributions
                 }
-                console.log(context.incomes)
+                console.log(context.countries)
                 if (nextFunction) {
                     nextFunction(context)
                 }
@@ -228,6 +229,21 @@ export default {
                 var answer = response.data.response
                 context.realExpenses = answer.expenses
                 context.$emit('updateTaxes')
+            })
+            .catch(function(error) {
+                util.processErrorMsgs(error, context)
+            })
+    },
+    addClearing(context, id) {
+        axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
+        axios({
+                method: 'post',
+                data: { clearing: context.clearing },
+                url: `${BALANCE_URL}/${id}/clearing`
+            }).then(function(response) {
+                // var answer = response.data.response
+                // context.realExpenses = answer.expenses
+                // context.$emit('updateTaxes')
             })
             .catch(function(error) {
                 util.processErrorMsgs(error, context)

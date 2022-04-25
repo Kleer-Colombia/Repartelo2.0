@@ -131,6 +131,7 @@
 <script>
 
   import balanceConnector from '../../model/balance_connector'
+  import countriesConnector from '../../model/countries_connector'
   import propertiesBalance from './PropertiesBalance.vue'
   import util from '../../model/util'
   import SafeBody from '../base/SafeBody.vue'
@@ -175,13 +176,15 @@
         expenses: {
           realExpenses: []
         },
-        resume: []
+        resume: [],
+        countries: []
       }
     },
     beforeCreate: function () {
       balanceConnector.findBalance(this, function (context) {
         context.loaded = true
       })
+      
     },
     methods: {
       updateTaxes () {

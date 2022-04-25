@@ -77,6 +77,17 @@ module Api
         end
       end
 
+      def add_clearing
+        validate_parameters [:id, :clearing], params do
+          begin
+            clearing = params[:clearing]
+            send_response @actions.add_clearing_to_balance(params[:id], clearing)
+          rescue
+            halt_message("We can't add expense: #{e.message}", :internal_server_error)
+          end
+        end
+      end
+
       def update_percentages
         validate_parameters [:id, :kleerers], params do
           execute_command(UpdatePercentage.new(params[:id], kleerers: params[:kleerers]))
