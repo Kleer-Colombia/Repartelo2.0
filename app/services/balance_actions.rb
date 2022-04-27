@@ -50,6 +50,7 @@ class BalanceActions
                               total: balance.total_incomes},
                     expenses: {expenses: balance.expenses,
                               total: balance.total_expenses},
+                    clearings: balance.clearings,
                     distributions: balance.prepare_distributions(balance.distributions),
                     percentages: balance.percentages,
                     resume: balance.resume,

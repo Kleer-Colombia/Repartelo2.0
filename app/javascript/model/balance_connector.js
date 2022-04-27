@@ -117,18 +117,19 @@ export default {
                 url: BALANCE_URL + '/' + context.$route.params.id
             }).then(function(response) {
                 var balance = response.data.response
+                console.log(balance)
                 context.balance = balance.balance
                 context.incomes.realIncomes = balance.incomes.incomes
                 context.incomes.totalIncomes = balance.incomes.total
                 context.expenses.realExpenses = balance.expenses.expenses
                 context.expenses.totalExpenses = balance.expenses.total
+                context.clearings.realClearings = balance.clearings
                 context.prepareResume(balance.resume)
                 context.distribution.balancePercentages = balance.percentages
                 context.countries = balance.disponible_countries
                 if (balance.distributions.length > 0) {
                     context.distribution.result = balance.distributions
                 }
-                console.log(context.countries)
                 if (nextFunction) {
                     nextFunction(context)
                 }
@@ -241,9 +242,10 @@ export default {
                 data: { clearing: context.clearing },
                 url: `${BALANCE_URL}/${id}/clearing`
             }).then(function(response) {
-                // var answer = response.data.response
-                // context.realExpenses = answer.expenses
-                // context.$emit('updateTaxes')
+                console.log(response)
+                    // var answer = response.data.response
+                    // context.realExpenses = answer.expenses
+                    // context.$emit('updateTaxes')
             })
             .catch(function(error) {
                 util.processErrorMsgs(error, context)

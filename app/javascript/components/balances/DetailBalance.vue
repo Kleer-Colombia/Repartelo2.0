@@ -27,7 +27,7 @@
                                       :allExpenses="expenses.realExpenses"/>
 
                       <clearing-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
-                                      :allExpenses="[]"/>
+                                      :allClearings="clearings.realClearings" :countries="countries" />
                     </div>
                     
                 </el-col>
@@ -131,7 +131,6 @@
 <script>
 
   import balanceConnector from '../../model/balance_connector'
-  import countriesConnector from '../../model/countries_connector'
   import propertiesBalance from './PropertiesBalance.vue'
   import util from '../../model/util'
   import SafeBody from '../base/SafeBody.vue'
@@ -175,6 +174,9 @@
         },
         expenses: {
           realExpenses: []
+        },
+        clearings: {
+          realClearings: []
         },
         resume: [],
         countries: []

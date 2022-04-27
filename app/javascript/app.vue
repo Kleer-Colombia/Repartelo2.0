@@ -48,3 +48,12 @@
     }
   }
 </script>
+
+<style>
+  .el-picker-panel{
+    width: 360px !important;
+  }
+  .el-picker-panel__content{  
+    width: 360px !important;
+  }
+</style>
