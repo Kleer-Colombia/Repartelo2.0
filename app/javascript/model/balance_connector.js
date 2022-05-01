@@ -242,10 +242,22 @@ export default {
                 data: { clearing: context.clearing },
                 url: `${BALANCE_URL}/${id}/clearing`
             }).then(function(response) {
-                console.log(response)
-                    // var answer = response.data.response
-                    // context.realExpenses = answer.expenses
-                    // context.$emit('updateTaxes')
+                var answer = response.data.response
+                context.realClearings = answer.clearings
+                context.$emit('updateClearings')
+            })
+            .catch(function(error) {
+                util.processErrorMsgs(error, context)
+            })
+    },
+    findClearings(context, id) {
+        axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
+        axios({
+                method: 'get',
+                url: BALANCE_URL + '/' + idBalance + '/clearing'
+            }).then(function(response) {
+                console.log('clearings', response.data.response)
+                context.realClearings = response.data.response.clearings
             })
             .catch(function(error) {
                 util.processErrorMsgs(error, context)

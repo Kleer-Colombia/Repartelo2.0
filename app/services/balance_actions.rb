@@ -26,6 +26,12 @@ class BalanceActions
             # total: balance.total_clearings}
   end
 
+  def remove_clearing_to_balance(id,idClearing)
+    balance = Balance.find(id)
+    balance.clearings.find(idClearing).destroy
+    return {clearings: balance.clearings}
+  end
+
   def find_all_balances()
     balances = Balance.all
     hashed_balances = []
@@ -64,9 +70,12 @@ class BalanceActions
     return { expenses: balance.expenses,
              total: balance.total_expenses
     }
-
   end
 
+  def find_clearings_balance(id)
+    balance = Balance.find(id)
+    return balance.clearings
+  end
 
   def update_kleerers_percentages(id, kleerers)
     balance = Balance.find(id)

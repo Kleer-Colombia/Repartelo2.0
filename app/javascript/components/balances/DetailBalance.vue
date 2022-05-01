@@ -27,7 +27,8 @@
                                       :allExpenses="expenses.realExpenses"/>
 
                       <clearing-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
-                                      :allClearings="clearings.realClearings" :countries="countries" />
+                                      :allClearings="clearings.realClearings" :countries="countries" 
+                                      :preutilidad="resume.find(r => r.tittle.includes('pre_utilidad')).total" />
                     </div>
                     
                 </el-col>
@@ -194,6 +195,9 @@
         this.distribution.result = false
         balanceConnector.updateTaxes(this, this.$route.params.id)
       },
+      calculateTotalClearings(){
+
+      },
       formatPrice (value) {
         return util.formatPrice(value)
       },
@@ -241,7 +245,7 @@
           obj['tittle'] = `${objectKey} ${percentage}`
           obj['total'] = data[objectKey]
           obj['id'] = 'money' + objectKey
-
+          console.log(obj)
           taxes.push(obj)
         })
         this.resume = taxes

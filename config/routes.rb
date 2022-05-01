@@ -37,9 +37,9 @@ Rails.application.routes.draw do
       get '/balance/:id/expense', to: 'balance_operations#find_expenses'
       delete '/balance/:id/expense/:idExpense', to: 'balance_operations#delete_expense'
       post '/balance/:id/percentages', to: 'balance_operations#update_percentages'
-      # get '/balance/:id/clearing'
+      get '/balance/:id/clearing', to: 'balance_operations#find_clearings'
       post 'balance/:id/clearing', to: 'balance_operations#add_clearing'
-      # delete '/balance/:id/clearing'
+      delete '/balance/:id/clearing', to: 'balance_operations#delete_clearing'
 
       post '/balance/:id/coachingSessions/new', to: 'coaching_sessions#create'
       get '/balance/:id/coachingSessions/', to: 'coaching_sessions#find'

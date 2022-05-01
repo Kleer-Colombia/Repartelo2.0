@@ -49,7 +49,8 @@
                     </el-button-group>
                     <label>{{ countries[clearing.country_id - 1].name }}</label>
                 </div>
-                <label style="float: right;">{{ `${clearing.percentage * 100}%` }}</label>
+                <label style="float: right;">{{ `${ preutilidad <= 0 ? `${clearing.percentage * 100}%` : calculateOneClearing(clearing)} ` }}</label>
+                <!-- <label style="float: right;">{{ `${clearing.percentage * 100}%` }}</label> -->
             </el-row>
         </div>
     </el-card>
@@ -81,6 +82,10 @@
         type: [Array],
         default: []
       },
+      preutilidad: {
+        type: [Number],
+        default: 0
+      }
     },
     data () {
       return {
@@ -130,6 +135,9 @@
                 message: 'verificalo bien ;-)'
               })
             })
+      },
+      calculateOneClearing(clearing){
+        return this.formatPrice(clearing.percentage * this.preutilidad)
       },
       formatPrice (value) {
         return util.formatPrice(value)

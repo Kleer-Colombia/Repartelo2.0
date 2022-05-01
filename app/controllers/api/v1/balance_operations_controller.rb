@@ -88,6 +88,26 @@ module Api
         end
       end
 
+      def find_clearings
+        validate_parameters [:id], params do
+          begin
+            send_response @actions.find_clearings_balance(params[:id])
+          rescue
+            halt_message("We can't find clearings: #{e.message}", :internal_server_error)
+          end
+        end
+      end
+
+      def delete_clearing
+        validate_parameters [:id, :idEClearing], params do
+          begin
+            send_response @actions.remove_clearing_to_balance(params[:id], params[:idEClearing])
+          rescue
+            halt_message("We can't remove clearing: #{e.message}", :internal_server_error)
+          end
+        end
+      end
+
       def update_percentages
         validate_parameters [:id, :kleerers], params do
           execute_command(UpdatePercentage.new(params[:id], kleerers: params[:kleerers]))
