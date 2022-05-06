@@ -14,7 +14,7 @@
 								>
 				    </el-slider>
                 </el-form-item>
-                <el-form-item label="País">
+                <el-form-item label="País destino">
                     <el-select v-model="clearing.countryId" placeholder="País">
                         <el-option
                             v-for="country in countries"
@@ -27,9 +27,9 @@
                 <el-form-item>
                     <el-button-group>
                         <el-button :plain="true" type="danger" size="mini" icon="el-icon-error"
-                                   @click="showClearing()"></el-button>
+                                  @click="showClearing()"></el-button>
                         <el-button id="saveCLearing" type="primary" size="mini" icon="el-icon-success"
-                                   @click="addClearing()"></el-button>
+                                  @click="addClearing()"></el-button>
                     </el-button-group>
                 </el-form-item>
             </el-form>
@@ -44,8 +44,8 @@
                 <div style="float: left">
                     <el-button-group style="margin-right: 5px;">
                         <el-button v-bind:id="'removeClearing'+clearing.percentage" :disabled="!editable" :plain="true"
-                                   size="mini" type="text" icon="el-icon-remove-outline"
-                                   @click="removeExpense(clearing.id)"></el-button>
+                                  size="mini" type="text" icon="el-icon-remove-outline"
+                                  @click="removeClearing(clearing.id)"></el-button>
                     </el-button-group>
                     <label>{{ countries[clearing.country_id - 1].name }}</label>
                 </div>
@@ -120,16 +120,18 @@
         this.newClearing = false
       },
       removeClearing (ClearingId) {
-        this.$confirm('¿Esta seguro de querer borrar este gasto?, no podrá recuperarlo si acepta.',
+        this.$confirm('¿Esta seguro de querer borrar este clearing?, no podrá recuperarlo si acepta.',
             'Cuidado!', {
               confirmButtonText: 'Aceptar',
               cancelButtonText: 'Cancelar',
               type: 'warning',
               center: true
             }).then(() => {
+              console.log('va piola', ClearingId)
               this.error = ''
-            //   balanceConnector.removeClearing(this, this.$route.params.id, ClearingId)
-            }).catch(() => {
+              balanceConnector.removeClearing(this, this.$route.params.id, ClearingId)
+            }).catch((error) => {
+              console.log('error', error)
               this.$message({
                 type: 'info',
                 message: 'verificalo bien ;-)'

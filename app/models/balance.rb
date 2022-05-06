@@ -160,6 +160,16 @@ class Balance < ApplicationRecord
     return data
   end
 
+  def close_clearings
+    puts 'entrando a close clearings'
+    pre_utilidad = resume[:pre_utilidad]
+    clearings.each do |clearing|
+      puts "clearing #{pre_utilidad } #{clearing.percentage}"
+      clearing.amount = pre_utilidad * clearing.percentage
+      clearing.save!
+    end
+  end
+
   private
 
   def plus_data(data)

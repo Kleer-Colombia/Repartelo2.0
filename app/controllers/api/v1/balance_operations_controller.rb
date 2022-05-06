@@ -99,9 +99,9 @@ module Api
       end
 
       def delete_clearing
-        validate_parameters [:id, :idEClearing], params do
+        validate_parameters [:id, :idClearing], params do
           begin
-            send_response @actions.remove_clearing_to_balance(params[:id], params[:idEClearing])
+            send_response @actions.remove_clearing_to_balance(params[:id], params[:idClearing])
           rescue
             halt_message("We can't remove clearing: #{e.message}", :internal_server_error)
           end

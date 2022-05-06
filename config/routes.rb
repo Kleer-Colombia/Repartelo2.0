@@ -39,7 +39,7 @@ Rails.application.routes.draw do
       post '/balance/:id/percentages', to: 'balance_operations#update_percentages'
       get '/balance/:id/clearing', to: 'balance_operations#find_clearings'
       post 'balance/:id/clearing', to: 'balance_operations#add_clearing'
-      delete '/balance/:id/clearing', to: 'balance_operations#delete_clearing'
+      delete '/balance/:id/clearing/:idClearing', to: 'balance_operations#delete_clearing'
 
       post '/balance/:id/coachingSessions/new', to: 'coaching_sessions#create'
       get '/balance/:id/coachingSessions/', to: 'coaching_sessions#find'

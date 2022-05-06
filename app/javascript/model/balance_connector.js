@@ -244,20 +244,38 @@ export default {
             }).then(function(response) {
                 var answer = response.data.response
                 context.realClearings = answer.clearings
-                context.$emit('updateClearings')
+                EventBus.$emit('updateClearings')
+                context.$emit('updateTaxes')
             })
             .catch(function(error) {
                 util.processErrorMsgs(error, context)
             })
     },
     findClearings(context, id) {
+        console.log('find clearings')
         axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
         axios({
                 method: 'get',
-                url: BALANCE_URL + '/' + idBalance + '/clearing'
+                url: BALANCE_URL + '/' + id + '/clearing'
             }).then(function(response) {
-                console.log('clearings', response.data.response)
-                context.realClearings = response.data.response.clearings
+                console.log(response)
+                context.realClearings = response.data.response
+            })
+            .catch(function(error) {
+                util.processErrorMsgs(error, context)
+            })
+    },
+    removeClearing(context, id, idClearing) {
+        axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
+        axios({
+                method: 'delete',
+                url: `${BALANCE_URL}/${id}/clearing/${idClearing}`
+            }).then(function(response) {
+                console.log(response)
+                var answer = response.data.response
+                context.realClearings = answer.clearings
+                EventBus.$emit('updateClearings')
+                context.$emit('updateTaxes')
             })
             .catch(function(error) {
                 util.processErrorMsgs(error, context)
