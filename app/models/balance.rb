@@ -5,6 +5,7 @@ class Balance < ApplicationRecord
   belongs_to :kleerer, optional: true
   has_many :incomes, dependent: :destroy
   has_many :expenses, dependent: :destroy
+  has_many :clearings, dependent: :destroy
   has_many :taxes, dependent: :destroy
   has_many :distributions, dependent: :destroy
   has_many :percentages, dependent: :destroy
@@ -17,6 +18,14 @@ class Balance < ApplicationRecord
 
   def total_expenses
     plus_data(expenses)
+  end
+
+  def total_clearings(preutilidad)
+    result = 0
+    clearings.each do |clearing|
+      result += preutilidad * clearing.percentage
+    end
+    result
   end
 
   def calculate_profit
@@ -41,7 +50,9 @@ class Balance < ApplicationRecord
     resume[:pre_utilidad] = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
     resume_utility, total_utility = find_tax(:utility)
     resume.merge!(resume_utility)
-    resume[:utilidad] = resume[:pre_utilidad] - total_utility
+    resume[:clearings] = total_clearings(resume[:pre_utilidad])
+    resume[:utilidad] = resume[:pre_utilidad] - total_utility - resume[:clearings]
+    #TODO: save with clearings distributions and saldos
     Rails.logger.info("Resumed taxes IN BALANCE: #{resume}")
     return resume
   end
@@ -147,6 +158,16 @@ class Balance < ApplicationRecord
     end
     data = add_other_post_utility data
     return data
+  end
+
+  def close_clearings
+    puts 'entrando a close clearings'
+    pre_utilidad = resume[:pre_utilidad]
+    clearings.each do |clearing|
+      puts "clearing #{pre_utilidad } #{clearing.percentage}"
+      clearing.amount = pre_utilidad * clearing.percentage
+      clearing.save!
+    end
   end
 
   private

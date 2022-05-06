@@ -37,6 +37,9 @@ Rails.application.routes.draw do
       get '/balance/:id/expense', to: 'balance_operations#find_expenses'
       delete '/balance/:id/expense/:idExpense', to: 'balance_operations#delete_expense'
       post '/balance/:id/percentages', to: 'balance_operations#update_percentages'
+      get '/balance/:id/clearing', to: 'balance_operations#find_clearings'
+      post 'balance/:id/clearing', to: 'balance_operations#add_clearing'
+      delete '/balance/:id/clearing/:idClearing', to: 'balance_operations#delete_clearing'
 
       post '/balance/:id/coachingSessions/new', to: 'coaching_sessions#create'
       get '/balance/:id/coachingSessions/', to: 'coaching_sessions#find'
@@ -54,6 +57,8 @@ Rails.application.routes.draw do
 
       post '/objectives/', to: 'objectives#add_objective_kleerco'
       get '/objectives/reports', to: 'objectives#find_kleerco_reports'
+
+      get '/countries/', to: 'countries#find_countries'
 
 
     end

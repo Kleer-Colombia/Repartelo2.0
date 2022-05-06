@@ -15,6 +15,7 @@ class CloseBalance
       distributions.each do |distribution|
         @saldos.add_saldo(distribution: distribution, balance: balance)
       end
+      @balance.close_clearings
       balance.editable = false
       balance.save!
     else

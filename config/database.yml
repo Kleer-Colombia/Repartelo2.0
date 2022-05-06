@@ -23,7 +23,7 @@ default: &default
 
 development: &development
   <<: *default
-  database: repartelo2_0_development
+  database: repartelo_dev
   host: <%= ENV.fetch("DB_HOST") %>
   username: <%= ENV.fetch("DB_USERNAME") %>
   password: <%= ENV.fetch("DB_PASSWORD") %>
