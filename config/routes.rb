@@ -60,6 +60,8 @@ Rails.application.routes.draw do
 
       get '/countries/', to: 'countries#find_countries'
 
+      get '/clearing/:country_id', to: 'clearings#find_clearings'
+
 
     end
   end
