@@ -6,7 +6,7 @@ const API_URL = util.apiUrl()
 const COUNTRIES_URL = API_URL + '/countries/'
 
 export default {
-    getCountries: (context, actions) => {
+    getCountries: (context, actions = () => {}) => {
         axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
         axios({
             method: 'get',

@@ -1,6 +1,7 @@
 class ClearingsActions
 
   def find_clearings country_id
+    #just clearings with amounts are closed
     data = Clearing.where(country_id: country_id).order(created_at: :desc).filter{|e| e.amount}
     summary = { total: 0}
     summary = calculate_totals data, summary
@@ -69,8 +70,8 @@ class ClearingsActions
     data.each do |clearing|
       concept = "Balance: #{clearing.balance_id} - #{clearing.balance.client} - #{clearing.description}"
 
-      detail = {ingreso: '',concepto: concept,
-                 fecha: clearing.created_at.strftime('%d')}
+      detail = {ingreso: '',concepto: concept,  reference: "/balance/#{clearing.balance.id}",
+                 fecha: clearing.updated_at.strftime('%d-%m-%Y')}
       if clearing.amount < 0
         # detail[:egreso] = saldo.amount
       else
