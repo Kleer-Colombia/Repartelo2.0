@@ -6,13 +6,16 @@
                     <el-input  type="textarea" name="clearingDescription" v-model="clearing.description"></el-input>
                 </el-form-item>
                 <el-form-item label="Porcentaje">
-                    <el-slider
-								v-model="percentageSelector.digit"
-								:max="percentageSelector.max"
-								:min="percentageSelector.min"
-								@change="calculatePercentage()"
-								>
-				    </el-slider>
+                  <el-input-number
+                    class="decimal-input"
+                    size="medium"
+                    v-model="percentageSelector.digit"
+                    :max="percentageSelector.max"
+                    :min="percentageSelector.min"
+                    :step="0.01"
+                    @change="calculatePercentage()"
+                    >
+				          </el-input-number>
                 </el-form-item>
                 <el-form-item label="País destino">
                     <el-select v-model="clearing.countryId" placeholder="País">
@@ -152,5 +155,20 @@
 </script>
 
 <style scoped>
-
+.decimal-input{
+  width: 90%;
+}
+</style>
+<style >
+.el-input__inner{
+  margin-left: 40px;
+  margin-right: 20px !important;
+  margin-top: 2px !important
+}
+.el-input--suffix{
+  margin-left: -35px;
+}
+.el-input__suffix-inner{
+  margin-left: 40px !important;
+}
 </style>

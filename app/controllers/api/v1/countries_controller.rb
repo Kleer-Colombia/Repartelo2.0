@@ -12,6 +12,8 @@ module Api
       def find_countries
         begin
           response = Country.all
+          puts 'paises'
+          puts response
           send_response response
         rescue StandardError => error
           halt_message("can't find countries: #{error.message}", :internal_server_error)
