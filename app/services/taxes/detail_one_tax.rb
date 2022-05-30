@@ -33,4 +33,8 @@ class DetailOneTax < TaxesHelper
     errors.add(:error_code, :not_acceptable)
   end
 
+  def separate_in_months
+
+  end
+
 end

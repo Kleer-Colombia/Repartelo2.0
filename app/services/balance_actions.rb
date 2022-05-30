@@ -49,7 +49,6 @@ class BalanceActions
   def find_complete_balance(id)
     balance = Balance.find(id)
     countries = Country.all
-    puts "facturas asociadas"
     balance.incomes.each do |income|
       puts income.description
     end
