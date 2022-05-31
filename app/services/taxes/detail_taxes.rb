@@ -7,7 +7,6 @@ class DetailTaxes < TaxesHelper
     groups = {"RETEICA" => "Ica", "RETEFUENTE" => "Reserva Retefuente",  "RETEIVA" => "IVA","Retefuente" => "Reserva Retefuente" }
 
     TaxMaster.taxes_to_show.each do |tax_master|
-      puts tax_master.name
       taxesDetail = Tax.all.select{ |tax| tax.name.split(' (')[0] == tax_master.name and !tax.balance.editable and tax.amount != 0}.map do |tax|
         prepare_tax_registry(tax)
       end
@@ -26,7 +25,9 @@ class DetailTaxes < TaxesHelper
 
     taxes_preconsolidated.each do |key, value|
       puts "key: #{key}, Value: #{value[:id]}, size: #{value[:data].size}"
-      data.push({name: key, id: value[:id], years: order_taxes_by_year(value[:data])})
+      summary = {total: 0, ingresos: 0, egresos: 0}
+      data.push({name: key, id: value[:id], months: order_taxes_by_month(value[:data]),
+                 years: order_taxes_by_year(value[:data]), header: calculate_totals(value[:data], summary)})
     end
     data
     rescue StandardError => error
