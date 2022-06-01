@@ -148,10 +148,11 @@
       tax: {
         type: Object,
         default: ''
+      },
+      updatetax: {
+        type: Function,
+        default: ()=>{}
       }
-    },
-    updatetax () {
-        taxesConnector.findOne(this, this.tax.id, this.taxYear)
     },
     data () {
       return {
@@ -183,9 +184,7 @@
       routeTo (route) {
         router.push(route)
       },
-      updatetax () {
-        taxesConnector.find(this)
-      },
+      
       getDescription (taxDetail) {
         let description = ''
         if (!this.hasBalance(taxDetail)) {

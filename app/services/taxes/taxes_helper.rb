@@ -58,17 +58,15 @@ class TaxesHelper
     acum = 0
 
 
-    month_array = month_array.sort_by{|e| DateTime.parse(e[:fecha] + '-01')}.reverse
+    month_array = month_array.sort_by{|e| DateTime.parse(e[:fecha] + '-01')}
 
-    month_array.each do |month|
-      puts month[:fecha]
-    end
 
     month_array.each do |month|
       acum += month[:total]
+      # puts "#{month[:fecha]} - #{month[:total]} - #{acum}"
       month[:saldo_acumulado] = acum
     end
-    return month_array
+    return month_array.reverse
   end
 
   def prepare_details(data)
