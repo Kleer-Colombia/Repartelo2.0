@@ -6,7 +6,7 @@
                     <el-tabs v-model="activeTab" style="margin-bottom: 30px;">
                         <el-tab-pane v-for="tax in taxes" :key="tax.name"
                                      v-bind:label="tax.name" v-bind:name="tax.name">
-                            <taxes-detail-by-year v-bind:tax="tax" v-bind:updateTax="updatetax"/>
+                            <taxes-detail-by-year v-bind:tax="tax" v-bind:updateTax="updateTax"/>
                         </el-tab-pane>
                     </el-tabs>
                 </el-card>
@@ -36,7 +36,8 @@
       taxesConnector.find(this)
     },
     methods:{
-      updatetax () {
+      updateTax () {
+        console.log('si hay update')
         taxesConnector.find(this)
       },
     }
