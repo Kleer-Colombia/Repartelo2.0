@@ -57,11 +57,6 @@ class ClearingsActions
       acum += month[:total]
       month[:saldo_acumulado] = acum
     end
-
-    # puts 'separado por meses'
-    # puts months
-
-
     return month_array
   end
 
@@ -81,43 +76,5 @@ class ClearingsActions
     end
     return details
   end
-
-  #Saldos with balance
-
-  def calculate_totals_of_balances data, summary
-    data.each do |saldo|
-      if saldo.balance
-        if saldo.amount < 0
-          summary[:egresos] += saldo.amount
-        else
-          summary[:ingresos] += saldo.amount
-        end
-        summary[:total] += saldo.amount
-      end
-    end
-    return summary
-  end
-
-  def separate_in_months_with_balance data
-    months = {}
-    data.each do |saldo|
-      if saldo.balance
-        months = get_one_month_saldos saldo, months
-      end
-    end
-    return months
-  end
-
-  # Generals
-  def get_one_month_saldos saldo, months
-    date = saldo.created_at.strftime('%Y-%m')
-    unless months[date]
-      months[date] = []
-    end
-    months[date].push saldo
-
-    return months
-  end
-
 
 end
