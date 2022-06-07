@@ -7,15 +7,13 @@
                 </el-form-item>
                 <el-form-item label="Porcentaje">
                   <el-input-number
-                    class="decimal-input"
-                    size="medium"
                     v-model="percentageSelector.digit"
                     :max="percentageSelector.max"
                     :min="percentageSelector.min"
                     :step="0.01"
                     @change="calculatePercentage()"
-                    >
-				          </el-input-number>
+                    controls-position="right"
+                    />
                 </el-form-item>
                 <el-form-item label="País destino">
                     <el-select v-model="clearing.countryId" placeholder="País">
@@ -155,20 +153,18 @@
 </script>
 
 <style scoped>
-.decimal-input{
-  width: 90%;
-}
+/* .decimal-input{
+  width: 100%;
+} */
 </style>
 <style >
-.el-input__inner{
-  margin-left: 40px;
-  margin-right: 20px !important;
-  margin-top: 2px !important
-}
-.el-input--suffix{
+/* .el-input__inner{
+  height: 100% !important;
+} */
+/* .el-input--suffix{
   margin-left: -35px;
 }
 .el-input__suffix-inner{
   margin-left: 40px !important;
-}
+} */
 </style>

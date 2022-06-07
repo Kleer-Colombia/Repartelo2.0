@@ -65,9 +65,6 @@
 		width: 150px !important;
 		height: 30px !important;
 	}
-	.el-input__inner{
-		height: 100% !important;
-	}
 	.el-table .normal-row {
 		background: white;
 	}
