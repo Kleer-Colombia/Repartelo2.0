@@ -10,6 +10,8 @@
         </el-tabs>
       </el-col>
     </el-row> -->
+    
+    <!-- taxes detail by year disable -->
     <el-row>
       <!-- -*----------------------------------------------------- -->
       <el-row :gutter="20">
@@ -35,7 +37,7 @@
         </el-col>
         <el-col :span="4">
         </el-col>
-          <add-taxes-button @refresh="updatetax" style="float: right;" :tax="tax"/>
+          <add-taxes-button @refresh="updateTax" style="float: right;" :tax="tax"/>
         </el-col>
       </el-row> 
 
@@ -149,10 +151,7 @@
         type: Object,
         default: ''
       },
-      updatetax: {
-        type: Function,
-        default: ()=>{}
-      }
+      updateTax: Function
     },
     data () {
       return {
