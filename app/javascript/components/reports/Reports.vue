@@ -24,20 +24,17 @@
 						</template>
 					</el-table-column>
 				</el-table>
+
 			</el-col>
 		</el-row>
 		<el-row>
-			<el-col :span="15" :offset="2">
-				<h2>Cargue masivo de datos</h2>
-			</el-col>
-			
-			<el-col :span="8" :offset="2">
+			<el-col :span="10" :offset="1">
+              <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                  <h2>Cargue masivo de datos</h2>
+                </div>
 				<input type="file" class="file-input" @change="loadData" />
-			</el-col>
-			<el-col :span="8" :offset="2">
 				<el-button type="primary" @click="sendSaldos()" :disabled="loading">Carga de datos</el-button>
-			</el-col>
-			<el-col :span="15" :offset="2">
 				<h3>Reporte de carga</h3>
 				<div v-if="!report" v-loading="loading">
 					Sin reporte
@@ -54,8 +51,16 @@
 						<ul>{{error}}</ul>
 					</div>
 				</div>
-			</el-col>
-			
+              </el-card>
+            </el-col>
+			<el-col :span="10" :offset="1">
+              	<el-card class="box-card">
+					<div slot="header" class="clearfix">
+					<h2>Carga de TRM</h2>
+					</div>
+					<add-trm-button></add-trm-button>
+				</el-card>
+            </el-col>
 		</el-row>
 	</safe-body>
 </template>
@@ -80,13 +85,15 @@
 
 <script>
 
-  import reportConnector from '../../model/report_connector'
-  import SafeBody from '../base/SafeBody.vue'
+import reportConnector from '../../model/report_connector'
+import SafeBody from '../base/SafeBody.vue'
+import AddTrmButton from '../TRM/AddTrmButton.vue'
 
   export default {
 
     components: {
-      SafeBody
+      	SafeBody,
+        AddTrmButton
     },
     data () {
       return {
@@ -154,7 +161,6 @@
 			return gasto
 		},
 		loadData (e) {
-			
 		  	const reader = new FileReader()
             reader.onload = (e) => {
                 this.transformData(e.target.result)

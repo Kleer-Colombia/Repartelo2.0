@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_22_165510) do
+ActiveRecord::Schema.define(version: 2022_06_08_020042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -187,6 +187,14 @@ ActiveRecord::Schema.define(version: 2022_04_22_165510) do
     t.datetime "updated_at", null: false
     t.index ["balance_id"], name: "index_percentages_on_balance_id"
     t.index ["kleerer_id"], name: "index_percentages_on_kleerer_id"
+  end
+
+  create_table "representative_market_rates", force: :cascade do |t|
+    t.decimal "rate"
+    t.date "date"
+    t.string "currency"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "saldos", force: :cascade do |t|
