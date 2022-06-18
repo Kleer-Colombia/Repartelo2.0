@@ -2,12 +2,17 @@ module Api
   module V1
     class RatesController < ApiController
 
+      before_action :set_actions
+
+      def set_actions
+        @rate_actions ||= RatesActions.new
+      end
+
       def add_trm
         validate_parameters [:trm], params do
           begin
             trm = params[:trm]
-            response = RepresentativeMarketRate.new(rate: trm[:rate], date: trm[:date], currency: trm[:currency])
-            response.save!
+            response = @rate_actions.add_trm(trm)
             send_response response
           rescue StandardError => error
             halt_message("can't add new rate: #{error.message}", :internal_server_error)
