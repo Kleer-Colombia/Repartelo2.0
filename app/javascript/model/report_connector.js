@@ -38,5 +38,25 @@ export default {
         }).catch(error => {
             util.processErrorMsgs(error, context)
         })
+    },
+
+    addTRM(context, data) {
+        axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
+        axios({
+                method: 'post',
+                url: API_URL + '/trm',
+                data: data
+            }).then(response => {
+                console.log(response.data.response)
+                context.loading = false
+                context.closeDialog(true)
+                context.$message({
+                    type: 'success',
+                    message: 'TRM agregado exitosamente'
+                })
+            })
+            .catch(error => {
+                util.processErrorMsgs(error, context)
+            })
     }
 }

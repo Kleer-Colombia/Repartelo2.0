@@ -42,7 +42,6 @@ class ObjetivesActions
   end
 
   def add_objective objective
-    # TODO: poner porcentaje inicial al crear
     objective = Objective.new(amount: objective[:amount], initial_balance_percentage: objective[:percentage])
     objective.save!
   end
