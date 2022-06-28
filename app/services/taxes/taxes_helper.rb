@@ -45,9 +45,12 @@ class TaxesHelper
 
   def calculate_totals_by_month data
     month_array = []
-    months = data.group_by{|e| e[:created_at].strftime('%Y-%m')}
+    months = data.group_by{|e|
+      e[:date].strftime('%Y-%m')
+    }
 
     months.each do |month_name, data|
+      data = data.sort_by {|e| e[:date]}.reverse
       month = {total: 0, ingresos: 0, egresos: 0, fecha: month_name}
       month = calculate_totals(data, month)
       month[:detalles] = data
