@@ -138,7 +138,7 @@ export default {
                 util.processErrorMsgs(error, context)
             })
     },
-    findBalances(context) {
+    findBalances(context, actions = () => {}) {
         axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
         axios({
                 method: 'get',
@@ -147,7 +147,7 @@ export default {
                 context.balances = response.data.response.balances
                 context.kleerers = response.data.response.kleerers
                 context.filteredBalances = context.balances
-                console.log(context.balances)
+                actions()
             })
             .catch(function(error) {
                 util.processErrorMsgs(error, context)
