@@ -36,7 +36,10 @@ class CalculateTaxes
     result = calculate_taxes(:utility, pre_utility)
     utility = calculate_utility(result)
 
-    result = calculate_taxes(:post_utility, utility)
+    result =  calculate_taxes(:reservas, @incomes + retefuente + reteica)
+
+    result.merge!(calculate_taxes(:post_utility, utility))
+
     utility = calculate_utility(result)
     save_taxes(result) if @save_in
     result['Ingresos'] = @incomes

@@ -157,7 +157,7 @@ export default {
         },
         showing: {
           checkAll: false,
-          checkedBalances: ['Abiertos', 'Cerrados'],
+          checkedBalances: ['Abiertos'],
           show: showOptions,
           isIndeterminate: true
         },
@@ -167,7 +167,10 @@ export default {
       }
     },
     created: function () {
-      balanceConnector.findBalances(this)
+      balanceConnector.findBalances(this, () => {
+        this.filter()
+      })
+      
     },
     methods: {
       newBalance () {
@@ -229,7 +232,6 @@ export default {
                 !kleerer.name.toLowerCase().includes('reserva') && 
                 !kleerer.name.toLowerCase().includes('kleerco')
         })
-        console.log('---')
         return kleererId ? kleererId.id : ''
       },
       filterByKleerer(editableFilter = null){

@@ -63,10 +63,12 @@ class Balance < ApplicationRecord
 
 
     resume.merge!(resume_utility)
+    reservas, total_reservas = find_tax(:reservas)
+    resume.merge!(reservas)
     resume[:clearings] = total_clearings(resume[:pre_utilidad])
     puts "clearings #{resume[:clearings]}"
 
-    resume[:utilidad] = resume[:pre_utilidad] - total_utility - resume[:clearings]
+    resume[:utilidad] = resume[:pre_utilidad] - total_utility - resume[:clearings] - total_reservas
     #TODO: save with clearings distributions and saldos
     Rails.logger.info("Resumed taxes IN BALANCE: #{resume}")
     return resume
@@ -113,9 +115,11 @@ class Balance < ApplicationRecord
 
   def find_master_taxes
     master_tax_names = TaxMaster.taxes_names_to_calculate
+
     master_taxes = taxes.select do |tax|
       master_tax_names.include?(tax.name)
     end
+
     master_taxes
   end
 
@@ -132,6 +136,7 @@ class Balance < ApplicationRecord
 
   def find_in_invoice_taxes
     master_tax_names = TaxMaster.taxes_names_to_calculate
+
     in_invoice_taxes = taxes.reject do |tax|
       master_tax_names.include?(tax.name)
     end
@@ -200,6 +205,8 @@ class Balance < ApplicationRecord
       resume[tax.name] = find_tax_value(tax.name)
       total += resume[tax.name]
     end
+    puts "buscando tax #{type}"
+    puts resume
     return resume, total
   end
 
