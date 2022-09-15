@@ -14,17 +14,22 @@ class CalculateTaxes
 
   def call
     Rails.logger.info("incomes: #{@incomes}")
-    #ACA SE CALCULA EL ICA
-    # TODO: arreglar calculo de ICA
+    puts 'CALCULO DE IMPUESTOS---------'
+    puts "incomes #{@incomes}"
     result = calculate_taxes(:invoiced, @incomes)
 
+    puts "invoiced - #{result} --- total va en #{@incomes}"
     resume_in_invoice = {}
     resume_in_invoice.merge!(adjust_incomes_with_in_invoice_taxes) if @save_in
+    puts "resume in invoice #{resume_in_invoice} --- total va en #{@incomes}"
 
     retefuente = resume_in_invoice["RETEFUENTE"] != nil ? resume_in_invoice["RETEFUENTE"] :0
     reteica = resume_in_invoice["RETEICA"] != nil ? resume_in_invoice["RETEICA"] :0
 
+    puts "retefuente #{retefuente} - reteica #{reteica} --- total va en #{@incomes}"
+
     result.merge!(calculate_taxes(:post_iva, @incomes + retefuente + reteica))
+    puts "post_iva #{result} - base #{@incomes + retefuente + reteica} --- total va en #{@incomes}"
 
     pre_utility = calculate_utility(result)
 

@@ -39,18 +39,33 @@ class Balance < ApplicationRecord
   def resume
     resume = {}
     resume[:ingresos] = total_incomes
+    puts "resumen general #{resume}"
     resume_in_invoice, total_in_invoice = resume_in_invoice_tax
+    puts "resume invoiced #{resume_in_invoice} - total #{total_in_invoice}  'Calc ft :ingresos' \n"
+
     resume.merge!(resume_in_invoice)
     resume_invoiced, total = find_tax(:invoiced)
+    puts "resume invoiced #{resume_invoiced} - total #{total}  'Calc ft :invoiced' \n"
     resume_invoiced_a, total_a = find_tax(:post_iva)
+    puts "resume invoiced #{resume_invoiced_a} - total #{total_a}  'Calc ft :post_iva'"
+
     resume_invoiced.merge!(resume_invoiced_a)
     total += total_a
+
     resume.merge!(resume_invoiced)
     resume[:egresos] = total_expenses
+    puts "egresos #{resume[:egresos]}"
+
+    #ingresos - egresos - invoiced - post_iva - alegra
     resume[:pre_utilidad] = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
     resume_utility, total_utility = find_tax(:utility)
+    puts "resume invoiced #{resume_utility} - total #{total_utility}  'Calc ft :utility'"
+
+
     resume.merge!(resume_utility)
     resume[:clearings] = total_clearings(resume[:pre_utilidad])
+    puts "clearings #{resume[:clearings]}"
+
     resume[:utilidad] = resume[:pre_utilidad] - total_utility - resume[:clearings]
     #TODO: save with clearings distributions and saldos
     Rails.logger.info("Resumed taxes IN BALANCE: #{resume}")
@@ -161,10 +176,8 @@ class Balance < ApplicationRecord
   end
 
   def close_clearings
-    puts 'entrando a close clearings'
     pre_utilidad = resume[:pre_utilidad]
     clearings.each do |clearing|
-      puts "clearing #{pre_utilidad } #{clearing.percentage}"
       clearing.amount = pre_utilidad * clearing.percentage
       clearing.save!
     end
