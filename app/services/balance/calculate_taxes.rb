@@ -1,13 +1,15 @@
 class CalculateTaxes
   prepend Service
 
-  attr_accessor :taxes, :expenses, :incomes, :save_in, :taxes_amounts, :taxes_percentages, :incomes_post_iva
+  attr_accessor :taxes, :clearings, :expenses, :incomes, :save_in, :taxes_amounts, :taxes_percentages, :incomes_post_iva, :iva
   def initialize(data)
     @taxes = data[:taxes]
     @incomes = data[:incomes] ? data[:incomes] : 0
     @incomes_post_iva = data[:incomes_post_iva] ? data[:incomes_post_iva] : 0
     @expenses = data[:expenses] ? data[:expenses] : 0
+    @clearings = data[:clearings] ? data[:clearings] : 0
     @save_in = data[:save_in]
+    @iva = data[:iva] ? data[:iva] : 0
     @taxes_amounts = {}
     @taxes_percentages = {}
   end
@@ -15,12 +17,15 @@ class CalculateTaxes
   def call
     Rails.logger.info("incomes: #{@incomes}")
     puts 'CALCULO DE IMPUESTOS---------'
-    puts "incomes #{@incomes}"
-    result = calculate_taxes(:invoiced, @incomes)
+    puts "incomes #{@incomes} #{@iva}"
+    puts @incomes_post_iva
+    incomes_without_iva = @incomes - @iva
+    result = calculate_taxes(:invoiced, @incomes)[0]
 
     puts "invoiced - #{result} --- total va en #{@incomes}"
     resume_in_invoice = {}
     resume_in_invoice.merge!(adjust_incomes_with_in_invoice_taxes) if @save_in
+
     puts "resume in invoice #{resume_in_invoice} --- total va en #{@incomes}"
 
     retefuente = resume_in_invoice["RETEFUENTE"] != nil ? resume_in_invoice["RETEFUENTE"] :0
@@ -28,23 +33,34 @@ class CalculateTaxes
 
     puts "retefuente #{retefuente} - reteica #{reteica} --- total va en #{@incomes}"
 
-    result.merge!(calculate_taxes(:post_iva, @incomes + retefuente + reteica))
+    result.merge!(calculate_taxes(:post_iva, incomes_without_iva)[0])
     puts "post_iva #{result} - base #{@incomes + retefuente + reteica} --- total va en #{@incomes}"
+
+
+    clearings = calculate_clearings(calculate_base(@incomes - @expenses, result))
+    @incomes -= clearings
 
     pre_utility = calculate_utility(result)
 
-    result = calculate_taxes(:utility, pre_utility)
+    puts "PREUTILIDAD #{pre_utility}"
+
+    result, reservas_result = calculate_taxes(:reservas, incomes_without_iva - clearings)
+
+    result.merge!(calculate_taxes(:utility, pre_utility  - calculate_tax_total(reservas_result))[0])
+
+
     utility = calculate_utility(result)
 
-    result =  calculate_taxes(:reservas, @incomes + retefuente + reteica)
+    puts "UTILIDAD #{utility}"
 
-    result.merge!(calculate_taxes(:post_utility, utility))
+    result.merge!(calculate_taxes(:post_utility, utility)[0])
 
     utility = calculate_utility(result)
     save_taxes(result) if @save_in
     result['Ingresos'] = @incomes
     result['Egresos'] = @expenses
     result['Utilidad'] = utility
+    result['Clearings'] = clearings
 
     Rails.logger.info("Resumed taxes: #{result}")
 
@@ -56,10 +72,11 @@ class CalculateTaxes
   def adjust_incomes_with_in_invoice_taxes
     resume_in_invoice, total_taxes_in_invoice = @save_in.resume_in_invoice_tax
     @incomes -= total_taxes_in_invoice
-    resume_in_invoice
+    return resume_in_invoice
   end
 
   def save_taxes(taxes)
+    puts "SAVE TAXES #{taxes}"
     Rails.logger.info("actual taxes: #{@save_in.taxes.map(&:name)}")
     @save_in.taxes -= @save_in.find_master_taxes
     Rails.logger.info("after remove master taxes: #{@save_in.taxes.map(&:name)}")
@@ -73,17 +90,21 @@ class CalculateTaxes
 
   def calculate_taxes(type, amount)
     Rails.logger.info("calculate taxes: #{type}, #{amount}")
+    taxes_by_type = {}
     @taxes.each do |tax|
 
       if tax.type_tax == type.to_s
         Rails.logger.info("tax type: #{tax.type_tax}")
         @taxes_amounts[tax.name] = calculate_percentage(amount, tax.value)
         @taxes_percentages[tax.name] = tax.value
+
+        taxes_by_type[tax.name] = calculate_percentage(amount, tax.value)
       end
     end
     Rails.logger.info("taxes amounts: #{@taxes_amounts}")
     Rails.logger.info("taxes percentages: #{@taxes_percentages}")
-    @taxes_amounts
+    puts taxes_by_type
+    return @taxes_amounts, taxes_by_type
   end
 
   # TODO duplicated in calculate taxes in invoice, put in utils.
@@ -100,5 +121,26 @@ class CalculateTaxes
     utility = @incomes - taxes_total - @expenses
     Rails.logger.info("utility: #{utility}")
     utility
+  end
+
+  def calculate_clearings(base)
+    total = @clearings * base
+  end
+
+  def calculate_tax_total(taxes)
+    total = 0
+    taxes.each do |tax_amount|
+      total += tax_amount[1]
+    end
+
+    total
+  end
+
+  def calculate_base(total, taxes)
+    new_total = total
+    taxes.each do |tax_amount|
+      new_total -= tax_amount[1]
+    end
+    new_total
   end
 end

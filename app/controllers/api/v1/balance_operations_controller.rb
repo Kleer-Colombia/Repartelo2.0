@@ -23,7 +23,9 @@ module Api
           execute_command(CalculateTaxes.new(taxes: TaxMaster.all_taxes(balance),
                                              incomes: balance.total_incomes,
                                              incomes_post_iva: (balance.total_incomes - iva),
+                                             iva: iva,
                                              expenses: balance.total_expenses,
+                                             clearings: balance.total_clearings,
                                              save_in: balance))
         end
       end
