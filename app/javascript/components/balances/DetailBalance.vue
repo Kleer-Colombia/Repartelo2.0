@@ -11,7 +11,7 @@
                                 :date="balance.date"
                                 :editable="balance.editable"
             />
-            
+
             <el-row id="row-money">
                 <el-col :span="6">
                     <div v-if="checkFlag('balance-incomes')">
@@ -27,10 +27,10 @@
                                       :allExpenses="expenses.realExpenses"/>
 
                       <clearing-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
-                                      :allClearings="clearings.realClearings" :countries="countries" 
-                                      :preutilidad="resume.find(r => r.tittle.includes('pre_utilidad')).total" />
+                                      :allClearings="clearings.realClearings" :countries="countries"
+                                      :totalClearingsAmount="resume.find(r => r.tittle.includes('clearings')).total" />
                     </div>
-                    
+
                 </el-col>
                 <el-col :span="18">
                     <el-card class="box-card">
@@ -187,7 +187,7 @@
       balanceConnector.findBalance(this, function (context) {
         context.loaded = true
       })
-      
+
     },
     methods: {
       updateTaxes () {
@@ -230,7 +230,7 @@
       prepareResume (data) {
         let taxes = []
         const total = data ? (data.ingresos - data['IVA']) : 0
-        
+
         Object.keys(data).map(function (objectKey, index) {
           // console.log(this.getPercentages(data[objectKey], total))
 
@@ -239,7 +239,7 @@
             percentage = ''
           else
             percentage = `(${percentage}%)`
-          
+
 
           let obj = {}
           obj['tittle'] = `${objectKey} ${percentage}`

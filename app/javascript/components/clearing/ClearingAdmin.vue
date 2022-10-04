@@ -83,7 +83,7 @@
         type: [Array],
         default: []
       },
-      preutilidad: {
+      totalClearingsAmount: {
         type: [Number],
         default: 0
       }
@@ -106,7 +106,6 @@
     },
     created: function () {
       this.realClearings = this.allClearings
-
       EventBus.$on('updateClearings', () => {
         balanceConnector.findClearings(this, this.$route.params.id)
       })
@@ -140,7 +139,12 @@
             })
       },
       calculateOneClearing(clearing){
-        return this.formatPrice(clearing.percentage * this.preutilidad)
+        return this.formatPrice((clearing.percentage / this.calculateTotalClearingPercentages()) * this.totalClearingsAmount)
+      },
+      calculateTotalClearingPercentages(){
+        return this.realClearings.reduce((total, clearing) => {
+          return total + parseFloat(clearing.percentage)
+        }, 0)
       },
       formatPrice (value) {
         return util.formatPrice(value)

@@ -26,6 +26,10 @@ class Balance < ApplicationRecord
     total
   end
 
+  def calculate_clearing_amounts(base, clearings)
+    total = clearings * base
+  end
+
   def calculate_profit
     profit = resume[:utilidad] - find_taxes_value(:post_utility)
     if(profit < 0)
@@ -50,15 +54,16 @@ class Balance < ApplicationRecord
     resume[:egresos] = total_expenses
 
     #ingresos - egresos - invoiced - post_iva - alegra
-    resume[:pre_utilidad] = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
+    pre_utilidad = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
     resume_utility, total_utility = find_tax(:utility)
+
+    resume[:clearings] = calculate_clearing_amounts(pre_utilidad, total_clearings)
+    resume[:pre_utilidad] = pre_utilidad - resume[:clearings]
 
     resume.merge!(resume_utility)
     reservas, total_reservas = find_tax(:reservas)
     resume.merge!(reservas)
-    resume[:clearings] = total_clearings
-
-    resume[:utilidad] = resume[:pre_utilidad] - total_utility - resume[:clearings] - total_reservas
+    resume[:utilidad] = resume[:pre_utilidad] - total_utility - total_reservas
     #TODO: save with clearings distributions and saldos
     Rails.logger.info("Resumed taxes IN BALANCE: #{resume}")
     return resume
@@ -171,9 +176,9 @@ class Balance < ApplicationRecord
   end
 
   def close_clearings
-    pre_utilidad = resume[:pre_utilidad]
+    base = resume[:pre_utilidad] + resume[:clearings]
     clearings.each do |clearing|
-      clearing.amount = pre_utilidad * clearing.percentage
+      clearing.amount = base * clearing.percentage
       clearing.save!
     end
   end

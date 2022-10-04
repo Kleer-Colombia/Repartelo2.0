@@ -16,42 +16,26 @@ class CalculateTaxes
 
   def call
     Rails.logger.info("incomes: #{@incomes}")
-    puts 'CALCULO DE IMPUESTOS---------'
-    puts "incomes #{@incomes} #{@iva}"
-    puts @incomes_post_iva
     incomes_without_iva = @incomes - @iva
     result = calculate_taxes(:invoiced, @incomes)[0]
 
-    puts "invoiced - #{result} --- total va en #{@incomes}"
     resume_in_invoice = {}
     resume_in_invoice.merge!(adjust_incomes_with_in_invoice_taxes) if @save_in
-
-    puts "resume in invoice #{resume_in_invoice} --- total va en #{@incomes}"
 
     retefuente = resume_in_invoice["RETEFUENTE"] != nil ? resume_in_invoice["RETEFUENTE"] :0
     reteica = resume_in_invoice["RETEICA"] != nil ? resume_in_invoice["RETEICA"] :0
 
-    puts "retefuente #{retefuente} - reteica #{reteica} --- total va en #{@incomes}"
-
     result.merge!(calculate_taxes(:post_iva, incomes_without_iva)[0])
-    puts "post_iva #{result} - base #{@incomes + retefuente + reteica} --- total va en #{@incomes}"
-
 
     clearings = calculate_clearings(calculate_base(@incomes - @expenses, result))
     @incomes -= clearings
 
     pre_utility = calculate_utility(result)
 
-    puts "PREUTILIDAD #{pre_utility}"
-
     result, reservas_result = calculate_taxes(:reservas, incomes_without_iva - clearings)
-
     result.merge!(calculate_taxes(:utility, pre_utility  - calculate_tax_total(reservas_result))[0])
 
-
     utility = calculate_utility(result)
-
-    puts "UTILIDAD #{utility}"
 
     result.merge!(calculate_taxes(:post_utility, utility)[0])
 
@@ -97,7 +81,9 @@ class CalculateTaxes
         Rails.logger.info("tax type: #{tax.type_tax}")
         @taxes_amounts[tax.name] = calculate_percentage(amount, tax.value)
         @taxes_percentages[tax.name] = tax.value
-
+        if amount < 0
+          @taxes_amounts[tax.name] = 0
+        end
         taxes_by_type[tax.name] = calculate_percentage(amount, tax.value)
       end
     end
