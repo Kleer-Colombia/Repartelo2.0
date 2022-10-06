@@ -60,9 +60,10 @@ class Balance < ApplicationRecord
     resume[:clearings] = calculate_clearing_amounts(pre_utilidad, total_clearings)
     resume[:pre_utilidad] = pre_utilidad - resume[:clearings]
 
-    resume.merge!(resume_utility)
     reservas, total_reservas = find_tax(:reservas)
     resume.merge!(reservas)
+    resume.merge!(resume_utility)
+
     resume[:utilidad] = resume[:pre_utilidad] - total_utility - total_reservas
     #TODO: save with clearings distributions and saldos
     Rails.logger.info("Resumed taxes IN BALANCE: #{resume}")
