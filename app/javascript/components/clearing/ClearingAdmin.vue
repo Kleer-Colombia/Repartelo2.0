@@ -36,7 +36,7 @@
             </el-form>
         </div>
         <div v-else slot="header" class="clearfix">
-            <el-button type="primary" id="nuevo egreso" @click="showClearing()" :disabled="!editable">nuevo clearing
+            <el-button type="primary" id="nuevo clearing" @click="showClearing()" :disabled="!editable">nuevo clearing
             </el-button>
         </div>
 
