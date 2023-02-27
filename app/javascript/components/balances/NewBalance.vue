@@ -2,16 +2,16 @@
   <safe-body tittle='Nuevo balance'>
     <el-row :gutter="20">
     <el-col :span="10" :offset="7">
-       
+
       <el-card class="box-card">
         <el-form  label-width="100px">
             <el-form-item label="Cliente">
-                <el-input name="client" 
+                <el-input name="client"
                         placeholder="Cliente"
                         v-model="balance.client"></el-input>
             </el-form-item>
             <el-form-item label="Proyecto">
-                <el-input name="project"  
+                <el-input name="project"
                         placeholder="Proyecto"
                         v-model="balance.project"></el-input>
             </el-form-item>
@@ -25,15 +25,25 @@
             </el-form-item>
             <el-form-item label="Descripción">
                 <el-input type="textarea"
-                        :rows="3"   
+                        :rows="3"
                         placeholder="Descripción"
-                        name="description"  
+                        name="description"
                         v-model="balance.description"></el-input>
             </el-form-item>
             <el-form-item label="Tipo">
                 <el-radio id="standard" v-model="balance.balance_type" label="standard">Estándar</el-radio>
                 <el-radio id="coaching" v-model="balance.balance_type" label="coaching">Coaching</el-radio>
                 <el-radio id="standard-international" v-model="balance.balance_type" label="standard-international">Servicio Internacional</el-radio>
+            </el-form-item>
+            <el-form-item label="Responsable">
+              <el-select v-model="balance.responsible" placeholder="Responsable">
+                <el-option
+                  v-for="kleerer in filteredKleerers"
+                  :key="kleerer.id"
+                  :label="kleerer.name"
+                  :value="kleerer.id">
+                </el-option>
+              </el-select>
             </el-form-item>
           <el-form-item label="Retención" v-show="balance.balance_type === 'standard-international'">
             <el-input
@@ -54,6 +64,7 @@
 <script>
 
 import balanceConnector from '../../model/balance_connector'
+import kleerersConnector from '../../model/kleerers_connector'
 import SafeBody from '../base/SafeBody.vue'
 
 export default {
@@ -63,20 +74,43 @@ export default {
   },
   data () {
     return {
+      loading: false,
       balance: {
         client: '',
         project: '',
         description: '',
         date: '',
         balance_type: '',
-        retencion: 0
-      }
+        retencion: 0,
+        responsible: '',
+      },
+      kleerers: [{
+          name: '',
+          id: '',
+          option: ''
+        }],
+      filteredKleerers: [{
+          name: '',
+          id: '',
+          option: ''
+        }]
     }
+  },
+  beforeCreate: function() {
+    this.loading = true
+    kleerersConnector.getKleerers(this,false, () => {
+      this.loading = false
+      this.filteredKleerers = this.kleerers.filter(kleerer => {
+        console.log(kleerer.name)
+        console.log(kleerer.option)
+        return kleerer.option.includes('meta')
+      })
+    })
   },
   methods: {
     guardar () {
       balanceConnector.createBalance(this, {balance: this.balance})
-    }
+    },
   }
 }
 </script>

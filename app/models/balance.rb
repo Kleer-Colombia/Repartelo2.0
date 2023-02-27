@@ -2,11 +2,14 @@ class Balance < ApplicationRecord
   validates :client, presence: true, allow_blank: false
   validates :project, presence: true, allow_blank: false
   validates :balance_type, presence: true, allow_blank: false
+  belongs_to :kleerer, optional: true
   has_many :incomes, dependent: :destroy
   has_many :expenses, dependent: :destroy
+  has_many :clearings, dependent: :destroy
   has_many :taxes, dependent: :destroy
   has_many :distributions, dependent: :destroy
   has_many :percentages, dependent: :destroy
+
 
 
   def total_incomes
@@ -15,6 +18,16 @@ class Balance < ApplicationRecord
 
   def total_expenses
     plus_data(expenses)
+  end
+
+  def total_clearings
+    total = 0
+    clearings.each { |e| total += e.percentage}
+    total
+  end
+
+  def calculate_clearing_amounts(base, clearings)
+    total = clearings * base
   end
 
   def calculate_profit
@@ -29,17 +42,30 @@ class Balance < ApplicationRecord
     resume = {}
     resume[:ingresos] = total_incomes
     resume_in_invoice, total_in_invoice = resume_in_invoice_tax
+
     resume.merge!(resume_in_invoice)
     resume_invoiced, total = find_tax(:invoiced)
     resume_invoiced_a, total_a = find_tax(:post_iva)
+
     resume_invoiced.merge!(resume_invoiced_a)
     total += total_a
+
     resume.merge!(resume_invoiced)
     resume[:egresos] = total_expenses
-    resume[:pre_utilidad] = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
+
+    #ingresos - egresos - invoiced - post_iva - alegra
+    pre_utilidad = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
     resume_utility, total_utility = find_tax(:utility)
+
+    resume[:clearings] = calculate_clearing_amounts(pre_utilidad, total_clearings)
+    resume[:pre_utilidad] = pre_utilidad - resume[:clearings]
+
+    reservas, total_reservas = find_tax(:reservas)
+    resume.merge!(reservas)
     resume.merge!(resume_utility)
-    resume[:utilidad] = resume[:pre_utilidad] - total_utility
+
+    resume[:utilidad] = resume[:pre_utilidad] - total_utility - total_reservas
+    #TODO: save with clearings distributions and saldos
     Rails.logger.info("Resumed taxes IN BALANCE: #{resume}")
     return resume
   end
@@ -85,16 +111,18 @@ class Balance < ApplicationRecord
 
   def find_master_taxes
     master_tax_names = TaxMaster.taxes_names_to_calculate
+
     master_taxes = taxes.select do |tax|
       master_tax_names.include?(tax.name)
     end
+
     master_taxes
   end
 
   def get_invoice_ids
     incomes.select {|income| income.invoice&.invoice_id}.map {|income| income.invoice&.invoice_id}
   end
-  
+
   # by default select the most older date
   def find_invoice_date
     incomes_ids = incomes.map { |income| income.id }
@@ -104,6 +132,7 @@ class Balance < ApplicationRecord
 
   def find_in_invoice_taxes
     master_tax_names = TaxMaster.taxes_names_to_calculate
+
     in_invoice_taxes = taxes.reject do |tax|
       master_tax_names.include?(tax.name)
     end
@@ -113,8 +142,8 @@ class Balance < ApplicationRecord
   def resume_in_invoice_tax
     resume = {}
     total = 0
-    find_in_invoice_taxes.each do |tax|
 
+    find_in_invoice_taxes.each do |tax|
       tax.name = tax.name.split(' (')[0] #removed the last name of the alegra taxes RETEFUENTE (Honorarios y comisiones)
 
       if resume[tax.name]
@@ -145,6 +174,14 @@ class Balance < ApplicationRecord
     end
     data = add_other_post_utility data
     return data
+  end
+
+  def close_clearings
+    base = resume[:pre_utilidad] + resume[:clearings]
+    clearings.each do |clearing|
+      clearing.amount = base * clearing.percentage
+      clearing.save!
+    end
   end
 
   private

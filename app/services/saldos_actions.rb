@@ -75,6 +75,14 @@ class SaldosActions
       month_array.push(month)
     end
 
+    acum = 0
+
+    month_array.reverse.each do |month|
+      acum += month[:total]
+      month[:saldo_acumulado] = acum
+    end
+
+
     return month_array
   end
 
@@ -89,8 +97,15 @@ class SaldosActions
   def prepare_details data
     details = []
     data.each do |saldo|
+      concept = ''
+      if saldo.balance
+        concept = "Balance: #{saldo.balance.id} - #{saldo.balance.client} - #{saldo.balance.project}"
+      elsif
+        concept = saldo.concept
+      end
+      # puts "#{saldo.balance.id} #{'ola'}"
       detail = {ingreso: '',egreso: '',
-                 referencia: saldo.reference,concepto: saldo.concept,
+                 referencia: saldo.reference,concepto: concept,
                  fecha: saldo.created_at.strftime('%d')}
       if saldo.amount < 0
         detail[:egreso] = saldo.amount

@@ -11,7 +11,7 @@
                                 :date="balance.date"
                                 :editable="balance.editable"
             />
-            
+
             <el-row id="row-money">
                 <el-col :span="6">
                     <div v-if="checkFlag('balance-incomes')">
@@ -25,8 +25,12 @@
                       </div>
                       <expenses-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
                                       :allExpenses="expenses.realExpenses"/>
+
+                      <clearing-admin v-on:updateTaxes="updateTaxes" :editable="balance.editable"
+                                      :allClearings="clearings.realClearings" :countries="countries"
+                                      :totalClearingsAmount="resume.find(r => r.tittle.includes('clearings')).total" />
                     </div>
-                    
+
                 </el-col>
                 <el-col :span="18">
                     <el-card class="box-card">
@@ -133,6 +137,7 @@
   import SafeBody from '../base/SafeBody.vue'
   import IncomesAdmin from './IncomesAdmin'
   import ExpensesAdmin from './ExpensesAdmin'
+  import ClearingAdmin from '../clearing/ClearingAdmin'
   import KleerersDistribution from './kleerersDistribution'
   import AdminCoachingLog from '../coachingLog/AdminCoachingLogButton'
   import invoiceSelector from '../invoices/invoiceSelector'
@@ -143,6 +148,7 @@
       KleerersDistribution,
       IncomesAdmin,
       ExpensesAdmin,
+      ClearingAdmin,
       SafeBody,
       invoiceSelector,
       propertiesBalance
@@ -170,19 +176,27 @@
         expenses: {
           realExpenses: []
         },
-        resume: []
+        clearings: {
+          realClearings: []
+        },
+        resume: [],
+        countries: []
       }
     },
     beforeCreate: function () {
       balanceConnector.findBalance(this, function (context) {
         context.loaded = true
       })
+
     },
     methods: {
       updateTaxes () {
         this.showResume = false
         this.distribution.result = false
         balanceConnector.updateTaxes(this, this.$route.params.id)
+      },
+      calculateTotalClearings(){
+
       },
       formatPrice (value) {
         return util.formatPrice(value)
@@ -216,7 +230,7 @@
       prepareResume (data) {
         let taxes = []
         const total = data ? (data.ingresos - data['IVA']) : 0
-        
+
         Object.keys(data).map(function (objectKey, index) {
           // console.log(this.getPercentages(data[objectKey], total))
 
@@ -225,13 +239,13 @@
             percentage = ''
           else
             percentage = `(${percentage}%)`
-          
+
 
           let obj = {}
           obj['tittle'] = `${objectKey} ${percentage}`
           obj['total'] = data[objectKey]
           obj['id'] = 'money' + objectKey
-
+          console.log(obj)
           taxes.push(obj)
         })
         this.resume = taxes

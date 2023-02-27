@@ -41,6 +41,8 @@
   <script>
 
   import auth from '../model/auth'
+  import util from '../model/util'
+  import router from '../router'
   
   export default {
     data () {
@@ -53,6 +55,11 @@
         }
       }
     },
+    created () {
+      if(this.isAuth()){
+        router.push('/balance')
+      }
+    },
     methods: {
       submit () {
         var credentials = {
@@ -60,6 +67,9 @@
           password: this.credentials.password
         }
         auth.login(this, credentials, '/balance')
+      },
+      isAuth () {
+        return util.checkAuth()
       }
     }
   }

@@ -1,5 +1,9 @@
 <template>
   <SafeBody tittle="Aporte por ventas a Kleer Colombia">
+    <div v-if="loaded == false">
+      <h1>cargando</h1>
+    </div>
+
     <div v-loading="!loaded">
       <el-row :gutter="20">
         <el-col :span="20" :offset="2">
@@ -185,7 +189,19 @@ export default {
           }
         })
 
+      this.filteredKleerers = dealer.filterKleerers({
+        initialBalancePercentage: this.yearObjective.initial_balance_percentage * 0.01,
+        yearObjective: this.yearObjective,
+        filteredYear: this.years.filteredYear,
+        kleerers: this.kleerers,
+        objectiveByKleerer: this.objectiveByKleerer,
+        lastObjectiveByKleerer: this.lastObjectiveByKleerer,
+        formatPrice: this.formatPrice
+      })
       
+      console.log("FILTRADO DE KLEERERS")
+      console.log(this.filteredKleerers)
+      console.log(this.filteredKleerers)
     },
 
     filterObjectives(){
