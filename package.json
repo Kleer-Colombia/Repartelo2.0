@@ -21,7 +21,7 @@
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^2.0.1",
     "js-file-download": "^0.4.9",
-    "node-sass": "^4.12.0",
+    "node-sass": "^8.0.0",
     "v-money": "^0.8.1",
     "vue": "^2.6.10",
     "vue-loader": "^15.7.1",
