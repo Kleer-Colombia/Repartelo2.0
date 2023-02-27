@@ -9,7 +9,7 @@ module Api
       end
 
       def find_all
-        send_response(Balance.all, :ok)
+        send_response({ balances: @actions.find_all_balances, kleerers: Kleerer.all }, :ok)
       end
 
       def create
@@ -17,6 +17,8 @@ module Api
           balance = params[:balance]
           begin
 
+            puts 'responsible'
+            puts balance['responsible']
             retencion = 0
             if balance['balance_type'] == 'standard-international'
               retefuente = TaxMaster.find_by(name: 'RETEFUENTE').value
@@ -28,7 +30,10 @@ module Api
               description: balance['description'],
               balance_type: balance['balance_type'],
               retencion: retencion,
+              kleerer_id: balance['responsible'],
               date: Date.strptime(balance['date'], '%Y-%m-%d'))
+
+
             send_response result.id
           rescue StandardError => e
             halt_message("Invalid parameters creating balance #{e}", :internal_server_error)

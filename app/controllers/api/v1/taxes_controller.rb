@@ -6,6 +6,7 @@ module Api
         execute_command(DetailTaxes.new())
       end
 
+      #disable
       def resume_one_tax
         execute_command(DetailOneTax.new(params[:taxId],params[:tax_year]))
       end

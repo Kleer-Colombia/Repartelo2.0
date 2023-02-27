@@ -95,10 +95,17 @@
         </template>
     </el-table-column>
     <el-table-column
-      label="Total"
+      label="Total mes"
       prop="total">
       <template slot-scope="scope">
         <span v-html="addColorToValue(scope.row.total, 'ID')"></span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="Saldo"
+      prop="saldo_acumulado">
+      <template slot-scope="scope">
+        <span v-html="addColorToValue(scope.row.saldo_acumulado, 'ID')"></span>
       </template>
     </el-table-column>
   </el-table>

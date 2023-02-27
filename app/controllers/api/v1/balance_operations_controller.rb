@@ -23,7 +23,9 @@ module Api
           execute_command(CalculateTaxes.new(taxes: TaxMaster.all_taxes(balance),
                                              incomes: balance.total_incomes,
                                              incomes_post_iva: (balance.total_incomes - iva),
+                                             iva: iva,
                                              expenses: balance.total_expenses,
+                                             clearings: balance.total_clearings,
                                              save_in: balance))
         end
       end
@@ -73,6 +75,37 @@ module Api
             send_response @actions.remove_expense_to_balance(params[:id], params[:idExpense])
           rescue
             halt_message("We can't remove expense: #{e.message}", :internal_server_error)
+          end
+        end
+      end
+
+      def add_clearing
+        validate_parameters [:id, :clearing], params do
+          begin
+            clearing = params[:clearing]
+            send_response @actions.add_clearing_to_balance(params[:id], clearing)
+          rescue
+            halt_message("We can't add expense: #{e.message}", :internal_server_error)
+          end
+        end
+      end
+
+      def find_clearings
+        validate_parameters [:id], params do
+          begin
+            send_response @actions.find_clearings_balance(params[:id])
+          rescue
+            halt_message("We can't find clearings: #{e.message}", :internal_server_error)
+          end
+        end
+      end
+
+      def delete_clearing
+        validate_parameters [:id, :idClearing], params do
+          begin
+            send_response @actions.remove_clearing_to_balance(params[:id], params[:idClearing])
+          rescue
+            halt_message("We can't remove clearing: #{e.message}", :internal_server_error)
           end
         end
       end

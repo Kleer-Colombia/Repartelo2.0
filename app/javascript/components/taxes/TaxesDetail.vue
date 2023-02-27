@@ -77,6 +77,7 @@
       </el-pagination>
     </el-col>
   </el-row>
+  
 </el-main>
 
 </template>
@@ -147,6 +148,10 @@
         this.paginate()
       },
       paginate () {
+        // console.log('los paginados')
+        // console.log(this.taxDetailPaged)
+        // console.log('lod updateados')
+        // console.log(this.taxesForUpdate)
         this.taxDetailPaged = this.taxesForUpdate.slice(this.page * this.pageSize, (this.page + 1) * this.pageSize)
       },
       addColorToValue (value, id) {

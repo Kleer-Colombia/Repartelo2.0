@@ -18,16 +18,50 @@ class BalanceActions
             total:balance.total_expenses}
   end
 
+  def add_clearing_to_balance(id, clearing)
+    balance = Balance.find(id)
+    balance.clearings.create!(description: clearing[:description], percentage: clearing[:percentage],
+                          country_id: clearing[:countryId])
+    return {clearings: balance.clearings}
+            # total: balance.total_clearings}
+  end
+
+  def remove_clearing_to_balance(id,idClearing)
+    balance = Balance.find(id)
+    puts 'id'
+    puts idClearing
+    balance.clearings.find(idClearing).destroy
+    return {clearings: balance.clearings}
+  end
+
+  def find_all_balances()
+    balances = Balance.all
+    hashed_balances = []
+    balances.each do |balance|
+      balance_to_hash = balance.attributes
+      balance_to_hash[:incomes] = balance.incomes
+      hashed_balances.push(balance_to_hash)
+
+    end
+    hashed_balances
+  end
+
   def find_complete_balance(id)
     balance = Balance.find(id)
+    countries = Country.all
+    balance.incomes.each do |income|
+      puts income.description
+    end
     balance_info = {balance: balance,
-            incomes: {incomes: balance.incomes,
-                      total: balance.total_incomes},
-            expenses: {expenses: balance.expenses,
-                      total: balance.total_expenses},
-            distributions: balance.prepare_distributions(balance.distributions),
-            percentages: balance.percentages,
-            resume: balance.resume
+                    incomes: {incomes: balance.incomes,
+                              total: balance.total_incomes},
+                    expenses: {expenses: balance.expenses,
+                              total: balance.total_expenses},
+                    clearings: balance.clearings,
+                    distributions: balance.prepare_distributions(balance.distributions),
+                    percentages: balance.percentages,
+                    resume: balance.resume,
+                    disponible_countries: countries
             }
     balance_info
   end
@@ -37,9 +71,12 @@ class BalanceActions
     return { expenses: balance.expenses,
              total: balance.total_expenses
     }
-
   end
 
+  def find_clearings_balance(id)
+    balance = Balance.find(id)
+    return balance.clearings
+  end
 
   def update_kleerers_percentages(id, kleerers)
     balance = Balance.find(id)

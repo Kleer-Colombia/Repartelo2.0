@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_30_020459) do
+ActiveRecord::Schema.define(version: 2022_06_08_020042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,6 +56,19 @@ ActiveRecord::Schema.define(version: 2022_01_30_020459) do
     t.boolean "editable", default: true
     t.string "balance_type", default: "standard", null: false
     t.decimal "retencion"
+    t.integer "kleerer_id"
+  end
+
+  create_table "clearings", force: :cascade do |t|
+    t.bigint "balance_id", null: false
+    t.bigint "country_id", null: false
+    t.decimal "percentage"
+    t.decimal "amount"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["balance_id"], name: "index_clearings_on_balance_id"
+    t.index ["country_id"], name: "index_clearings_on_country_id"
   end
 
   create_table "coaching_sessions", force: :cascade do |t|
@@ -73,6 +86,12 @@ ActiveRecord::Schema.define(version: 2022_01_30_020459) do
     t.bigint "coaching_session_id", null: false
     t.index ["coaching_session_id"], name: "index_coaching_sessions_kleerers_on_coaching_session_id"
     t.index ["kleerer_id"], name: "index_coaching_sessions_kleerers_on_kleerer_id"
+  end
+
+  create_table "countries", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -168,6 +187,14 @@ ActiveRecord::Schema.define(version: 2022_01_30_020459) do
     t.datetime "updated_at", null: false
     t.index ["balance_id"], name: "index_percentages_on_balance_id"
     t.index ["kleerer_id"], name: "index_percentages_on_kleerer_id"
+  end
+
+  create_table "representative_market_rates", force: :cascade do |t|
+    t.decimal "rate"
+    t.date "date"
+    t.string "currency"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "saldos", force: :cascade do |t|
