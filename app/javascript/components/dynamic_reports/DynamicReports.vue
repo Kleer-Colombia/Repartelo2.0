@@ -189,7 +189,19 @@ export default {
           }
         })
 
+      this.filteredKleerers = dealer.filterKleerers({
+        initialBalancePercentage: this.yearObjective.initial_balance_percentage * 0.01,
+        yearObjective: this.yearObjective,
+        filteredYear: this.years.filteredYear,
+        kleerers: this.kleerers,
+        objectiveByKleerer: this.objectiveByKleerer,
+        lastObjectiveByKleerer: this.lastObjectiveByKleerer,
+        formatPrice: this.formatPrice
+      })
       
+      console.log("FILTRADO DE KLEERERS")
+      console.log(this.filteredKleerers)
+      console.log(this.filteredKleerers)
     },
 
     filterObjectives(){
