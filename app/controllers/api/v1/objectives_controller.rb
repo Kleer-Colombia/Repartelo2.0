@@ -36,6 +36,10 @@ module Api
           end
         end
       end
+
+      def add_kleerer_to_objective
+
+      end
     end
     end
 end

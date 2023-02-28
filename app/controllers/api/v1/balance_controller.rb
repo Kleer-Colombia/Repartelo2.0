@@ -17,8 +17,6 @@ module Api
           balance = params[:balance]
           begin
 
-            puts 'responsible'
-            puts balance['responsible']
             retencion = 0
             if balance['balance_type'] == 'standard-international'
               retefuente = TaxMaster.find_by(name: 'RETEFUENTE').value

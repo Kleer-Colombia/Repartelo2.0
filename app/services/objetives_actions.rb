@@ -1,5 +1,12 @@
 class ObjetivesActions
 
+  def find_objectives_distributions
+    #hallar años
+    #hallar kleerers en cada año
+    #hallar ingresos por kleerer por año
+    #hallar hallar calculos
+  end
+
   def find_filtered_kleerers kleerCo, kleerers, objectives
     kleerers_with_meta = kleerers.select{|e| e[:hasMeta]}.length
     kleerers_by_year = []
@@ -108,6 +115,13 @@ class ObjetivesActions
   def add_objective objective
     objective = Objective.new(amount: objective[:amount], initial_balance_percentage: objective[:percentage])
     objective.save!
+  end
+
+  def add_kleerer_to_objective(kleerer_id, objective_id)
+    kleerer = Kleerer.find(kleerer_id)
+    objective = Objective.find(objective_id)
+
+    objective.kleerers.push(kleerer)
   end
 
   # private

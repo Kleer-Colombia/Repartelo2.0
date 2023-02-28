@@ -19,6 +19,7 @@ export default {
 
                 context.kleerersByYears = response.data.response.filtered_kleerers
                 if (nextFunction) {
+                    console.log('toda la respuesta')
                     console.log(response.data.response)
                     nextFunction(context)
                 }
