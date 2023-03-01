@@ -1,7 +1,19 @@
 class ObjetivesActions
 
+  FIRST_YEAR = 2018
+
   def find_objectives_distributions
-    #hallar años
+    distributed_objectives = []
+    available_years = get_kleer_historical_years
+
+    available_years.each do |year|
+      objectives = Objective.where('extract(year from created_at) = ?', year)
+      current_objective = objectives.max_by{|e| e.created_at}
+      distributed_objectives.push(year => {"amount" => current_objective ? current_objective.amount : 0})
+
+      kleerers = current_objective ? current_objective.kleerers : []
+    end
+
     #hallar kleerers en cada año
     #hallar ingresos por kleerer por año
     #hallar hallar calculos
@@ -183,6 +195,19 @@ class ObjetivesActions
     date = saldo.created_at.strftime('%Y').to_i
     unless years.include? date
       years.push(date)
+    end
+    years
+  end
+
+  def get_kleer_historical_years
+    actual_year = FIRST_YEAR
+    years = []
+
+    puts Time.now.year.class
+
+    while actual_year <= Time.now.year
+      years.push(actual_year)
+      actual_year += 1
     end
     years
   end

@@ -14,6 +14,8 @@ module Api
           kleerCo = Kleerer.find_by(name: "KleerCo")
           kleerCo_id = kleerCo.id
 
+          @objectives_actions.find_objectives_distributions
+
           response = {
             total: @saldo_actions.find_saldos_of_balances(kleerCo_id),
             kleerers: @objectives_actions.find_kleerers_inputs(kleerCo),
@@ -38,7 +40,13 @@ module Api
       end
 
       def add_kleerer_to_objective
-
+        validate_parameters [:objective_id, :kleerer_id], params do
+          begin
+            @objectives_actions.add_kleerer_to_objective(params[:objective_id], params[:kleerer_id])
+          rescue
+            halt_message("can't add kleerer: #{error.message}", :internal_server_error)
+          end
+        end
       end
     end
     end
