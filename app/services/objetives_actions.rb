@@ -9,14 +9,18 @@ class ObjetivesActions
     available_years.each do |year|
       objectives = Objective.where('extract(year from created_at) = ?', year)
       current_objective = objectives.max_by{|e| e.created_at}
-      distributed_objectives.push(year => {"amount" => current_objective ? current_objective.amount : 0})
-
       kleerers = current_objective ? current_objective.kleerers : []
+
+      #hallar ingresos por kleerer
+      #hallar hallar calculos
+
+      distributed_objectives.push(year => {"amount" => current_objective ? current_objective.amount : 0,
+                                           "kleerers" => kleerers
+      })
+
     end
 
-    #hallar kleerers en cada año
-    #hallar ingresos por kleerer por año
-    #hallar hallar calculos
+    puts distributed_objectives
   end
 
   def find_filtered_kleerers kleerCo, kleerers, objectives
@@ -134,6 +138,7 @@ class ObjetivesActions
     objective = Objective.find(objective_id)
 
     objective.kleerers.push(kleerer)
+    objective.save!
   end
 
   # private
@@ -202,8 +207,6 @@ class ObjetivesActions
   def get_kleer_historical_years
     actual_year = FIRST_YEAR
     years = []
-
-    puts Time.now.year.class
 
     while actual_year <= Time.now.year
       years.push(actual_year)
