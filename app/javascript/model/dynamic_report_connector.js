@@ -13,14 +13,17 @@ export default {
                 url: kleerCoURL
             })
             .then(response => {
+                console.log('toda la respuesta')
+                console.log(response.data.response.new)
+                context.distributedObjectives = response.data.response.new
+
                 context.kleerCo = response.data.response.total
                 context.kleerers = response.data.response.kleerers
                 context.objectives = response.data.response.objectives
 
                 context.kleerersByYears = response.data.response.filtered_kleerers
                 if (nextFunction) {
-                    console.log('toda la respuesta')
-                    console.log(response.data.response)
+
                     nextFunction(context)
                 }
             })

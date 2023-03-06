@@ -2,25 +2,54 @@ class ObjetivesActions
 
   FIRST_YEAR = 2018
 
+  #Actually used
   def find_objectives_distributions
     distributed_objectives = []
     available_years = get_kleer_historical_years
 
+    kleerCo = Kleerer.find_by(name: "KleerCo")
+    kleerer_income_list = find_kleerers_inputs(kleerCo)
+
+    initial_income_list = Kleerer.all.map{ |e|
+      {
+        id: e.id,
+        name: e.name,
+        amount: 0
+      }
+    }
+
     available_years.each do |year|
       objectives = Objective.where('extract(year from created_at) = ?', year)
       current_objective = objectives.max_by{|e| e.created_at}
+      objectives -= [current_objective]
       kleerers = current_objective ? current_objective.kleerers : []
 
-      #hallar ingresos por kleerer
-      #hallar hallar calculos
+      kleerer_plane_list = get_income_by_year(kleerer_income_list, kleerers, year)
 
-      distributed_objectives.push(year => {"amount" => current_objective ? current_objective.amount : 0,
-                                           "kleerers" => kleerers
+      distributed_kleerers, initial_income_list = get_objective_calcules(kleerer_plane_list, initial_income_list, current_objective)
+
+      balance = 0
+      income = distributed_kleerers.reduce(0){|ac,e| ac + e[:income]}
+      initial_income = distributed_kleerers.reduce(0){|ac,e| ac + e[:initial_income]}
+
+      if current_objective
+        balance = (income + initial_income) - current_objective.amount
+      end
+
+
+      distributed_objectives.push({
+        "kleerers" => distributed_kleerers,
+        "objective" => current_objective,
+        "income" => income,
+        "initial_income" => initial_income,
+        "all_objectives" => objectives,
+        "year" => year,
+        "balance" => balance
       })
-
     end
-
     puts distributed_objectives
+
+    distributed_objectives
   end
 
   def find_filtered_kleerers kleerCo, kleerers, objectives
@@ -127,12 +156,13 @@ class ObjetivesActions
     objectives
   end
 
-
+  #Actually used
   def add_objective objective
     objective = Objective.new(amount: objective[:amount], initial_balance_percentage: objective[:percentage])
     objective.save!
   end
 
+  #Actually used
   def add_kleerer_to_objective(kleerer_id, objective_id)
     kleerer = Kleerer.find(kleerer_id)
     objective = Objective.find(objective_id)
@@ -141,7 +171,49 @@ class ObjetivesActions
     objective.save!
   end
 
-  # private
+  private
+
+  def get_income_by_year(all_inputs, current_kleerers, year)
+    current_kleerers.map do |kleerer|
+      income = all_inputs.find{|e|
+        e[:name] == kleerer.name
+      }[:inputs].find{|e| e[:year] == year}[:input]
+
+      {
+        name: kleerer.name,
+        income: income,
+        hasMeta: kleerer.option.name.include?("meta"),
+      }
+    end
+  end
+
+  def get_objective_calcules(kleerers, last_incomes, current_objective)
+    individual_objective = current_objective ?
+                             (current_objective.amount / kleerers.length) :
+                             0
+
+    kleerers.each do |kleerer|
+      initial_income_index = last_incomes.find_index{|e| e[:name] == kleerer[:name]}
+
+      initial_income = last_incomes[initial_income_index]
+      initial_income_amount = (initial_income[:amount] * (current_objective.initial_balance_percentage * 0.01 || 0))
+      partial_income = kleerer[:income]
+      total_income = partial_income + initial_income_amount
+      balance = total_income - individual_objective || 0
+
+      kleerer.merge!({
+                       income: partial_income,
+                       balance: balance,
+                       anualMeta: individual_objective,
+                       initial_income: initial_income_amount,
+                       total_income: total_income
+                     })
+
+      last_incomes[initial_income_index][:amount] = balance > 0 ? balance : 0
+    end
+
+    return kleerers, last_incomes
+  end
 
   def get_one_kleerer_input kleerer, kleerCo
     complete_kleerer_input = {
@@ -208,11 +280,12 @@ class ObjetivesActions
     actual_year = FIRST_YEAR
     years = []
 
+    puts Time.now.year.class
+
     while actual_year <= Time.now.year
       years.push(actual_year)
       actual_year += 1
     end
     years
   end
-
 end

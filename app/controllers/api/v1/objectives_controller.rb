@@ -14,12 +14,11 @@ module Api
           kleerCo = Kleerer.find_by(name: "KleerCo")
           kleerCo_id = kleerCo.id
 
-          @objectives_actions.find_objectives_distributions
-
           response = {
             total: @saldo_actions.find_saldos_of_balances(kleerCo_id),
             kleerers: @objectives_actions.find_kleerers_inputs(kleerCo),
             objectives: @objectives_actions.find_objectives,
+            new: @objectives_actions.find_objectives_distributions,
             filtered_kleerers: @objectives_actions.find_filtered_kleerers(0,  @objectives_actions.find_kleerers_inputs(kleerCo), @objectives_actions.find_objectives)
           }
           send_response response
