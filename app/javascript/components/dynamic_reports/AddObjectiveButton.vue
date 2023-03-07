@@ -28,6 +28,21 @@
                 <el-col :span="2" style="padding-top: 10px; text-align: center">
                         {{percentageSelector.max}}%
                 </el-col>
+
+                <el-row :gutter="10" v-for="kleerer in allKleerers" :key="kleerer.id"
+                        :id="'percentage_' + kleerer.name">
+                    <el-col :span="6" :offset="2">
+                        <el-checkbox-button
+                                v-model="kleerer.selected"
+                                :label="kleerer.id"
+                                :key="kleerer.name"
+                                :id="'check' + kleerer.name"
+                                @change="selectKleerer(kleerer)">
+                            <span>{{ kleerer.name }}</span>
+                            <span style="font-size: 12px">{{ kleerer.option }}</span>
+                        </el-checkbox-button>
+                    </el-col>
+                </el-row>
             </el-row>
             
         
@@ -46,6 +61,9 @@ import InputMoney from '../base/InputMoney.vue'
 import DynamicReportConnector from "../../model/dynamic_report_connector";
 
 export default {
+    props:{
+        allKleerers: [],
+    },
     components: { InputMoney },
         data () {
             return {
@@ -74,6 +92,10 @@ export default {
             }
             this.dialogFormVisible = false
         },
+        selectKleerer (kleerer) {
+            this.$emit('input', null)
+            this.$forceUpdate()
+      },
     }
 }
 </script>

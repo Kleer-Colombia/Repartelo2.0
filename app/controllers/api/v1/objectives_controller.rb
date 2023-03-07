@@ -14,12 +14,16 @@ module Api
           kleerCo = Kleerer.find_by(name: "KleerCo")
           kleerCo_id = kleerCo.id
 
+
+
           response = {
-            total: @saldo_actions.find_saldos_of_balances(kleerCo_id),
-            kleerers: @objectives_actions.find_kleerers_inputs(kleerCo),
-            objectives: @objectives_actions.find_objectives,
-            new: @objectives_actions.find_objectives_distributions,
-            filtered_kleerers: @objectives_actions.find_filtered_kleerers(0,  @objectives_actions.find_kleerers_inputs(kleerCo), @objectives_actions.find_objectives)
+              all_kleerers: Kleerer.all,
+              distributed_objectives: @objectives_actions.find_objectives_distributions,
+              total: @saldo_actions.find_saldos_of_balances(kleerCo_id),
+              kleerers: @objectives_actions.find_kleerers_inputs(kleerCo),
+              objectives: @objectives_actions.find_objectives,
+              filtered_kleerers: @objectives_actions.find_filtered_kleerers(0,  @objectives_actions.find_kleerers_inputs(kleerCo), @objectives_actions.find_objectives)
+
           }
           send_response response
         # rescue StandardError => error

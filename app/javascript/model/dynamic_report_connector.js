@@ -14,14 +14,18 @@ export default {
             })
             .then(response => {
                 console.log('toda la respuesta')
-                console.log(response.data.response.new)
-                context.distributedObjectives = response.data.response.new
+                console.log(response.data.response)
+                context.distributedObjectives = response.data.response.distributed_objectives
+                context.allKleerers = response.data.response.all_kleerers.map(kleerer => {
+                    kleerer.selected = false
+                    return kleerer
+                })
 
                 context.kleerCo = response.data.response.total
-                context.kleerers = response.data.response.kleerers
-                context.objectives = response.data.response.objectives
+                    // context.kleerers = response.data.response.kleerers
+                    // context.objectives = response.data.response.objectives
 
-                context.kleerersByYears = response.data.response.filtered_kleerers
+                // context.kleerersByYears = response.data.response.filtered_kleerers
                 if (nextFunction) {
 
                     nextFunction(context)

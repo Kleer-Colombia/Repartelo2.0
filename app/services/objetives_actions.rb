@@ -21,7 +21,6 @@ class ObjetivesActions
     available_years.each do |year|
       objectives = Objective.where('extract(year from created_at) = ?', year)
       current_objective = objectives.max_by{|e| e.created_at}
-      objectives -= [current_objective]
       kleerers = current_objective ? current_objective.kleerers : []
 
       kleerer_plane_list = get_income_by_year(kleerer_income_list, kleerers, year)
@@ -47,7 +46,6 @@ class ObjetivesActions
         "balance" => balance
       })
     end
-    puts distributed_objectives
 
     distributed_objectives
   end
@@ -188,8 +186,9 @@ class ObjetivesActions
   end
 
   def get_objective_calcules(kleerers, last_incomes, current_objective)
+    kleerers_with_meta = kleerers.count{|e| e[:hasMeta] == true}
     individual_objective = current_objective ?
-                             (current_objective.amount / kleerers.length) :
+                             (current_objective.amount / kleerers_with_meta) :
                              0
 
     kleerers.each do |kleerer|
@@ -204,7 +203,7 @@ class ObjetivesActions
       kleerer.merge!({
                        income: partial_income,
                        balance: balance,
-                       anualMeta: individual_objective,
+                       anualMeta: kleerer[:hasMeta] ? individual_objective : 0,
                        initial_income: initial_income_amount,
                        total_income: total_income
                      })

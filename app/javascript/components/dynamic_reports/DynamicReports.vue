@@ -1,9 +1,5 @@
 <template>
   <SafeBody tittle="Aporte por ventas a Kleer Colombia">
-    <div v-if="loaded == false">
-      <h1>cargando</h1>
-    </div>
-
     <div v-loading="!loaded">
       <el-row :gutter="20">
         <el-col :span="20" :offset="2">
@@ -34,7 +30,7 @@
                   <h2 id="objetivo">{{ this.formatPrice(this.yearObjective.amount) }}</h2>
                   <div class="objective-buttons">
                     <div v-if="this.years.filteredYear === this.years.currentYear">
-                      <add-objective-button/>
+                      <add-objective-button v-bind:allKleerers="allKleerers"/>
                     </div>
                     <div v-if="!yearObjective.amount.includes('No')">
                       <all-objectives-button v-bind:objectives="objectives" v-bind:year="years.filteredYear"/>
@@ -116,6 +112,7 @@ export default {
       distributedObjectives: [],
       yearObjectives: [],
       balance: 0,
+      allKleerers: [],
 
       loaded: false,
       kleerCo: {},
@@ -123,7 +120,9 @@ export default {
       objectives: [],
       kleerCoIncome: 0,
       initialBalance: 0,
-      yearObjective: {},
+      yearObjective: {
+        amount: "0"
+      },
       objectiveByKleerer: 0,
       lastObjectiveByKleerer: 0,
       formattedKleerers: [
@@ -163,10 +162,11 @@ export default {
   },
   methods: {
     filter() {
-      
+      this.filterObjectives();
+      // this.filterKleerers();
+      // this.filterKleerCoIncome();
+      // this.getInitialBalance()
       this.filterByYear()
-      console.log('TODA LA RESPUESTA')
-      console.log(this)
     },
 
     filterKleerCoIncome(){
@@ -180,44 +180,23 @@ export default {
     },
 
     filterKleerers(kleerers) {
-      // this.objectiveByKleerer = this.yearObjective.amount / dealer.findKleerersWithMeta(this.kleerers).length
-      // this.lastObjectiveByKleerer = this.lastObjective.amount / dealer.findKleerersWithMeta(this.kleerers).length
-
-      // this.filteredKleerers2 = this.kleerersByYears
-      //   .find((kleerer) => kleerer.year === this.years.filteredYear).kleerers
-      //   .filter((kleerer) => kleerer.hasMeta)
-      //   .map(kleerer => {
-      //     return {
-      //       name: kleerer.name,
-      //       anualMeta: this.formatPrice(kleerer.anualMeta),
-      //       hasMeta: kleerer.hasMeta,
-      //       income: this.formatPrice(kleerer.income),
-      //       initialIncome: kleerer.initial_income,
-      //       formatInitialIncome: this.formatPrice(kleerer.initial_income),
-      //       positiveBalance: kleerer.balance > 0 ? this.formatPrice(kleerer.balance) : this.formatPrice(0),
-      //       outstandingBalance: kleerer.balance < 0 ? this.formatPrice(kleerer.balance * -1) : this.formatPrice(0),
-      //     }
-      //   })
-
-      // this.filteredKleerers = dealer.filterKleerers({
-      //   initialBalancePercentage: this.yearObjective.initial_balance_percentage * 0.01,
-      //   yearObjective: this.yearObjective,
-      //   filteredYear: this.years.filteredYear,
-      //   kleerers: this.kleerers,
-      //   objectiveByKleerer: this.objectiveByKleerer,
-      //   lastObjectiveByKleerer: this.lastObjectiveByKleerer,
-      //   formatPrice: this.formatPrice
-      // })
-
       this.formattedKleerers = kleerers.map(kleerer => {
         return {
             name: kleerer.name,
-            anualMeta: this.formatPrice(kleerer.anualMeta),
+            anualMeta: kleerer.anualMeta !== 0 ? this.formatPrice(kleerer.anualMeta) : "No tiene meta",
             hasMeta: kleerer.hasMeta,
             income: this.formatPrice(kleerer.income),
             initialIncome: this.formatPrice(kleerer.initial_income),
-            positiveBalance: kleerer.balance > 0 ? this.formatPrice(kleerer.balance) : this.formatPrice(0),
-            outstandingBalance: kleerer.balance < 0 ? this.formatPrice(kleerer.balance * -1) : this.formatPrice(0),
+            positiveBalance: kleerer.anualMeta !== 0 ?
+                                  (kleerer.balance > 0 ?
+                                  this.formatPrice(kleerer.balance) :
+                                  this.formatPrice(0)) :
+                                  "No tiene meta",
+            outstandingBalance: kleerer.anualMeta !== 0 ?
+                                  (kleerer.balance < 0 ?
+                                  this.formatPrice(kleerer.balance * -1) :
+                                  this.formatPrice(0)) :
+                                  "No tiene meta",
         }
       })
     
@@ -244,18 +223,14 @@ export default {
       this.yearObjective = current.objective
       this.kleerers = current.kleerers
       this.filterKleerers(current.kleerers)
-      this.objectives(current.objectives)
+      this.objectives = current.all_objectives
       console.log('FILTRADO EN AÑO')
       console.log(current)
+      console.log(this.objectives)
     },
     
     getDisponibleYears() {
-      let actualYear = new Date().getFullYear();
-      this.kleerCo.meses.forEach((date) => {
-        if (date.fecha.includes(actualYear) || date.fecha.includes(actualYear - 1)) {
-          this.years.disponibleYears.push(actualYear--);
-        }
-      });
+      this.years.disponibleYears = this.distributedObjectives.map(ob => ob.year)
     },
 
     getPositiveBalance(){
@@ -288,7 +263,7 @@ export default {
 
     formatPrice(price) {
       const formattedPrice = util.formatPrice(price);
-      if(formattedPrice !== '$NaN'){
+      if(formattedPrice !== '$NaN' || formattedPrice !== undefined){
         return formattedPrice;
       }else{
         return price;
