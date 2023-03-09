@@ -14,8 +14,6 @@ module Api
           kleerCo = Kleerer.find_by(name: "KleerCo")
           kleerCo_id = kleerCo.id
 
-
-
           response = {
               all_kleerers: Kleerer.all,
               distributed_objectives: @objectives_actions.find_objectives_distributions,
