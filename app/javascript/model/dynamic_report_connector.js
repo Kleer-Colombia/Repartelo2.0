@@ -18,6 +18,9 @@ export default {
                 context.distributedObjectives = response.data.response.distributed_objectives
                 context.allKleerers = response.data.response.all_kleerers.map(kleerer => {
                     kleerer.selected = false
+                    kleerer.customObjective = 0
+                    kleerer.hasCustomObjective = false
+
                     return kleerer
                 })
 
@@ -37,6 +40,7 @@ export default {
     },
 
     addObjective(context, objective) {
+        console.log(objective)
         axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
         axios({
             method: 'post',

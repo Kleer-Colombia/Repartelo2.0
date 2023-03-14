@@ -21,7 +21,7 @@ class ObjetivesActions
     available_years.each do |year|
       objectives = Objective.where('extract(year from created_at) = ?', year)
       current_objective = objectives.max_by{|e| e.created_at}
-      kleerers = current_objective ? current_objective.kleerers : []
+      kleerers = current_objective ? current_objective.kleerers_objectives : []
 
       kleerer_plane_list = get_income_by_year(kleerer_income_list, kleerers, year)
 
@@ -155,9 +155,20 @@ class ObjetivesActions
   end
 
   #Actually used
-  def add_objective objective
-    objective = Objective.new(amount: objective[:amount], initial_balance_percentage: objective[:percentage])
-    objective.save!
+  def add_objective data
+    new_objective = Objective.new(amount: data[:objective][:amount], initial_balance_percentage: data[:objective][:percentage])
+    new_objective.save!
+
+    data[:kleerers].map do |kleerer|
+      ob_kleerer = KleerersObjective.new(kleerer_id: kleerer[:id], objective_id: new_objective.id, has_custom_objective: kleerer[:hasCustomObjective])
+
+      if kleerer[:hasCustomObjective]
+        ob_kleerer.objective_amount = kleerer[:customObjective]
+      end
+      ob_kleerer.save!
+    end
+
+    p new_objective
   end
 
   #Actually used
@@ -172,15 +183,16 @@ class ObjetivesActions
   private
 
   def get_income_by_year(all_inputs, current_kleerers, year)
-    current_kleerers.map do |kleerer|
+    current_kleerers.map do |kleerer_ob|
       income = all_inputs.find{|e|
-        e[:name] == kleerer.name
+        e[:name] == kleerer_ob.kleerer.name
       }[:inputs].find{|e| e[:year] == year}[:input]
 
       {
-        name: kleerer.name,
+        name: kleerer_ob.kleerer.name,
         income: income,
-        hasMeta: kleerer.option.name.include?("meta"),
+        hasMeta: !kleerer_ob.has_custom_objective,
+        custom_objective: kleerer_ob.objective_amount
       }
     end
   end
@@ -195,15 +207,19 @@ class ObjetivesActions
       initial_income_index = last_incomes.find_index{|e| e[:name] == kleerer[:name]}
 
       initial_income = last_incomes[initial_income_index]
-      initial_income_amount = (initial_income[:amount] * (current_objective.initial_balance_percentage * 0.01 || 0))
+      initial_income_amount = (initial_income[:amount] * (current_objective.initial_balance_percentage || 0) * 0.01)
       partial_income = kleerer[:income]
       total_income = partial_income + initial_income_amount
       balance = total_income - individual_objective || 0
 
+      if kleerer[:custom_objective]
+        balance = total_income - kleerer[:custom_objective] || 0
+      end
+
       kleerer.merge!({
                        income: partial_income,
                        balance: balance,
-                       anualMeta: kleerer[:hasMeta] ? individual_objective : 0,
+                       anualMeta: kleerer[:hasMeta] ? individual_objective : kleerer[:custom_objective],
                        initial_income: initial_income_amount,
                        total_income: total_income
                      })

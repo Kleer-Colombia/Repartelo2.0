@@ -28,21 +28,41 @@
                 <el-col :span="2" style="padding-top: 10px; text-align: center">
                         {{percentageSelector.max}}%
                 </el-col>
+            </el-row>
+            <h4 style="margin: 50px 10%">Seleccione los kleerers que participarán este año</h4>
 
-                <el-row :gutter="10" v-for="kleerer in allKleerers" :key="kleerer.id"
+            <el-row :gutter="10" v-for="kleerer in allKleerers" :key="kleerer.id"
                         :id="'percentage_' + kleerer.name">
-                    <el-col :span="6" :offset="2">
-                        <el-checkbox-button
-                                v-model="kleerer.selected"
-                                :label="kleerer.id"
-                                :key="kleerer.name"
-                                :id="'check' + kleerer.name"
-                                @change="selectKleerer(kleerer)">
-                            <span>{{ kleerer.name }}</span>
-                            <span style="font-size: 12px">{{ kleerer.option }}</span>
-                        </el-checkbox-button>
-                    </el-col>
-                </el-row>
+                <el-col :span="6" :offset="3">
+                    <el-checkbox-button
+                            v-model="kleerer.selected"
+                            :label="kleerer.id"
+                            :key="kleerer.name"
+                            :id="'check' + kleerer.name"
+                            style="color: blue"
+                            @change="selectKleerer(kleerer)">
+                        <span>{{ kleerer.name }}</span>
+                    </el-checkbox-button>
+                </el-col>
+                <el-col :offset="0" :span="6">  
+                    <el-checkbox-button
+                        v-model="kleerer.hasCustomObjective"
+                        :key="kleerer.id"
+                        :id="'check-value' + kleerer.name"
+                        :disabled="!kleerer.selected"
+                        @change="selectKleerer(kleerer)">
+                        <span>Objetivo especifico</span>
+                    </el-checkbox-button>
+                </el-col>
+                <el-col :offset="0" :span="6">
+                    <div v-show="kleerer.hasCustomObjective">
+                        <el-input-number 
+                            v-model="kleerer.customObjective" 
+                            :name="'inputObjective' + kleerer.name" 
+                            :min="0">
+                        </el-input-number>
+                    </div>
+                </el-col>
             </el-row>
             
         
@@ -81,7 +101,7 @@ export default {
         },
     methods: {
         addTax () {
-            DynamicReportConnector.addObjective(this, {objective: this.objectiveInfo, percentage: this.objectiveInfo.percentage})
+            DynamicReportConnector.addObjective(this, {objective: this.objectiveInfo, kleerers: this.sendKleerers()})
         },
         closeDialog (format) {
             if (format) {
@@ -95,7 +115,17 @@ export default {
         selectKleerer (kleerer) {
             this.$emit('input', null)
             this.$forceUpdate()
-      },
+        },
+        sendKleerers(){
+            return this.allKleerers.filter(kleerer => kleerer.selected)
+                                    .map(kleerer => {
+                                        return {
+                                            id: kleerer.id,
+                                            hasCustomObjective: kleerer.hasCustomObjective,
+                                            customObjective: kleerer.customObjective
+                                        }
+                                    })
+        }
     }
 }
 </script>
@@ -104,5 +134,9 @@ export default {
 .button-container{
     display: flex;
     justify-content: flex-end;
+}
+
+.el-checkbox-button__inner{
+    width: 150px !important;
 }
 </style>

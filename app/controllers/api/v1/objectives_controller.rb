@@ -31,12 +31,14 @@ module Api
 
       def add_objective_kleerco
         validate_parameters [:objective], params do
-          begin
-            response = @objectives_actions.add_objective(params[:objective])
+          # puts "---PARAMETROS---"
+          # puts params[:objective]
+          # begin
+            response = @objectives_actions.add_objective(params)
             send_response response
-          rescue StandardError => error
-            halt_message("can't add objective: #{error.message}", :internal_server_error)
-          end
+          # rescue StandardError => error
+          #   halt_message("can't add objective: #{error.message}", :internal_server_error)
+          # end
         end
       end
 
