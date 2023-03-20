@@ -125,6 +125,9 @@ class ObjetivesActions
       end
     end
 
+    puts 'KLEERERS'
+    p kleerers
+
     kleerers.each do |kleerer|
       input = get_one_kleerer_input(kleerer, kleerCo)
       kleerers_inputs.push(input)
@@ -160,7 +163,8 @@ class ObjetivesActions
     new_objective.save!
 
     data[:kleerers].map do |kleerer|
-      ob_kleerer = KleerersObjective.new(kleerer_id: kleerer[:id], objective_id: new_objective.id, has_custom_objective: kleerer[:hasCustomObjective])
+      ob_kleerer = KleerersObjective.new(kleerer_id: kleerer[:id], objective_id: new_objective.id,
+                                         has_custom_objective: kleerer[:hasCustomObjective])
 
       if kleerer[:hasCustomObjective]
         ob_kleerer.objective_amount = kleerer[:customObjective]
@@ -180,7 +184,7 @@ class ObjetivesActions
     objective.save!
   end
 
-  private
+  # private
 
   def get_income_by_year(all_inputs, current_kleerers, year)
     current_kleerers.map do |kleerer_ob|
@@ -294,8 +298,6 @@ class ObjetivesActions
   def get_kleer_historical_years
     actual_year = FIRST_YEAR
     years = []
-
-    puts Time.now.year.class
 
     while actual_year <= Time.now.year
       years.push(actual_year)

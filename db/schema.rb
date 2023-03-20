@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_13_004643) do
+ActiveRecord::Schema.define(version: 2022_06_08_020042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -150,8 +150,6 @@ ActiveRecord::Schema.define(version: 2023_03_13_004643) do
   create_table "kleerers_objectives", id: false, force: :cascade do |t|
     t.bigint "kleerer_id"
     t.bigint "objective_id"
-    t.boolean "has_custom_objective", default: false
-    t.integer "objective_amount"
     t.index ["kleerer_id"], name: "index_kleerers_objectives_on_kleerer_id"
     t.index ["objective_id"], name: "index_kleerers_objectives_on_objective_id"
   end
