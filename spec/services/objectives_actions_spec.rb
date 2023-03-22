@@ -68,7 +68,7 @@ describe ObjectivesActions do
     set_kleerco_saldos(balances)
     set_aux_saldos(balances)
     set_percentages(balances)
-    set_objectives
+    @objectives = set_objectives
   end
 
 
@@ -111,16 +111,17 @@ describe ObjectivesActions do
                                 ])
   end
 
-  it '' do
-    initial_income_list = @kleerers.map{ |e|
-      {
-        id: e.id,
-        name: e.name,
-        amount: 0
-      }
-    }
+  it 'Get kleerers to 2021 objective' do
+    kleerer_income_list = @actions.find_kleerers_inputs(@kleerCo)
 
-    # puts @actions.get_income_by_year(initial_income_list, @kleerers, 2021)
+    contributers = @actions.get_income_by_year(
+      kleerer_income_list,
+      @objectives[0].kleerers_objectives,
+      2021
+    )
+
+    names = contributers.map{|e| e[:name]}
+    expect(names).to eq(['Jader'])
   end
 end
 
@@ -230,26 +231,33 @@ def set_percentages(balances)
 end
 
 def set_objectives
-  # objectives = [
-  #   Objective.new(amount: 0, initial_balance_percentage: 0,
-  #                 created_at: Time.parse('2023-10-21T19:54:45.808Z'),
-  #                 updated_at: Time.parse('2023-10-21T19:54:45.808Z')),
-  #   Objective.new(amount: 0, initial_balance_percentage: 0,
-  #                 created_at: Time.parse('2022-10-21T19:54:45.808Z'),
-  #                 updated_at: Time.parse('2022-10-21T19:54:45.808Z')),
-  #   Objective.new(amount: 0, initial_balance_percentage: 0,
-  #                 created_at: Time.parse('2021-10-21T19:54:45.808Z'),
-  #                 updated_at: Time.parse('2021-10-21T19:54:45.808Z'))
-  # ]
-  #
-  # ko = KleerersObjective.new(kleerer_id: @kleerers[0], has_custom_objective: false,
-  #                            object_id: objectives[0].id)
-  #
-  # objectives[0].kleerers_objectives = [
-  #   ko
-  # ]
-  #
-  # objectives.each{|e| e.save!}
-  #
-  # p objectives
+  objectives = [
+    Objective.new(amount: 5000000, initial_balance_percentage: 0,
+                  created_at: Time.parse('2023-10-21T19:54:45.808Z'),
+                  updated_at: Time.parse('2023-10-21T19:54:45.808Z')),
+    Objective.new(amount: 7000000, initial_balance_percentage: 50,
+                  created_at: Time.parse('2022-10-21T19:54:45.808Z'),
+                  updated_at: Time.parse('2022-10-21T19:54:45.808Z')),
+    Objective.new(amount: 12000000, initial_balance_percentage: 50,
+                  created_at: Time.parse('2021-10-21T19:54:45.808Z'),
+                  updated_at: Time.parse('2021-10-21T19:54:45.808Z'))
+  ]
+
+  objectives[0].kleerers_objectives = [
+    KleerersObjective.new(kleerer_id: @kleerers[1].id, has_custom_objective: false),
+  ]
+
+  objectives[1].kleerers_objectives = [
+    KleerersObjective.new(kleerer_id: @kleerers[1].id, has_custom_objective: false),
+    KleerersObjective.new(kleerer_id: @kleerers[0].id, has_custom_objective: false),
+    KleerersObjective.new(kleerer_id: @kleerers[2].id, has_custom_objective: true, objective_amount: 1000000),
+  ]
+
+  objectives[1].kleerers_objectives = [
+    KleerersObjective.new(kleerer_id: @kleerers[1].id, has_custom_objective: false),
+    KleerersObjective.new(kleerer_id: @kleerers[0].id, has_custom_objective: false),
+    KleerersObjective.new(kleerer_id: @kleerers[2].id, has_custom_objective: false),
+  ]
+
+  objectives.each{|e| e.save!}
 end

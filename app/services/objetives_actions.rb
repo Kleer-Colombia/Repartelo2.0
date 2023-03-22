@@ -125,9 +125,6 @@ class ObjetivesActions
       end
     end
 
-    puts 'KLEERERS'
-    p kleerers
-
     kleerers.each do |kleerer|
       input = get_one_kleerer_input(kleerer, kleerCo)
       kleerers_inputs.push(input)
