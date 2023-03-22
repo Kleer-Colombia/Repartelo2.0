@@ -187,7 +187,14 @@ class ObjetivesActions
     current_kleerers.map do |kleerer_ob|
       income = all_inputs.find{|e|
         e[:name] == kleerer_ob.kleerer.name
-      }[:inputs].find{|e| e[:year] == year}[:input]
+      }
+
+      begin
+        income = income[:inputs].find{|e| e[:year] == year}[:input]
+      rescue
+        income = 0
+      end
+
 
       {
         name: kleerer_ob.kleerer.name,

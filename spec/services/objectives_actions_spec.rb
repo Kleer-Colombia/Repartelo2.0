@@ -1,21 +1,4 @@
 require 'rails_helper'
-class DoubleObjectiveOne
-  def created_at
-    Time.parse '2021-10-21T19:54:45.808Z'
-  end
-end
-
-class DoubleObjectiveTwo
-  def created_at
-    Time.parse '2020-10-21T19:54:45.808Z'
-  end
-end
-
-class DoubleObjectiveThree
-  def created_at
-    Time.parse '2021-10-21T19:54:45.808Z'
-  end
-end
 
 ObjectivesActions = ObjetivesActions
 describe ObjectivesActions do
@@ -31,7 +14,10 @@ describe ObjectivesActions do
                   id: 1001),
       Kleerer.new(name: "Juli",
                   option: Option.new(name: 'meta_cumplida', value: 10),
-                  id: 1002)
+                  id: 1002),
+      Kleerer.new(name: "Camilo",
+                  option: Option.new(name: 'meta_cumplido', value: 10),
+                  id: 1003)
     ]
 
     @kleerCo = Kleerer.new(name:'KleerCo',
@@ -76,16 +62,22 @@ describe ObjectivesActions do
     leo_contrib = @actions.get_one_kleerer_input(@kleerers[0] , @kleerCo)
     jader_contrib = @actions.get_one_kleerer_input(@kleerers[1], @kleerCo)
     juli_contrib = @actions.get_one_kleerer_input(@kleerers[2], @kleerCo)
+    camilo_contrib = @actions.get_one_kleerer_input(@kleerers[3], @kleerCo)
+
+    puts leo_contrib
+    puts jader_contrib
+    puts juli_contrib
+    puts camilo_contrib
 
 
     expect(leo_contrib[:inputs]).to eq([{ :year => 2021, :input => 2000000 },
                                         { :year => 2022, :input => 6000000}])
-    expect(jader_contrib[:inputs]).to eq([{:year => 2021, :input => 3000000},
+    expect(jader_contrib[:inputs]).to eq([{:year => 2021, :input => 5000000},
                                           {:year => 2022, :input => 4000000},
                                           {:year => 2023, :input => 2000000}])
-    expect(juli_contrib[:inputs]).to eq([{:year => 2021, :input => 2000000},
-                                          {:year => 2022, :input => 2000000},
+    expect(juli_contrib[:inputs]).to eq([{:year => 2022, :input => 2000000},
                                           {:year => 2023, :input => 2000000}])
+    expect(camilo_contrib[:inputs]).to eq([{:year => 2023, :input => 4000000}])
   end
 
   it 'Get all kleerer contributions' do
@@ -98,15 +90,18 @@ describe ObjectivesActions do
                                   },
                                   {
                                     :name => 'Jader', :hasMeta => true,
-                                    :inputs => [{:year => 2021, :input => 3000000},
+                                    :inputs => [{:year => 2021, :input => 5000000},
                                                 {:year => 2022, :input => 4000000},
                                                 {:year => 2023, :input => 2000000}]
                                   },
                                   {
                                     :name => 'Juli', :hasMeta => true,
-                                    :inputs => [{:year => 2021, :input => 2000000},
-                                                {:year => 2022, :input => 2000000},
+                                    :inputs => [{:year => 2022, :input => 2000000},
                                                 {:year => 2023, :input => 2000000}]
+                                  },
+                                  {
+                                    :name => 'Camilo', :hasMeta => true,
+                                    :inputs => [{:year => 2023, :input => 4000000}]
                                   }
                                 ])
   end
@@ -116,12 +111,12 @@ describe ObjectivesActions do
 
     contributers = @actions.get_income_by_year(
       kleerer_income_list,
-      @objectives[0].kleerers_objectives,
-      2021
+      @objectives[2].kleerers_objectives,
+      2023
     )
 
     names = contributers.map{|e| e[:name]}
-    expect(names).to eq(['Jader'])
+    expect(names).to eq(['Leo','Jader','Juli','Camilo'])
   end
 end
 
@@ -143,7 +138,7 @@ def set_kleerco_saldos(balances)
               reference: "Referencia genérica", balance_id: balances[3].id,
               concept: "concepto genérico", created_at: Time.parse('2021-10-21T19:54:45.808Z'),
               updated_at: Time.parse('2022-10-21T19:54:45.808Z')),
-    Saldo.new(amount: 4000000, kleerer_id: 999,
+    Saldo.new(amount: 8000000, kleerer_id: 999,
               reference: "Referencia genérica", balance_id: balances[4].id,
               concept: "concepto genérico", created_at: Time.parse('2021-10-21T19:54:45.808Z'),
               updated_at: Time.parse('2023-10-21T19:54:45.808Z'))
@@ -151,26 +146,26 @@ def set_kleerco_saldos(balances)
 end
 
 def set_aux_saldos(balances)
-  # 2021 - 1 - Leo - Juli
+  # 2021 - 1 - Leo - Jader
   # 2021 - 2 - Jader
   # 2022 - 1 - Jader - Leo
   # 2022 - 2 - Jader - Leo - Juli
-  # 2023 - 1 - Jader - Juli
+  # 2023 - 1 - Jader - Juli - Camilo
 
   [
-    Saldo.new(amount: 4000000, kleerer_id: @kleerers[0].id,
+    Saldo.new(amount: 1000000, kleerer_id: @kleerers[0].id,
               reference: "Referencia genérica", balance_id: balances[0].id,
               concept: "concepto genérico", created_at: Time.parse('2021-10-21T19:54:45.808Z'),
               updated_at: Time.parse('2021-10-21T19:54:45.808Z')),
-    Saldo.new(amount: 4000000, kleerer_id: @kleerers[2].id,
+    Saldo.new(amount: 1000000, kleerer_id: @kleerers[1].id,
               reference: "Referencia genérica", balance_id: balances[0].id,
               concept: "concepto genérico", created_at: Time.parse('2021-10-21T19:54:45.808Z'),
               updated_at: Time.parse('2021-10-21T19:54:45.808Z')),
-    Saldo.new(amount: 4000000, kleerer_id: @kleerers[1].id,
+    Saldo.new(amount: 1000000, kleerer_id: @kleerers[1].id,
               reference: "Referencia genérica", balance_id: balances[1].id,
               concept: "concepto genérico", created_at: Time.parse('2021-10-21T19:54:45.808Z'),
               updated_at: Time.parse('2021-10-21T19:54:45.808Z')),
-    Saldo.new(amount: 4000000, kleerer_id: @kleerers[1].id,
+    Saldo.new(amount: 1000000, kleerer_id: @kleerers[1].id,
               reference: "Referencia genérica", balance_id: balances[2].id,
               concept: "concepto genérico", created_at: Time.parse('2022-10-21T19:54:45.808Z'),
               updated_at: Time.parse('2022-10-21T19:54:45.808Z')),
@@ -195,6 +190,10 @@ def set_aux_saldos(balances)
               concept: "concepto genérico", created_at: Time.parse('2023-10-21T19:54:45.808Z'),
               updated_at: Time.parse('2023-10-21T19:54:45.808Z')),
     Saldo.new(amount: 4000000, kleerer_id: @kleerers[2].id,
+              reference: "Referencia genérica", balance_id: balances[4].id,
+              concept: "concepto genérico", created_at: Time.parse('2023-10-21T19:54:45.808Z'),
+              updated_at: Time.parse('2023-10-21T19:54:45.808Z')),
+    Saldo.new(amount: 4000000, kleerer_id: @kleerers[3].id,
               reference: "Referencia genérica", balance_id: balances[4].id,
               concept: "concepto genérico", created_at: Time.parse('2023-10-21T19:54:45.808Z'),
               updated_at: Time.parse('2023-10-21T19:54:45.808Z')),
@@ -204,7 +203,7 @@ end
 def set_percentages(balances)
   balances[0].percentages = [
     Percentage.new(value: 50, kleerer_id: @kleerers[0].id),
-    Percentage.new(value: 50, kleerer_id: @kleerers[2].id)
+    Percentage.new(value: 50, kleerer_id: @kleerers[1].id)
   ]
 
   balances[1].percentages = [
@@ -223,8 +222,9 @@ def set_percentages(balances)
   ]
 
   balances[4].percentages = [
-    Percentage.new(value: 50, kleerer_id: @kleerers[1].id),
-    Percentage.new(value: 50, kleerer_id: @kleerers[2].id),
+    Percentage.new(value: 25, kleerer_id: @kleerers[1].id),
+    Percentage.new(value: 25, kleerer_id: @kleerers[2].id),
+    Percentage.new(value: 50, kleerer_id: @kleerers[3].id),
   ]
 
   balances.each { |e| e.save! }
@@ -253,10 +253,11 @@ def set_objectives
     KleerersObjective.new(kleerer_id: @kleerers[2].id, has_custom_objective: true, objective_amount: 1000000),
   ]
 
-  objectives[1].kleerers_objectives = [
-    KleerersObjective.new(kleerer_id: @kleerers[1].id, has_custom_objective: false),
+  objectives[2].kleerers_objectives = [
     KleerersObjective.new(kleerer_id: @kleerers[0].id, has_custom_objective: false),
+    KleerersObjective.new(kleerer_id: @kleerers[1].id, has_custom_objective: false),
     KleerersObjective.new(kleerer_id: @kleerers[2].id, has_custom_objective: false),
+    KleerersObjective.new(kleerer_id: @kleerers[3].id, has_custom_objective: true),
   ]
 
   objectives.each{|e| e.save!}
