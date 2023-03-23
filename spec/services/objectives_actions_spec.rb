@@ -55,6 +55,7 @@ describe ObjectivesActions do
     set_aux_saldos(balances)
     set_percentages(balances)
     @objectives = set_objectives
+    @complete_distribution = @actions.find_objectives_distributions
   end
 
 
@@ -63,12 +64,6 @@ describe ObjectivesActions do
     jader_contrib = @actions.get_one_kleerer_input(@kleerers[1], @kleerCo)
     juli_contrib = @actions.get_one_kleerer_input(@kleerers[2], @kleerCo)
     camilo_contrib = @actions.get_one_kleerer_input(@kleerers[3], @kleerCo)
-
-    puts leo_contrib
-    puts jader_contrib
-    puts juli_contrib
-    puts camilo_contrib
-
 
     expect(leo_contrib[:inputs]).to eq([{ :year => 2021, :input => 2000000 },
                                         { :year => 2022, :input => 6000000}])
@@ -106,7 +101,7 @@ describe ObjectivesActions do
                                 ])
   end
 
-  it 'Get kleerers to 2021 objective' do
+  it 'Get kleerers in 2023 objective' do
     kleerer_income_list = @actions.find_kleerers_inputs(@kleerCo)
 
     contributers = @actions.get_income_by_year(
@@ -117,6 +112,58 @@ describe ObjectivesActions do
 
     names = contributers.map{|e| e[:name]}
     expect(names).to eq(['Leo','Jader','Juli','Camilo'])
+  end
+
+  it 'Camilo should has custom objective un 2023' do
+    kleerer_income_list = @actions.find_kleerers_inputs(@kleerCo)
+
+    contributers = @actions.get_income_by_year(
+      kleerer_income_list,
+      @objectives[2].kleerers_objectives,
+      2023
+    )
+
+    camilo = contributers.find{|e| e[:name] == 'Camilo'}
+
+    expect(camilo[:custom_objective]).to eq(1000000)
+  end
+
+  it 'Juli should contribute 2M and have a 4M objective' do
+    initial_income_list = @kleerers.map{|e|
+      {
+        id: e.id,
+        name: e.name,
+        amount: 0
+      }
+    }
+
+    kleerer_income_list = @actions.find_kleerers_inputs(@kleerCo)
+
+    contributers = @actions.get_income_by_year(
+      kleerer_income_list,
+      @objectives[2].kleerers_objectives,
+      2023
+    )
+
+    distributed_kleerers, initial_income_list = @actions.get_objective_calcules(contributers, initial_income_list, @objectives[2])
+
+    juli = distributed_kleerers.find{|e| e[:name] == 'Juli'}
+    expect(juli[:anualMeta]).to eq(4000000)
+    expect(juli[:total_income]).to eq(2000000)
+  end
+
+  it '2019 objective should be null' do
+    objective2019 = @complete_distribution.find{|e| e[:year] == 2019}
+    expect(objective2019).to eq(nil)
+  end
+
+  it 'Jaders initial income in 2023 should be greater than 0' do
+    objective2023 = @complete_distribution.find{|e|
+      e["year"] == 2023
+    }
+
+    jader = objective2023["kleerers"].find{|e| e[:name] == 'Jader'}
+    expect(jader[:initial_income] > 0).to eq(true)
   end
 end
 
@@ -233,14 +280,14 @@ end
 def set_objectives
   objectives = [
     Objective.new(amount: 5000000, initial_balance_percentage: 0,
-                  created_at: Time.parse('2023-10-21T19:54:45.808Z'),
-                  updated_at: Time.parse('2023-10-21T19:54:45.808Z')),
-    Objective.new(amount: 7000000, initial_balance_percentage: 50,
+                  created_at: Time.parse('2021-10-21T19:54:45.808Z'),
+                  updated_at: Time.parse('2021-10-21T19:54:45.808Z')),
+    Objective.new(amount: 3000000, initial_balance_percentage: 50,
                   created_at: Time.parse('2022-10-21T19:54:45.808Z'),
                   updated_at: Time.parse('2022-10-21T19:54:45.808Z')),
     Objective.new(amount: 12000000, initial_balance_percentage: 50,
-                  created_at: Time.parse('2021-10-21T19:54:45.808Z'),
-                  updated_at: Time.parse('2021-10-21T19:54:45.808Z'))
+                  created_at: Time.parse('2023-10-21T19:54:45.808Z'),
+                  updated_at: Time.parse('2023-10-21T19:54:45.808Z'))
   ]
 
   objectives[0].kleerers_objectives = [
@@ -257,7 +304,7 @@ def set_objectives
     KleerersObjective.new(kleerer_id: @kleerers[0].id, has_custom_objective: false),
     KleerersObjective.new(kleerer_id: @kleerers[1].id, has_custom_objective: false),
     KleerersObjective.new(kleerer_id: @kleerers[2].id, has_custom_objective: false),
-    KleerersObjective.new(kleerer_id: @kleerers[3].id, has_custom_objective: true),
+    KleerersObjective.new(kleerer_id: @kleerers[3].id, has_custom_objective: true, objective_amount: 1000000),
   ]
 
   objectives.each{|e| e.save!}
