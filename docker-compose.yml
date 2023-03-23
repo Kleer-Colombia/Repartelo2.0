@@ -12,7 +12,7 @@ services:
   repartelo:
     depends_on:
     - 'postgres'
-    - 'webpacker'
+    # - 'webpacker'
     build: .
     ports:
     - '4000:3000'
@@ -20,29 +20,29 @@ services:
     - '.:/app'
     env_file:
     - '.env'
-  webpacker:
-    build: .
-    command: ruby bin/webpack-dev-server
-    volumes:
-    - .:/app
-    ports:
-    - "4035:3035"
-  chrome:
-    image: selenium/node-chrome:3.14
-    depends_on:
-    - hub
-    environment:
-      HUB_HOST: hub
-  firefox:
-    image: selenium/node-firefox
-    depends_on:
-    - hub
-    environment:
-      HUB_HOST: hub
-  hub:
-    image: selenium/hub
-    ports:
-    - "4444:4444"
+  # webpacker:
+  #   build: .
+  #   command: ruby bin/webpack-dev-server
+  #   volumes:
+  #   - .:/app
+  #   ports:
+  #   - "4035:3035"
+  # chrome:
+  #   image: selenium/node-chrome:3.14
+  #   depends_on:
+  #   - hub
+  #   environment:
+  #     HUB_HOST: hub
+  # firefox:
+  #   image: selenium/node-firefox
+  #   depends_on:
+  #   - hub
+  #   environment:
+  #     HUB_HOST: hub
+  # hub:
+  #   image: selenium/hub
+  #   ports:
+  #   - "4444:4444"
 
 volumes:
   postgres:

@@ -1,4 +1,4 @@
-FROM ruby:2.5.1
+FROM ruby:2.6.7
 
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev
 
@@ -15,12 +15,13 @@ WORKDIR /app
 
 COPY Gemfile Gemfile.lock ./
 COPY .gemrc ~/
+RUN gem install bundler
 RUN bundle install
 
 COPY . .
 
-RUN bin/yarn install
+RUN yarn install
 
 LABEL maintainer="Yamit Cardenas <yamit.cardenas@kleer.la>"
 
-CMD puma -C config/puma.rb
+# CMD puma -C config/puma.rb
