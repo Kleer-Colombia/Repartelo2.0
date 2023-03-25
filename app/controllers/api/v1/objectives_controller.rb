@@ -10,12 +10,12 @@ module Api
       end
 
       def find_kleerco_reports
-        # begin
+        begin
           kleerCo = Kleerer.find_by(name: "KleerCo")
           kleerCo_id = kleerCo.id
 
           response = {
-              all_kleerers: Kleerer.all,
+              all_kleerers: Kleerer.where.not(name: 'KleerCo').where.not(name: 'Yamit'),
               distributed_objectives: @objectives_actions.find_objectives_distributions,
               total: @saldo_actions.find_saldos_of_balances(kleerCo_id),
               kleerers: @objectives_actions.find_kleerers_inputs(kleerCo),
@@ -24,9 +24,9 @@ module Api
 
           }
           send_response response
-        # rescue StandardError => error
-        #   halt_message("can't find kleerCo report: #{error.message}", :internal_server_error)
-        # end
+        rescue StandardError => error
+          halt_message("can't find kleerCo report: #{error.message}", :internal_server_error)
+        end
       end
 
       def add_objective_kleerco
