@@ -1,13 +1,13 @@
 class TaxesHelper
 
   def prepare_tax_registry(tax)
-    tax.invoice_date = tax.created_at.strftime("%Y-%m-%d") if tax.invoice_date == nil
+    tax.invoice_date = tax.balance.updated_at.strftime("%Y-%m-%d") if tax.invoice_date == nil
     {
         balance: {
             id: tax.balance.id,
             client: tax.balance.client,
             project: tax.balance.project,
-            description: tax.balance.description
+            description: tax.balance.description,
         },
         date: tax.invoice_date,
         amount: tax.amount,
@@ -31,7 +31,6 @@ class TaxesHelper
   end
 
   def calculate_totals(data, summary)
-
     data.each do |tax|
       if tax[:amount] < 0
         summary[:egresos] += tax[:amount]
