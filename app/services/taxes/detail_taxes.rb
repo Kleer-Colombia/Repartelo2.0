@@ -4,10 +4,12 @@ class DetailTaxes < TaxesHelper
   def call
     data = []
     taxes_preconsolidated = {} #{ica: {id: ... ,data[]},Donaciones: {id: ... ,data[]}}
-    groups = {"RETEICA" => "Ica", "RETEFUENTE" => "Reserva Retefuente",  "RETEIVA" => "IVA","Retefuente" => "Reserva Retefuente" }
+    groups = { "RETEICA" => "Ica", "Reteica Bogotá 2022"=> "Ica","RETEFUENTE" => "Reserva Retefuente",  "RETEIVA" => "IVA","Retefuente" => "Reserva Retefuente" }
 
     TaxMaster.taxes_to_show.each do |tax_master|
-      taxesDetail = Tax.all.select{ |tax| tax.name.split(' (')[0] == tax_master.name and !tax.balance.editable and tax.amount != 0}.map do |tax|
+      taxesDetail = Tax.all.select{ |tax|
+        tax.name.split(' (')[0] == tax_master.name and !tax.balance.editable and tax.amount != 0
+      }.map do |tax|
         prepare_tax_registry(tax)
       end
       manualTaxesDetail = tax_master.manual_taxes.map do |manual_tax|
@@ -15,7 +17,7 @@ class DetailTaxes < TaxesHelper
       end
       total_taxes = taxesDetail + manualTaxesDetail
       tax_key_to_group = groups[tax_master.name] ? groups[tax_master.name] : tax_master.name
-      puts "#{tax_key_to_group}"
+
       if taxes_preconsolidated[tax_key_to_group]
         taxes_preconsolidated[tax_key_to_group][:data] += total_taxes
       else

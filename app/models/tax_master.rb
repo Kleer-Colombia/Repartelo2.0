@@ -7,7 +7,7 @@ class TaxMaster < ApplicationRecord
   INVOICE_TAX_GROUPS = {
     IVA: ['iva','IVA'],
     RETEIVA: ['ReteIVA', 'Reteiva 11% - Especial','RETEIVA'],
-    RETEICA: ['RETEICABOGOTA','RETEICA_MEDELLIN','RETEICA MEDELLIN','RETEICA BOG2','ReteICA Cali', 'RETEICA'],
+    RETEICA: ['RETEICABOGOTA','RETEICA_MEDELLIN','RETEICA MEDELLIN','RETEICA BOG2','ReteICA Cali', 'RETEICA', 'Reteica Bogotá 2022'],
     RETEFUENTE: ['Arrendamiento de bienes muebles',
                   'Arrendamiento de bienes raíces',
                   'Compras',
