@@ -51,7 +51,9 @@ export default {
         },
     methods: {
         showObjectives(){
-            return this.objectives.find(objective => objective.year === this.year).objectives
+            console.log("objetivos")
+            console.log(this.objectives)
+            return this.objectives
             .map(objective => {
                 return {
                     created_at: objective.created_at.substr(0,10),
