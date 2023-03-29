@@ -34,15 +34,34 @@
 
 
 #Objective migration
+# These are the migrations for the new working of objectives
 
 objective = Objective.where('extract(year  from created_at) = ?', 2021).last
-kleerer = Kleerer.find_by(name: 'Jenny')
 
-p objective.kleerers_objectives.class
-objective.kleerers_objectives.push [KleerersObjective.new(kleerer: kleerer, has_custom_objective: false),]
-
-# = [
-#   KleerersObjective.new(kleerer: kleerer, has_custom_objective: false),
-# ]
-
+objective.kleerers_objectives.push [
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Camilo'), has_custom_objective: false),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Leo'), has_custom_objective: false),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Juli'), has_custom_objective: false),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Pablo'), has_custom_objective: false),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Jader'), has_custom_objective: false),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Reserva AC Leo'), has_custom_objective: true, objective_amount: 0),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Reserva AC Cami'), has_custom_objective: true, objective_amount: 0),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Reserva AC Pablo'), has_custom_objective: true, objective_amount: 0),
+                                   ]
 objective.save!
+
+objective = Objective.where('extract(year  from created_at) = ?', 2022).last
+
+objective.kleerers_objectives.push [
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Camilo'), has_custom_objective: false),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Leo'), has_custom_objective: false),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Juli'), has_custom_objective: false),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Pablo'), has_custom_objective: false),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Jader'), has_custom_objective: false),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Reserva AC Leo'), has_custom_objective: true, objective_amount: 0),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Reserva AC Cami'), has_custom_objective: true, objective_amount: 0),
+                                     KleerersObjective.new(kleerer: Kleerer.find_by(name: 'Reserva AC Pablo'), has_custom_objective: true, objective_amount: 0),
+                                   ]
+objective.save!
+
+puts "-CREATED-"
