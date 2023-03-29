@@ -27,7 +27,7 @@
                   <h2>Objetivo anual</h2>
                 </div>
                 <div class="objective-container">
-                  <h2 id="objetivo">{{ this.formatPrice(this.yearObjective.amount) }}</h2>
+                  <h2 id="objetivo">{{ this.formatPrice(this.yearObjective.amount)}}</h2>
                   <div class="objective-buttons">
                     <div v-if="this.years.filteredYear === this.years.currentYear">
                       <add-objective-button v-bind:allKleerers="allKleerers"/>
@@ -224,9 +224,13 @@ export default {
       this.kleerers = current.kleerers
       this.filterKleerers(current.kleerers)
       this.objectives = current.all_objectives
-      console.log('FILTRADO EN AÑO')
-      console.log(current)
-      console.log(this.objectives)
+
+      if(this.yearObjective == null){
+        this.yearObjective = {
+          amount: "No hay objetivos para este año"
+        }
+        this.objectives = []
+      }
     },
     
     getDisponibleYears() {
@@ -263,10 +267,10 @@ export default {
 
     formatPrice(price) {
       const formattedPrice = util.formatPrice(price);
-      if(formattedPrice !== '$NaN' || formattedPrice !== undefined){
-        return formattedPrice;
-      }else{
+      if(formattedPrice == '$NaN' || formattedPrice == undefined){
         return price;
+      }else{
+        return formattedPrice;
       }
     },
   },
