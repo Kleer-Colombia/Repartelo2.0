@@ -15,7 +15,8 @@
                     controls-position="right"
                     />
                 </el-form-item>
-                <el-form-item label="País destino">
+                <!-- TEMPORAL BEHAVIOUR -->
+                <!-- <el-form-item label="País destino">
                     <el-select v-model="clearing.countryId" placeholder="País">
                         <el-option
                             v-for="country in countries"
@@ -24,6 +25,9 @@
                             :value="country.id">
                         </el-option>
                     </el-select>
+                </el-form-item> -->
+                <el-form-item label="Kleerer">
+                  <el-input v-model="clearing.extKleerer"/>
                 </el-form-item>
                 <el-form-item>
                     <el-button-group>
@@ -48,7 +52,7 @@
                                   size="mini" type="text" icon="el-icon-remove-outline"
                                   @click="removeClearing(clearing.id)"></el-button>
                     </el-button-group>
-                    <label>{{ countries[clearing.country_id - 1].name }}</label>
+                    <label>{{ clearing.ext_kleerer }}</label>
                 </div>
                 <label style="float: right;">{{ `${ preutilidad <= 0 ? `${clearing.percentage * 100}%` : calculateOneClearing(clearing)} ` }}</label>
                 <!-- <label style="float: right;">{{ `${clearing.percentage * 100}%` }}</label> -->
@@ -96,6 +100,7 @@
           description: '',
           percentage: '',
           countryId: '',
+          extKleerer: ''
         },
         percentageSelector: {
             max: 100,
@@ -127,7 +132,6 @@
               type: 'warning',
               center: true
             }).then(() => {
-              console.log('va piola', ClearingId)
               this.error = ''
               balanceConnector.removeClearing(this, this.$route.params.id, ClearingId)
             }).catch((error) => {

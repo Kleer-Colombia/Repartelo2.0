@@ -81,12 +81,12 @@ module Api
 
       def add_clearing
         validate_parameters [:id, :clearing], params do
-          begin
+          # begin
             clearing = params[:clearing]
             send_response @actions.add_clearing_to_balance(params[:id], clearing)
-          rescue
-            halt_message("We can't add expense: #{e.message}", :internal_server_error)
-          end
+          # rescue
+          #   halt_message("We can't add expense: #{e.message}", :internal_server_error)
+          # end
         end
       end
 
