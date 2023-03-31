@@ -30,8 +30,6 @@ class BalanceActions
 
   def remove_clearing_to_balance(id,idClearing)
     balance = Balance.find(id)
-    puts 'id'
-    puts idClearing
     balance.clearings.find(idClearing).destroy
     return {clearings: balance.clearings}
   end

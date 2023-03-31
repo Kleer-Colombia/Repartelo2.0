@@ -76,9 +76,8 @@ class Balance < ApplicationRecord
   end
 
   def find_taxes_value(type)
-
     type_names = TaxMaster.where(type_tax: type).map(&:name)
-    taxes = self.taxes.select { |e| type_names.include? e.name }
+    taxes = self.taxes.select{ |e| type_names.include? e.name }
     total = 0
     taxes.each do |tax|
       total += tax ?  tax.amount.to_f : 0
@@ -96,6 +95,9 @@ class Balance < ApplicationRecord
 
     forKleerCo = kleerCoCustom ? forKleerCo : find_tax_value(:kleerCo)
 
+    if kleerCoCustom.nil?
+      forKleerCo += get_tax_of_clearings
+    end
     distributions = {kleerCo.id => forKleerCo}
 
     percentages.each do |percentage|
@@ -177,6 +179,7 @@ class Balance < ApplicationRecord
   end
 
   def close_clearings
+    #todo: use final amount
     base = resume[:pre_utilidad] + resume[:clearings]
     clearings.each do |clearing|
       clearing.amount = base * clearing.percentage
@@ -215,8 +218,12 @@ class Balance < ApplicationRecord
     data
   end
 
+  def get_tax_of_clearings
+    tax_master = TaxMaster.find_by(name: "Clearing")
+    total = self.clearings.reduce(0){|ac, e|
+      ac + e.amount
+    }
 
-
-
-
+    total * tax_master.value * 0.01
+  end
 end
