@@ -11,8 +11,11 @@ class DistributeBalance
     raise StandardError.new("the balance must have taxes") if balance.taxes.empty?
     raise StandardError.new("How to distribute?") if balance.percentages.empty?
 
+    puts "antes de la dist"
     result = distribute(balance)
+    puts "intermedio"
     data = balance.prepare_distributions(result)
+    puts "pasa todo"
     data
   rescue StandardError => error
     errors.add(:messages, "error on distribution balance: #{error.message}")

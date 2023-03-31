@@ -49,9 +49,7 @@ class BalanceActions
   def find_complete_balance(id)
     balance = Balance.find(id)
     countries = Country.all
-    balance.incomes.each do |income|
-      puts income.description
-    end
+
     balance_info = {balance: balance,
                     incomes: {incomes: balance.incomes,
                               total: balance.total_incomes},

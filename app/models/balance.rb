@@ -98,6 +98,7 @@ class Balance < ApplicationRecord
     if kleerCoCustom.nil?
       forKleerCo += get_tax_of_clearings
     end
+
     distributions = {kleerCo.id => forKleerCo}
 
     percentages.each do |percentage|
@@ -219,6 +220,10 @@ class Balance < ApplicationRecord
   end
 
   def get_tax_of_clearings
+    if self.clearings.nil? || self.clearings == []
+      return 0
+    end
+
     tax_master = TaxMaster.find_by(name: "Clearing")
     total = self.clearings.reduce(0){|ac, e|
       ac + e.amount
