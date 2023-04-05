@@ -99,6 +99,7 @@ class Balance < ApplicationRecord
       forKleerCo += get_tax_of_clearings
     end
 
+
     distributions = {kleerCo.id => forKleerCo}
 
     percentages.each do |percentage|
@@ -180,10 +181,11 @@ class Balance < ApplicationRecord
   end
 
   def close_clearings
-    #todo: use final amount
     base = resume[:pre_utilidad] + resume[:clearings]
+    tax = TaxMaster.find_by(name: "Clearing")
+    tax_percentage = tax.value * 0.01
     clearings.each do |clearing|
-      clearing.amount = base * clearing.percentage
+      clearing.final_amount = 1 - (base * clearing.percentage * tax_percentage)
       clearing.save!
     end
   end
@@ -224,6 +226,7 @@ class Balance < ApplicationRecord
       return 0
     end
 
+    #Extendible
     tax_master = TaxMaster.find_by(name: "Clearing")
     total = self.clearings.reduce(0){|ac, e|
       ac + e.amount

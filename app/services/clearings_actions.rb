@@ -3,6 +3,8 @@ class ClearingsActions
   def find_clearings country_id
     #just clearings with amounts are closed
     data = Clearing.where(country_id: country_id).order(created_at: :desc).filter{|e| e.amount}
+    data = data.filter{|e| !e.final_amount.nil?}
+
     summary = { total: 0}
     summary = calculate_totals data, summary
     summary[:meses] = calculate_totals_by_month data
@@ -10,21 +12,6 @@ class ClearingsActions
   end
 
   private
-
-  def add_saldo_with_distribution distribution, balance
-    saldo = Saldo.new(amount: distribution.amount, kleerer_id: distribution.kleerer_id,
-                      balance_id: balance.id, reference: "/balance/#{balance.id}",
-                      concept: "Ingreso del proyecto: #{balance.description}")
-    saldo.save!
-  end
-
-  #TODO validate if saldo is a number, and if reference is and URL ... you cant try to add a validation framework?
-  def add_saldo_with_saldo saldo
-    saldo = Saldo.new(amount: saldo[:amount], kleerer_id: saldo[:kleerer_id],
-                      reference: saldo[:reference],
-                      concept: saldo[:concept], created_at: saldo[:date], updated_at: saldo[:date])
-    saldo.save!
-  end
 
   def calculate_totals data, summary
     data.each do |clearing|
@@ -66,7 +53,7 @@ class ClearingsActions
       concept = "Balance: #{clearing.balance_id} - #{clearing.balance.client} - #{clearing.description}"
 
       detail = {ingreso: '',concepto: concept,  reference: "/balance/#{clearing.balance.id}",
-                 fecha: clearing.updated_at.strftime('%d-%m-%Y')}
+                 fecha: clearing.updated_at.strftime('%d-%m-%Y'), extKleerer: clearing.ext_kleerer}
       if clearing.amount < 0
         # detail[:egreso] = saldo.amount
       else

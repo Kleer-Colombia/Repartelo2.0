@@ -69,6 +69,13 @@
                 </template>
             </el-table-column>
             <el-table-column
+              prop="extKleerer"
+              min-width="20">
+                <!-- <template slot-scope="scope">
+                  <span v-html="addColorToValue(scope.row.ingreso, 'ID')"></span>
+                </template> -->
+            </el-table-column>
+            <el-table-column
               prop="referencia"
               min-width="100">
               <template slot-scope="scope">
