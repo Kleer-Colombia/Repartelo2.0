@@ -24,24 +24,22 @@ module Api
         begin
           default = Country.find_by(name: 'default')
           response = @actions.find_clearings default.id
-          puts response
           send_response response
         rescue StandardError => error
           halt_message("can't find clearings: #{error.message}", :internal_server_error)
         end
       end
 
-      # def add_saldo
-      #   validate_parameters [:saldo], params do
-      #
-      #     begin
-      #       response = @actions.add_saldo saldo: params[:saldo]
-      #       send_response response
-      #     rescue StandardError => error
-      #       halt_message("can't add saldo: #{error.message}", :internal_server_error)
-      #     end
-      #   end
-      # end
+      def add_clearing
+        validate_parameters [:clearing], params do
+          begin
+            response = @actions.add_clearing(params[:clearing])
+            send_response response
+          rescue StandardError => error
+            halt_message("can't add clearing: #{error.message}", :internal_server_error)
+          end
+        end
+      end
 
     end
   end

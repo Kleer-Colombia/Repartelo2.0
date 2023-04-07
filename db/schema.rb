@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_31_003212) do
+ActiveRecord::Schema.define(version: 2023_04_07_171534) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,8 +59,8 @@ ActiveRecord::Schema.define(version: 2023_03_31_003212) do
     t.integer "kleerer_id"
   end
 
-  create_table "clearings", force: :cascade do |t|
-    t.bigint "balance_id", null: false
+  create_table "clearings", id: :serial, force: :cascade do |t|
+    t.integer "balance_id"
     t.bigint "country_id", null: false
     t.decimal "percentage"
     t.decimal "amount"
