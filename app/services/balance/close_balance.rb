@@ -28,10 +28,9 @@ class CloseBalance
   private
 
   def can_close_the_balance?
-    # if ENV["RAILS_ENV"] == "development"
-    #   puts "dev- closing"
-    #   true
-    # else
+    if ENV["RAILS_ENV"] == "development"
+      true
+    else
       invoice_ids = @balance.get_invoice_ids
       can_close = true
       invoice_ids.each do |invoice_id|
@@ -39,8 +38,6 @@ class CloseBalance
       end
       # binding.pry
       can_close
-    # end
+    end
   end
-
-
 end
