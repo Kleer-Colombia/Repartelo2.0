@@ -3,37 +3,32 @@ class ClearingsActions
   def find_clearings country_id
     #just clearings with amounts are closed
     data = Clearing.where(country_id: country_id).order(created_at: :desc).filter{|e| e.amount}
-    summary = { total: 0}
+    data = data.filter{|e| !e.final_amount.nil?}
+
+    summary = { total: 0, ingresos: 0, egresos: 0}
     summary = calculate_totals data, summary
     summary[:meses] = calculate_totals_by_month data
-    return summary
+    summary
+  end
+
+  def add_clearing data
+    # default is onlyone
+    default = Country.find_by(name: 'default')
+    Clearing.create!(country_id: default.id, amount: data[:amount], final_amount: data[:amount], ext_kleerer: data[:extKleerer],
+                            description: data[:description], percentage: 0)
+
   end
 
   private
 
-  def add_saldo_with_distribution distribution, balance
-    saldo = Saldo.new(amount: distribution.amount, kleerer_id: distribution.kleerer_id,
-                      balance_id: balance.id, reference: "/balance/#{balance.id}",
-                      concept: "Ingreso del proyecto: #{balance.description}")
-    saldo.save!
-  end
-
-  #TODO validate if saldo is a number, and if reference is and URL ... you cant try to add a validation framework?
-  def add_saldo_with_saldo saldo
-    saldo = Saldo.new(amount: saldo[:amount], kleerer_id: saldo[:kleerer_id],
-                      reference: saldo[:reference],
-                      concept: saldo[:concept], created_at: saldo[:date], updated_at: saldo[:date])
-    saldo.save!
-  end
-
-  def calculate_totals data, summary
+  def   calculate_totals data, summary
     data.each do |clearing|
-      # if clearing.amount < 0
-      #   summary[:egresos] += clearing.amount
-      # else
-      #   summary[:ingresos] += clearing.amount
-      # end
-      summary[:total] += clearing.amount
+      if clearing.final_amount < 0
+        summary[:egresos] += clearing.final_amount
+      else
+        summary[:ingresos] += clearing.final_amount
+      end
+      summary[:total] += clearing.final_amount
     end
     return summary
   end
@@ -45,7 +40,7 @@ class ClearingsActions
     months = data.group_by{|e| e.created_at.strftime('%Y-%m')}
 
     months.each do |month_name, data|
-      month = { total: 0, fecha: month_name}
+      month = { total: 0, ingresos: 0, egresos: 0, fecha: month_name}
       month = calculate_totals data, month
       month[:detalles] = prepare_details data
       month_array.push(month)
@@ -63,14 +58,20 @@ class ClearingsActions
   def prepare_details data
     details = []
     data.each do |clearing|
-      concept = "Balance: #{clearing.balance_id} - #{clearing.balance.client} - #{clearing.description}"
-
-      detail = {ingreso: '',concepto: concept,  reference: "/balance/#{clearing.balance.id}",
-                 fecha: clearing.updated_at.strftime('%d-%m-%Y')}
-      if clearing.amount < 0
-        # detail[:egreso] = saldo.amount
+      concept = ''
+      if clearing.balance.nil?
+        concept = clearing.description
       else
-        detail[:ingreso] = clearing.amount
+        concept = "Balance: #{clearing.balance_id} - #{clearing.balance.client} - #{clearing.description}"
+      end
+
+      detail = {ingreso: '', egreso: '',concepto: concept,  reference: (clearing.balance.nil? ? '' : "/balance/#{clearing.balance.id}"),
+                 fecha: clearing.updated_at.strftime('%d-%m-%Y'), extKleerer: clearing.ext_kleerer}
+
+      if clearing.final_amount < 0
+        detail[:egreso] = clearing.final_amount
+      else
+        detail[:ingreso] = clearing.final_amount
       end
       details.push(detail)
     end

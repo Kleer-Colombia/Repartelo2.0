@@ -236,6 +236,7 @@ export default {
             })
     },
     addClearing(context, id) {
+        console.log(context.clearing)
         axios.defaults.headers.common['Authorization'] = util.getAuthHeader()
         axios({
                 method: 'post',

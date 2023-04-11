@@ -19,17 +19,17 @@ class BalanceActions
   end
 
   def add_clearing_to_balance(id, clearing)
+    #default country (temporal behaviour)
+    default_country = Country.find_by(name: 'default')
+
     balance = Balance.find(id)
     balance.clearings.create!(description: clearing[:description], percentage: clearing[:percentage],
-                          country_id: clearing[:countryId])
+                          country_id: default_country.id, ext_kleerer: clearing[:extKleerer])
     return {clearings: balance.clearings}
-            # total: balance.total_clearings}
   end
 
   def remove_clearing_to_balance(id,idClearing)
     balance = Balance.find(id)
-    puts 'id'
-    puts idClearing
     balance.clearings.find(idClearing).destroy
     return {clearings: balance.clearings}
   end
@@ -49,9 +49,7 @@ class BalanceActions
   def find_complete_balance(id)
     balance = Balance.find(id)
     countries = Country.all
-    balance.incomes.each do |income|
-      puts income.description
-    end
+
     balance_info = {balance: balance,
                     incomes: {incomes: balance.incomes,
                               total: balance.total_incomes},

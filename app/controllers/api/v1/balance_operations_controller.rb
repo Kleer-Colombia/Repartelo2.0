@@ -25,8 +25,10 @@ module Api
                                              incomes_post_iva: (balance.total_incomes - iva),
                                              iva: iva,
                                              expenses: balance.total_expenses,
-                                             clearings: balance.total_clearings,
+                                             clearings: balance.clearings,
+                                             total_clearings: balance.total_clearings,
                                              save_in: balance))
+
         end
       end
 

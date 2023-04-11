@@ -3,11 +3,11 @@
       <el-row>
         <el-col :span="20" :offset="2">
             <el-card class="box-card">
-              <el-tabs v-model="activeTab" style="margin-bottom: 30px;">
-                <el-tab-pane v-for="country in countries" :key="country.name" v-bind:label="country.name" v-bind:name="country.name">
+              <!-- <el-tabs v-model="activeTab" style="margin-bottom: 30px;">
+                <el-tab-pane v-for="country in countries" :key="country.name" v-bind:label="country.name" v-bind:name="country.name"> -->
                   <clearings-detail v-bind:country="country"/>
-                </el-tab-pane>
-              </el-tabs>
+                <!-- </el-tab-pane>
+              </el-tabs> -->
             </el-card>
         </el-col>
       </el-row>
@@ -27,12 +27,14 @@ export default {
     },
     data () {
         return {
-            countries: [],
+            countries: [{
+              name: 'Clearings'
+            }],
             activeTab: 'Argentina'
         }
     },
     created: function () {
-        countriesConnector.getCountries(this)
+        // countriesConnector.getCountries(this)
     }
 }
 </script>

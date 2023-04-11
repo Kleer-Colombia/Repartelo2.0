@@ -1,13 +1,14 @@
 class CalculateTaxes
   prepend Service
 
-  attr_accessor :taxes, :clearings, :expenses, :incomes, :save_in, :taxes_amounts, :taxes_percentages, :incomes_post_iva, :iva
+  attr_accessor :taxes,:total_clearings, :clearings, :expenses, :incomes, :save_in, :taxes_amounts, :taxes_percentages, :incomes_post_iva, :iva
   def initialize(data)
     @taxes = data[:taxes]
     @incomes = data[:incomes] ? data[:incomes] : 0
     @incomes_post_iva = data[:incomes_post_iva] ? data[:incomes_post_iva] : 0
     @expenses = data[:expenses] ? data[:expenses] : 0
-    @clearings = data[:clearings] ? data[:clearings] : 0
+    @clearings = data[:clearings] ? data[:clearings] : []
+    @total_clearings = data[:total_clearings] ? data[:total_clearings] : 0
     @save_in = data[:save_in]
     @iva = data[:iva] ? data[:iva] : 0
     @taxes_amounts = {}
@@ -27,6 +28,7 @@ class CalculateTaxes
 
     result.merge!(calculate_taxes(:post_iva, incomes_without_iva)[0])
 
+    set_clearings_amounts(calculate_base(@incomes - @expenses, result))
     clearings = calculate_clearings(calculate_base(@incomes - @expenses, result))
     @incomes -= clearings
 
@@ -60,7 +62,6 @@ class CalculateTaxes
   end
 
   def save_taxes(taxes)
-    puts "SAVE TAXES #{taxes}"
     Rails.logger.info("actual taxes: #{@save_in.taxes.map(&:name)}")
     @save_in.taxes -= @save_in.find_master_taxes
     Rails.logger.info("after remove master taxes: #{@save_in.taxes.map(&:name)}")
@@ -110,7 +111,7 @@ class CalculateTaxes
   end
 
   def calculate_clearings(base)
-    total = @clearings * base
+    total = @total_clearings * base
   end
 
   def calculate_tax_total(taxes)
@@ -128,5 +129,12 @@ class CalculateTaxes
       new_total -= tax_amount[1]
     end
     new_total
+  end
+
+  def set_clearings_amounts(base)
+    @clearings.each do |e|
+      e.amount = base * e.percentage
+      e.save!
+    end
   end
 end

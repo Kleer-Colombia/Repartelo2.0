@@ -61,10 +61,10 @@ Rails.application.routes.draw do
       get '/countries/', to: 'countries#find_countries'
 
       get '/clearing/:country_id', to: 'clearings#find_clearings'
+      get '/clearing', to: 'clearings#find_default_clearings'
+      post '/clearing', to: 'clearings#add_clearing'
 
       post '/trm/', to: 'rates#add_trm'
-
-
     end
   end
 end

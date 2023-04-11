@@ -2,35 +2,28 @@
 
 <el-main>
     <el-row :gutter="20">
-      <el-col :span="15">
+      <el-col :span="5">
           <div class="grid-content">
               <h2>Clearings de {{ country.name }}</h2>
           </div>
       </el-col>
-
-      <!-- -------------------------- -->
-
-      <!-- <el-col :span="5">
+      <el-col :span="5">
           <div class="grid-content">
-              <h3>Egresos: <br> <span v-html="addColorToValue(saldo.egresos, 'egresos')"></span></h3>
+              <h3>Egresos: <br> <span v-html="addColorToValue(clearing.egresos, 'egresos')"></span></h3>
           </div>
       </el-col>
       <el-col :span="5">
           <div class="grid-content">
-              <h3>Ingresos: <br> <span v-html="addColorToValue(saldo.ingresos, 'ingresos')"></span></h3>
+              <h3>Ingresos: <br> <span v-html="addColorToValue(clearing.ingresos, 'ingresos')"></span></h3>
           </div>
-      </el-col> -->
-      <el-col :span="15">
+      </el-col>
+      <el-col :span="5">
           <div class="grid-content">
               <h3>Total: <br> <span v-html="addColorToValue(clearing.total, 'total')"></span></h3>
           </div>
       </el-col>
-
-      <!-- --------------------------------- -->
-
-
       <el-col :span="4">
-        <!-- <add-saldos-button @refresh="updatesaldo" style="float: right;" :kleerer="kleerer"/> -->
+        <add-clearing-button @refresh="updateClearing" style="float: right;"/>
       </el-col>
     </el-row>
 
@@ -54,26 +47,29 @@
               min-width="130"
             >
             </el-table-column>
-            <!-- <el-table-column
-              prop="egreso"
-              min-width="70">
-                <template slot-scope="scope">
-                  <span v-html="addColorToValue(scope.row.egreso, 'ID')"></span>
-                </template>
-            </el-table-column> -->
             <el-table-column
-              prop="ingreso"
-              min-width="70">
+              prop="amount"
+              min-width="40">
                 <template slot-scope="scope">
-                  <span v-html="addColorToValue(scope.row.ingreso, 'ID')"></span>
+                  <div v-if="(scope.row.ingreso > 0)">
+                    <span v-html="addColorToValue(scope.row.ingreso, 'ID')"></span>
+                  </div>
+                  <div v-else>
+                    <span v-html="addColorToValue(scope.row.egreso, 'ID')"></span>
+                  </div>
                 </template>
             </el-table-column>
+            <el-table-column
+              prop="extKleerer"
+              min-width="60"/>
             <el-table-column
               prop="referencia"
               min-width="100">
               <template slot-scope="scope">
-                  <el-button @click="routeTo(scope.row.reference)" type="primary" icon="el-icon-zoom-in" round>Ver detalles</el-button>
-              </template> 
+                  <div v-if="scope.row.reference.includes('balance')">
+                    <el-button @click="routeTo(scope.row.reference)" type="primary" icon="el-icon-zoom-in" round>Ver detalles</el-button>
+                  </div>
+                </template> 
             </el-table-column>
           </el-table>
       </template>
@@ -82,7 +78,7 @@
       label="Mes"
       prop="fecha">
     </el-table-column>
-    <!-- <el-table-column
+    <el-table-column
       label="Egresos"
       prop="egresos">
         <template slot-scope="scope">
@@ -95,7 +91,7 @@
         <template slot-scope="scope">
           <span v-html="addColorToValue(scope.row.ingresos, 'ID')"></span>
         </template>
-    </el-table-column> -->
+    </el-table-column>
     <el-table-column
       label="Total mes"
       prop="total">
@@ -129,11 +125,13 @@
   import util from '../../model/util'
   import router from '../../router'
   import clearingConnector from '../../model/clearing_connector'
+  import AddClearingButton from './AddClearingButton.vue'
+
 
   export default {
-    // components: {
-    //   AddSaldosButton
-    // },
+    components: {
+      AddClearingButton
+    },
     props: {
       country: {
         type: Object,

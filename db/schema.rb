@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_13_004643) do
+ActiveRecord::Schema.define(version: 2023_04_07_171534) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,14 +59,16 @@ ActiveRecord::Schema.define(version: 2023_03_13_004643) do
     t.integer "kleerer_id"
   end
 
-  create_table "clearings", force: :cascade do |t|
-    t.bigint "balance_id", null: false
+  create_table "clearings", id: :serial, force: :cascade do |t|
+    t.integer "balance_id"
     t.bigint "country_id", null: false
     t.decimal "percentage"
     t.decimal "amount"
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "ext_kleerer"
+    t.float "final_amount"
     t.index ["balance_id"], name: "index_clearings_on_balance_id"
     t.index ["country_id"], name: "index_clearings_on_country_id"
   end
