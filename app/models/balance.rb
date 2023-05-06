@@ -91,7 +91,7 @@ class Balance < ApplicationRecord
   end
 
   def distribute(profit, kleerCoCustom = nil)
-    kleerCo = Kleerer.find_by(name: "KleerCo")
+    kleerCo = Kleerer.colombia
 
     forKleerCo = kleerCoCustom ? forKleerCo : find_tax_value(:kleerCo)
 
