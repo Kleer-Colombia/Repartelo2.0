@@ -11,7 +11,7 @@ module Api
 
       def find_kleerco_reports
         begin
-          kleerCo = Kleerer.find_by(name: "KleerCo")
+          kleerCo = Kleerer.colombia
           kleerCo_id = kleerCo.id
 
           response = {

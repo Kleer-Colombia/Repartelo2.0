@@ -7,7 +7,7 @@ class ObjetivesActions
     distributed_objectives = []
     available_years = get_kleer_historical_years
 
-    kleerCo = Kleerer.find_by(name: "KleerCo")
+    kleerCo = Kleerer.colombia
     kleerer_income_list = find_kleerers_inputs(kleerCo)
 
     initial_income_list = Kleerer.all.map{ |e|
@@ -238,24 +238,24 @@ class ObjetivesActions
     return kleerers, last_incomes
   end
 
-  def get_one_kleerer_input kleerer, kleerCo
+  def get_one_kleerer_input(kleerer, kleerCo = Kleerer.colombia)
     complete_kleerer_input = {
       name: kleerer.name,
       hasMeta: kleerer.option.name.include?("meta"),
       inputs: []
     }
-    saldos = Saldo.where(kleerer_id: kleerer.id)
-    inputs = []
-    years = separate_in_years saldos
-    years.each do |year|
-      inputs.push({
-                    year: year,
-                    input: 0
-                  })
-    end
+    saldos = Saldo.where(kleerer_id: kleerer.id).where.not(balance: nil)
+
+    
+    inputs = saldos
+      .pluck(:created_at)
+      .map { _1.strftime("%Y").to_i }
+      .uniq
+      .map { Hash[:year, _1, :input, 0] }
+    
+
     saldos.each do |saldo|
       #that could be better
-      if saldo.balance_id
         begin
           balance_input = Saldo.find_by(kleerer_id: kleerCo.id, balance_id: saldo.balance_id)
           percentage = Percentage.find_by(kleerer_id: kleerer.id, balance_id: saldo.balance_id)
@@ -269,18 +269,9 @@ class ObjetivesActions
         rescue
           break
         end
-      end
     end
     complete_kleerer_input[:inputs] = inputs
     complete_kleerer_input
-  end
-
-  def separate_in_years data
-    years = []
-    data.each do |saldo|
-      years = get_one_year_distributions saldo, years
-    end
-    years
   end
 
   def by_years(objectives)
@@ -289,14 +280,6 @@ class ObjetivesActions
               .keys
               .map(&:to_i)
               .sort
-  end
-
-  def get_one_year_distributions saldo, years
-    date = saldo.created_at.strftime('%Y').to_i
-    unless years.include? date
-      years.push(date)
-    end
-    years
   end
 
   def get_kleer_historical_years
