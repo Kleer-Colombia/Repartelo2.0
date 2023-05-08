@@ -35,6 +35,14 @@ class CalculateTaxes
     pre_utility = calculate_utility(result)
 
     result, reservas_result = calculate_taxes(:reservas, incomes_without_iva - clearings)
+
+    reservas_result.each do |key, value|
+      if value > (pre_utility)
+        reservas_result[key] = 0
+        result[key] = 0
+      end
+    end
+
     result.merge!(calculate_taxes(:utility, pre_utility  - calculate_tax_total(reservas_result))[0])
 
     utility = calculate_utility(result)
@@ -90,7 +98,6 @@ class CalculateTaxes
     end
     Rails.logger.info("taxes amounts: #{@taxes_amounts}")
     Rails.logger.info("taxes percentages: #{@taxes_percentages}")
-    puts taxes_by_type
     return @taxes_amounts, taxes_by_type
   end
 
