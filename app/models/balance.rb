@@ -47,6 +47,16 @@ class Balance < ApplicationRecord
     resume_invoiced, total = find_tax(:invoiced)
     resume_invoiced_a, total_a = find_tax(:post_iva)
 
+    resume_in_invoice_no_clearing = total_in_invoice
+    taxes_no_clearing_base = ["RETEFUENTE", "RETEICA"]
+
+    taxes_no_clearing_base.each do |tax_name|
+      if resume_in_invoice[tax_name]
+        resume_in_invoice_no_clearing -= resume_in_invoice[tax_name]
+      end
+    end
+
+
     resume_invoiced.merge!(resume_invoiced_a)
     total += total_a
 
@@ -54,7 +64,7 @@ class Balance < ApplicationRecord
     resume[:egresos] = total_expenses
 
     #ingresos - egresos - invoiced - post_iva - alegra
-    pre_utilidad = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
+    pre_utilidad = resume[:ingresos] - resume[:egresos] - total - resume_in_invoice_no_clearing
     resume_utility, total_utility = find_tax(:utility)
 
     resume[:clearings] = calculate_clearing_amounts(pre_utilidad, total_clearings)

@@ -29,6 +29,9 @@ class CalculateTaxes
     result.merge!(calculate_taxes(:post_iva, incomes_without_iva)[0])
 
     set_clearings_amounts(calculate_base(@incomes - @expenses, result))
+    puts "resultado"
+    puts result
+
     clearings = calculate_clearings(calculate_base(@incomes - @expenses, result))
     @incomes -= clearings
 
