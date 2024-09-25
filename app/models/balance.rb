@@ -32,6 +32,7 @@ class Balance < ApplicationRecord
 
   def calculate_profit
     profit = resume[:utilidad] - find_taxes_value(:post_utility)
+    puts "utilidad #{resume[:utilidad]} - post_utility #{find_taxes_value(:post_utility)} = profit #{profit}"
     if(profit < 0)
       raise StandardError, 'Nothing to distribute!'
     end
@@ -64,10 +65,12 @@ class Balance < ApplicationRecord
     resume[:egresos] = total_expenses
 
     #ingresos - egresos - invoiced - post_iva - alegra
-    pre_utilidad = resume[:ingresos] - resume[:egresos] - total - resume_in_invoice_no_clearing
+    clearings_base = resume[:ingresos] - resume[:egresos] - total - resume_in_invoice_no_clearing
+    pre_utilidad = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
     resume_utility, total_utility = find_tax(:utility)
 
-    resume[:clearings] = calculate_clearing_amounts(pre_utilidad, total_clearings)
+    resume[:clearings] = calculate_clearing_amounts(clearings_base, total_clearings)
+    puts "cleariongs: #{pre_utilidad}"
     resume[:pre_utilidad] = pre_utilidad - resume[:clearings]
 
     reservas, total_reservas = find_tax(:reservas)
