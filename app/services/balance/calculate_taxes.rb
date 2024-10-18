@@ -28,12 +28,14 @@ class CalculateTaxes
 
     result.merge!(calculate_taxes(:post_iva, incomes_without_iva)[0])
 
-    set_clearings_amounts(calculate_base(@incomes - @expenses, result))
-    puts "resultado"
-    puts result
+    retentions = retefuente + reteica
 
-    clearings = calculate_clearings(calculate_base(@incomes - @expenses, result))
+    set_clearings_amounts(calculate_base(@incomes - @expenses + retentions, result))
+
+    clearings = calculate_clearings(calculate_base(@incomes - @expenses + retentions, result))
+    retentions_adjust = retentions - calculate_clearings(retentions)
     @incomes -= clearings
+    @incomes += retentions_adjust
 
     pre_utility = calculate_utility(result)
 
@@ -49,6 +51,8 @@ class CalculateTaxes
     result.merge!(calculate_taxes(:utility, pre_utility  - calculate_tax_total(reservas_result))[0])
 
     utility = calculate_utility(result)
+    puts "preutilidad #{pre_utility}"
+    puts "utilidad #{utility}"
 
     result.merge!(calculate_taxes(:post_utility, utility)[0])
 

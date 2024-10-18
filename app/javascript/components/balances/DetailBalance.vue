@@ -235,15 +235,18 @@
           // console.log(this.getPercentages(data[objectKey], total))
 
           let percentage = util.getPercentage(data[objectKey], total)
-          if(percentage >= 100 || percentage == 0 || percentage == 'NaN')
+          if (percentage >= 100 || percentage == 0 || percentage == 'NaN') {
             percentage = ''
-          else
+          } else {
             percentage = `(${percentage}%)`
+          }
 
 
           let obj = {}
-          obj['tittle'] = `${objectKey} ${percentage}`
           obj['total'] = data[objectKey]
+          objectKey = objectKey == "clearing_refund" ? "Reintegro de Retenciones" : objectKey
+
+          obj['tittle'] = `${objectKey} ${percentage}`
           obj['id'] = 'money' + objectKey
           console.log(obj)
           taxes.push(obj)

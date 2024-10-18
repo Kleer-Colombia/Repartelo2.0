@@ -18,6 +18,15 @@ class CloseBalance
       @balance.close_clearings
       balance.editable = false
       balance.save!
+
+      #Needs refactor
+      amount = @balance.resume[:clearing_refund] * -1
+      if amount < 0
+        concept = "Reintegro de Retenciones - Balance #{@balance.id} - Cliente #{@balance.client}"
+        tax = ManualTax.new(tax_master_id: 3, payment_date: Date.current, date: Date.current, amount: amount, concept: concept)
+        tax.save!
+      end
+
     else
       errors.add(:messages, " Las facturas asociadas al balance no se encuentran cerradas en Alegra.
  El balance solo se puede enviar a saldos cuando las facturas esten cerradas.")

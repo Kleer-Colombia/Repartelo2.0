@@ -64,13 +64,17 @@ class Balance < ApplicationRecord
     resume.merge!(resume_invoiced)
     resume[:egresos] = total_expenses
 
+    retentions = total_in_invoice - resume_in_invoice_no_clearing
+    clearing_refund = calculate_clearing_amounts(retentions, total_clearings)
+    resume[:clearing_refund] = clearing_refund
+
     #ingresos - egresos - invoiced - post_iva - alegra
     clearings_base = resume[:ingresos] - resume[:egresos] - total - resume_in_invoice_no_clearing
-    pre_utilidad = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
+    pre_utilidad = resume[:ingresos] - resume[:egresos] - total - total_in_invoice + clearing_refund
     resume_utility, total_utility = find_tax(:utility)
 
     resume[:clearings] = calculate_clearing_amounts(clearings_base, total_clearings)
-    puts "cleariongs: #{pre_utilidad}"
+
     resume[:pre_utilidad] = pre_utilidad - resume[:clearings]
 
     reservas, total_reservas = find_tax(:reservas)
