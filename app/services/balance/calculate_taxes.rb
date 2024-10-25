@@ -16,7 +16,7 @@ class CalculateTaxes
   end
 
   def call
-    Rails.logger.info("incomes: #{@incomes}")
+    Rails.logger.info("Incomes: #{@incomes}")
     incomes_without_iva = @incomes - @iva
     result = calculate_taxes(:invoiced, @incomes)[0]
 
@@ -26,20 +26,21 @@ class CalculateTaxes
     retefuente = resume_in_invoice["RETEFUENTE"] != nil ? resume_in_invoice["RETEFUENTE"] :0
     reteica = resume_in_invoice["RETEICA"] != nil ? resume_in_invoice["RETEICA"] :0
 
-    result.merge!(calculate_taxes(:post_iva, incomes_without_iva)[0])
+    result.merge!(calculate_taxes(:post_iva, incomes_without_iva)[0])#bien
 
     retentions = retefuente + reteica
 
     set_clearings_amounts(calculate_base(@incomes - @expenses + retentions, result))
 
     clearings = calculate_clearings(calculate_base(@incomes - @expenses + retentions, result))
-    retentions_adjust = retentions - calculate_clearings(retentions)
+    retentions_adjust = calculate_clearings(retentions)
     @incomes -= clearings
     @incomes += retentions_adjust
 
     pre_utility = calculate_utility(result)
 
     result, reservas_result = calculate_taxes(:reservas, incomes_without_iva - clearings)
+
 
     reservas_result.each do |key, value|
       if value > (pre_utility)
@@ -51,8 +52,6 @@ class CalculateTaxes
     result.merge!(calculate_taxes(:utility, pre_utility  - calculate_tax_total(reservas_result))[0])
 
     utility = calculate_utility(result)
-    puts "preutilidad #{pre_utility}"
-    puts "utilidad #{utility}"
 
     result.merge!(calculate_taxes(:post_utility, utility)[0])
 
@@ -116,6 +115,8 @@ class CalculateTaxes
   def calculate_utility(taxes_amount)
     taxes_total = 0
     Rails.logger.info("calculate utility: #{taxes_amount}")
+    Rails.logger.info("Los ingresos al calcular son #{@incomes}")
+    Rails.logger.info(@expenses)
     taxes_amount.each do |tax_amount|
       taxes_total += tax_amount[1]
     end
