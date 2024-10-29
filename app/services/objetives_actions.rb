@@ -232,9 +232,9 @@ class ObjetivesActions
                        total_income: total_income
                      })
 
-      last_incomes[initial_income_index][:amount] = balance > 0 ? balance : 0
-    end
+      last_incomes[initial_income_index][:amount] = (balance > 0 && kleerer[:hasMeta]) ? balance : 0
 
+    end
     return kleerers, last_incomes
   end
 

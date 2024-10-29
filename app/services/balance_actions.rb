@@ -25,6 +25,7 @@ class BalanceActions
     balance = Balance.find(id)
     balance.clearings.create!(description: clearing[:description], percentage: clearing[:percentage],
                           country_id: default_country.id, ext_kleerer: clearing[:extKleerer])
+
     return {clearings: balance.clearings}
   end
 

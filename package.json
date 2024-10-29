@@ -7,6 +7,9 @@
   "scripts": {
     "lint": "eslint --ext .js,.vue app/javascript"
   },
+  "engines": {
+    "node": "14.17.6"
+  },
   "dependencies": {
     "@rails/webpacker": "5.4.3",
     "axios": "^0.16.2",

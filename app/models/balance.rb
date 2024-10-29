@@ -32,6 +32,7 @@ class Balance < ApplicationRecord
 
   def calculate_profit
     profit = resume[:utilidad] - find_taxes_value(:post_utility)
+    puts "utilidad #{resume[:utilidad]} - post_utility #{find_taxes_value(:post_utility)} = profit #{profit}"
     if(profit < 0)
       raise StandardError, 'Nothing to distribute!'
     end
@@ -47,17 +48,33 @@ class Balance < ApplicationRecord
     resume_invoiced, total = find_tax(:invoiced)
     resume_invoiced_a, total_a = find_tax(:post_iva)
 
+    resume_in_invoice_no_clearing = total_in_invoice
+    taxes_no_clearing_base = ["RETEFUENTE", "RETEICA"]
+
+    taxes_no_clearing_base.each do |tax_name|
+      if resume_in_invoice[tax_name]
+        resume_in_invoice_no_clearing -= resume_in_invoice[tax_name]
+      end
+    end
+
+
     resume_invoiced.merge!(resume_invoiced_a)
     total += total_a
 
     resume.merge!(resume_invoiced)
     resume[:egresos] = total_expenses
 
+    retentions = total_in_invoice - resume_in_invoice_no_clearing
+    clearing_refund = calculate_clearing_amounts(retentions, total_clearings)
+    resume[:clearing_refund] = clearing_refund
+
     #ingresos - egresos - invoiced - post_iva - alegra
-    pre_utilidad = resume[:ingresos] - resume[:egresos] - total - total_in_invoice
+    clearings_base = resume[:ingresos] - resume[:egresos] - total - resume_in_invoice_no_clearing
+    pre_utilidad = resume[:ingresos] - resume[:egresos] - total - total_in_invoice + clearing_refund
     resume_utility, total_utility = find_tax(:utility)
 
-    resume[:clearings] = calculate_clearing_amounts(pre_utilidad, total_clearings)
+    resume[:clearings] = calculate_clearing_amounts(clearings_base, total_clearings)
+
     resume[:pre_utilidad] = pre_utilidad - resume[:clearings]
 
     reservas, total_reservas = find_tax(:reservas)
