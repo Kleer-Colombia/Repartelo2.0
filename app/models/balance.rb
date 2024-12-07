@@ -198,11 +198,11 @@ class Balance < ApplicationRecord
   end
 
   def close_clearings
-    base = resume[:pre_utilidad] + resume[:clearings] + resume[:clearing_refund]
     tax = TaxMaster.find_by(name: "Clearing")
     tax_percentage = tax.value * 0.01
     clearings.each do |clearing|
-      clearing.final_amount = base * clearing.percentage * (1 - tax_percentage)
+      original_amount = clearing.amount
+      clearing.final_amount = original_amount * (1 - tax_percentage)
       clearing.save!
     end
   end
