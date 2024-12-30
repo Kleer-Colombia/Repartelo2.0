@@ -1,29 +1,43 @@
-FROM ruby:2.6.7
-
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev
-
-RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
-&& apt-get install -y nodejs
-
-RUN apt-get install -y curl apt-transport-https wget && \
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-apt-get update && apt-get install -y yarn
-
-RUN mkdir /app
+# Etapa 1: Construcción de activos JavaScript
+FROM node:14.17.6 AS build-assets
 WORKDIR /app
 
-RUN gem update --system
-RUN gem install bundler -v 2.0.1
+# Copia los archivos necesarios para instalar dependencias y compilar los activos
+COPY package.json yarn.lock ./
+RUN yarn install
 
+COPY . ./
+
+FROM ruby:2.6.7
+WORKDIR /app
+
+RUN apt-get update -qq && apt-get install -y \
+  build-essential \
+  libpq-dev \
+  nodejs \
+  npm \
+  postgresql-client
+
+# Instala Yarn
+RUN npm install -g yarn@1.22.19
+
+RUN gem install bundler:2.3.25
+
+# Copia el Gemfile y Gemfile.lock, e instala dependencias de Ruby
 COPY Gemfile Gemfile.lock ./
-COPY .gemrc ~/
-RUN bundle install
+RUN bundle install --without development test
 
-COPY . .
+# Copia el código de la aplicación y los activos compilados
+COPY . ./
+COPY --from=build-assets /app/public/packs public/packs
 
-RUN apt-get install yarn
+# Configura SECRET_KEY_BASE
+ENV SECRET_KEY_BASE=dummy_secret_key
 
-LABEL maintainer="Santiago Herrera <santiago.herrera@kleer.la>"
+# Precompila activos adicionales de Rails
+RUN RAILS_ENV=production SECRET_KEY_BASE=$SECRET_KEY_BASE bundle exec rails assets:precompile
+# Expone el puerto de la aplicación
+EXPOSE 3000
 
-CMD puma -C config/puma.rb
+# Comando para iniciar el servidor
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
