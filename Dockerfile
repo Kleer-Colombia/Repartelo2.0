@@ -46,4 +46,4 @@ RUN RAILS_ENV=production NODE_ENV=production bundle exec rails assets:precompile
 EXPOSE 3000
 
 # Comando para iniciar el servidor Rails
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "$PORT"]
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "${PORT}"]
