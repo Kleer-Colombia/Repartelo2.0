@@ -1,5 +1,5 @@
 # Imagen base para Rails
-FROM ruby:2.6.7 AS rails-app
+FROM ruby:2.7.7 AS rails-app
 WORKDIR /app
 
 # Instala dependencias del sistema necesarias para Rails y PostgreSQL
