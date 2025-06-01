@@ -1,29 +1,49 @@
-FROM ruby:2.6.7
-
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev
-
-RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - \
-&& apt-get install -y nodejs
-
-RUN apt-get install -y curl apt-transport-https wget && \
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-apt-get update && apt-get install -y yarn
-
-RUN mkdir /app
+# Imagen base para Rails
+FROM ruby:2.7.7 AS rails-app
 WORKDIR /app
 
-RUN gem update --system
-RUN gem install bundler -v 2.0.1
+# Instala dependencias del sistema necesarias para Rails y PostgreSQL
+RUN apt-get update -qq && apt-get install -y \
+  build-essential \
+  libpq-dev \
+  curl \
+  postgresql-client \
+  dos2unix
 
+# Instala Node.js 14.17.6 y npm
+# Instala Node.js (inicialmente) y npm
+RUN apt-get install -y nodejs npm
+
+# Instala `n` para gestionar versiones de Node.js
+RUN npm install -g n && n 14.17.6
+
+# Verifica la versión de Node.js y npm
+RUN node -v && npm -v
+
+# Instala Yarn y Bundler
+RUN npm install -g yarn@1.22.19
+RUN gem install bundler:2.3.25
+
+# Copia Gemfile y Gemfile.lock, e instala dependencias de Ruby
 COPY Gemfile Gemfile.lock ./
-COPY .gemrc ~/
-RUN bundle install
+RUN bundle install --without development test
 
-COPY . .
+# Copia package.json y yarn.lock, instala dependencias de Node.js
+COPY package.json yarn.lock ./
+RUN yarn install
 
-RUN apt-get install yarn
+# Copia todo el código de la aplicación
+COPY . ./
 
-LABEL maintainer="Santiago Herrera <santiago.herrera@kleer.la>"
+# Convierte los finales de línea a LF
+RUN find . -type f -exec dos2unix {} +
 
-CMD puma -C config/puma.rb
+# Compila activos frontend y precompila los activos de Rails
+ENV SECRET_KEY_BASE=dummy_secret_key
+RUN RAILS_ENV=production NODE_ENV=production bundle exec rails assets:precompile
+
+# Expone el puerto de la aplicación
+EXPOSE 3000
+
+# Comando para iniciar el servidor Rails
+CMD ["bash", "-c", "bundle exec rails server -b 0.0.0.0 -p ${PORT}"]
