@@ -3,7 +3,14 @@ FROM ruby:2.7.7 AS rails-app
 WORKDIR /app
 
 # Instala dependencias del sistema necesarias para Rails y PostgreSQL
-RUN apt-get update -qq && apt-get install -y \
+# NOTA: ruby:2.7.7 corre sobre Debian bullseye, que ya pasó a
+# archive.debian.org: deb.debian.org devuelve 404 para sus paquetes. Se
+# reapuntan las fuentes al archivo (con firmas válidas, sin flags inseguros);
+# Check-Valid-Until=false porque los Release archivados ya vencieron.
+# Ver docs/MIGRACION_HETZNER.md. Solución de fondo: actualizar la imagen base.
+RUN sed -i 's|deb.debian.org|archive.debian.org|g' /etc/apt/sources.list \
+ && apt-get update -qq -o Acquire::Check-Valid-Until=false \
+ && apt-get install -y \
   build-essential \
   libpq-dev \
   curl \
