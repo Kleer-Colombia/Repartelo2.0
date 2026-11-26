@@ -3,3 +3,7 @@
 .byebug_history
 log/*
 tmp/*
+# Variables locales: no van dentro de la imagen
+.env
+.env.*
+.kamal/secrets*

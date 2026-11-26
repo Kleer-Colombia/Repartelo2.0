@@ -4,7 +4,10 @@
         <el-col :span="20" :offset="2">
             <el-card class="box-card">
               <el-tabs v-model="activeTab" style="margin-bottom: 30px;">
-                <el-tab-pane v-for="kleerer in kleerers" :key="kleerer.name" v-bind:label="kleerer.name" v-bind:name="kleerer.name">
+                <!-- lazy: cada pestaña crea su <saldos-detail> (y pide sus
+                     datos) recién la primera vez que se abre, en vez de
+                     pedir los saldos de todos los kleerers al entrar. -->
+                <el-tab-pane lazy v-for="kleerer in kleerers" :key="kleerer.name" v-bind:label="kleerer.name" v-bind:name="kleerer.name">
                   <saldos-detail v-bind:kleerer="kleerer"/>
                 </el-tab-pane>
               </el-tabs>

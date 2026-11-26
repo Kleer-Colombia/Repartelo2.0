@@ -36,7 +36,9 @@ class BalanceActions
   end
 
   def find_all_balances()
-    balances = Balance.all
+    # includes(:incomes): precarga los ingresos en 1 query en vez de 1 por
+    # balance (N+1: ~717 queries -> 2). Mismo JSON de salida.
+    balances = Balance.includes(:incomes)
     hashed_balances = []
     balances.each do |balance|
       balance_to_hash = balance.attributes

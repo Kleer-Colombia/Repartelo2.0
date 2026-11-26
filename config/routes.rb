@@ -2,6 +2,11 @@
 # frozen_string_literal: true
 Rails.application.routes.draw do
 
+  # Healthcheck para kamal-proxy (ver config/deploy.yml). No pega a la DB
+  # a propósito: si Postgres está caído, igual queremos poder diagnosticar
+  # por SSH sin que el proxy tumbe el contenedor.
+  get "up" => proc { [200, {}, ["OK"]] }
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   root to: 'landing#index'

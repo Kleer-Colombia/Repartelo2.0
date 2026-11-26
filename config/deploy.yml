@@ -1,0 +1,80 @@
+# Config de deploy para Kamal (https://kamal-deploy.org). Reemplaza al
+# esquema anterior de docker-compose.prod.yml + Caddy — kamal-proxy hace de
+# reverse proxy y TLS, no hace falta un proxy aparte.
+#
+# Kamal se instala aparte (gem install kamal), no como gem del proyecto:
+# no depende del Ruby 2.7.7/EOL de la app, corre en la máquina del
+# operador. Ver docs/MIGRACION_HETZNER.md para los pasos de deploy.
+
+service: repartelo
+
+# Sin el prefijo "ghcr.io/": Kamal lo antepone solo a partir de registry.server
+image: kleer-colombia/repartelo
+
+servers:
+  web:
+    - "2.29.193.202" # nueva PRODUCCIÓN en Hetzner (CX, amd64, Ubuntu 26.04); reemplaza a repartelo2 de Heroku
+
+registry:
+  server: ghcr.io
+  username: pablotortorella # usuario de GitHub con permiso de push al package
+  password:
+    - KAMAL_REGISTRY_PASSWORD # personal access token con scope write:packages, ver .kamal/secrets
+
+builder:
+  arch: amd64 # Hetzner Cloud CX/CPX son amd64; si el plan elegido es CAX (Ampere/ARM), cambiar a arm64
+
+proxy:
+  app_port: 3000
+  healthcheck:
+    path: /up
+  # Registro A r.kleer.la -> 2.29.193.202. kamal-proxy emite y renueva el
+  # certificado de Let's Encrypt solo, y redirige HTTP -> HTTPS.
+  host: r.kleer.la
+  ssl: true
+
+env:
+  clear:
+    RAILS_ENV: production
+    RAILS_LOG_TO_STDOUT: "true"
+    RAILS_MAX_THREADS: 5
+    WEB_CONCURRENCY: 2
+    PORT: 3000
+  secret:
+    - SECRET_KEY_BASE
+    - DATABASE_URL
+    # Integración con Alegra (app/services/alegra/alegra_client.rb)
+    - ALEGRA_EMAIL
+    - ALEGRA_TOKEN
+    # ALLOWED_ORIGINS (CORS, config/initializers/cors.rb) NO se pasa a
+    # propósito: en Heroku no está definida y la app usa '*'. Si se quiere
+    # restringir, agregarla en env.clear (no es secreta), ej.
+    # ALLOWED_ORIGINS: https://r.kleer.la — y probar antes que nada externo
+    # consuma la API.
+    # SMTP_* / ACTION_MAILER_*: vienen de la plantilla genérica de .env;
+    # hoy ningún archivo de config/ ni app/ las lee. Pendiente confirmar
+    # cómo manda mails la app en Heroku antes de decidir si quedan.
+    - SMTP_ADDRESS
+    - SMTP_PORT
+    - SMTP_DOMAIN
+    - SMTP_USERNAME
+    - SMTP_PASSWORD
+    - SMTP_AUTH
+    - SMTP_ENABLE_STARTTLS_AUTO
+    - ACTION_MAILER_HOST
+    - ACTION_MAILER_DEFAULT_FROM
+    - ACTION_MAILER_DEFAULT_TO
+
+accessories:
+  postgres:
+    image: postgres:17 # misma versión mayor que Heroku Postgres (17.x), para poder restaurar sus dumps
+    host: "2.29.193.202" # mismo server que servers.web (deploy single-server)
+    port: "127.0.0.1:5432:5432" # solo loopback, no expuesto a internet
+    env:
+      clear:
+        POSTGRES_USER: repartelo
+        POSTGRES_DB: repartelo_production
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - data:/var/lib/postgresql/data

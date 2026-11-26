@@ -42,3 +42,6 @@ yarn-debug.log*
 
 # Ignore application configuration
 /config/application.yml
+
+# Secretos reales del operador para Kamal (los lee .kamal/secrets)
+/.env.kamal

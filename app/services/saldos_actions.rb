@@ -1,7 +1,10 @@
 class SaldosActions
 
+  # includes(:balance): prepare_details y los cálculos leen saldo.balance por
+  # cada saldo; precargarlo evita 1 query por saldo (N+1: ~745 queries -> 2
+  # para KleerCo). Mismo resultado.
   def find_saldos kleerer_id
-    data = Saldo.where(kleerer_id: kleerer_id).order(created_at: :desc)
+    data = Saldo.where(kleerer_id: kleerer_id).includes(:balance).order(created_at: :desc)
     summary = { total: 0, ingresos: 0, egresos: 0}
     summary = calculate_totals data, summary
     summary[:meses] = calculate_totals_by_month data, true
@@ -9,7 +12,7 @@ class SaldosActions
   end
 
   def find_saldos_of_balances kleerer_id
-    data = Saldo.where(kleerer_id: kleerer_id).order(created_at: :desc)
+    data = Saldo.where(kleerer_id: kleerer_id).includes(:balance).order(created_at: :desc)
     summary = { total: 0, ingresos: 0, egresos: 0}
     summary = calculate_totals_of_balances data,summary
     summary[:meses] = calculate_totals_by_month data, false

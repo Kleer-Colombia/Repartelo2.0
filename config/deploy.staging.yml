@@ -1,0 +1,40 @@
+# Ambiente de STAGING ("QA") en Hetzner: https://qa.r.kleer.la
+# Reemplaza a repartelo2-staging de Heroku.
+#
+# Kamal mezcla este archivo encima de config/deploy.yml cuando se usa
+# `-d staging`, ej.:
+#   kamal accessory boot postgres -d staging
+#   kamal deploy -d staging
+# Los secretos salen de .kamal/secrets.staging (no de .kamal/secrets).
+#
+# Corre en el MISMO server que producción, con contenedores propios:
+#   app:      repartelo-web-staging-<versión>  (Kamal agrega el destino al nombre)
+#   postgres: repartelo-staging-postgres (base repartelo_staging, puerto 5433)
+#
+# Se mantiene el MISMO `service` que producción (repartelo) a propósito: Kamal
+# etiqueta cada imagen con su service y solo deja correrla en ese service.
+# Así la imagen probada en staging se promueve tal cual a producción
+# (`kamal deploy --skip-push --version <versión>`), sin rebuildear.
+
+env:
+  clear:
+    # Un solo proceso de Puma: staging tiene poco tráfico y comparte los 4GB
+    # de RAM con producción.
+    WEB_CONCURRENCY: 1
+
+# Registro A qa.r.kleer.la -> 2.29.193.202. El host es lo que le permite a
+# kamal-proxy servir staging y producción en la misma IP.
+proxy:
+  host: qa.r.kleer.la
+  ssl: true
+
+accessories:
+  postgres:
+    # Nombre propio para no chocar con el Postgres de producción
+    # (por defecto sería <service>-postgres = repartelo-postgres).
+    # También define el directorio de datos: /root/repartelo-staging-postgres
+    service: repartelo-staging-postgres
+    port: "127.0.0.1:5433:5432" # 5432 ya lo usa producción; solo loopback
+    env:
+      clear:
+        POSTGRES_DB: repartelo_staging

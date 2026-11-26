@@ -88,4 +88,13 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Comprimir (gzip) las respuestas dinámicas, sobre todo el JSON de la API:
+  # /api/v1/balance pesa ~415 KB y /api/v1/saldos/:id hasta ~710 KB sin
+  # comprimir, lo que se nota mucho con latencia alta (ver
+  # docs/MIGRACION_HETZNER.md, incidencia 12). Va por encima de
+  # Rack::ConditionalGet para que el ETag se calcule sobre el cuerpo sin
+  # comprimir (estable) y los 304 sigan funcionando; Rack::Deflater no toca
+  # las respuestas 304/204 ni las que ya vienen comprimidas (assets .gz).
+  config.middleware.insert_before Rack::ConditionalGet, Rack::Deflater
 end
