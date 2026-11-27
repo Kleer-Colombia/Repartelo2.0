@@ -12,8 +12,13 @@ class AuthenticateUserCommand < BaseCommand
       @user ||= User.find_by(email: email)
     end
   
+    # Un password_digest que no es bcrypt (dato viejo/corrupto) hacía que
+    # authenticate levantara BCrypt::Errors::InvalidHash -> 500. Se trata
+    # como credenciales inválidas.
     def password_valid?
       user && user.authenticate(password)
+    rescue BCrypt::Errors::InvalidHash
+      false
     end
   
     def payload

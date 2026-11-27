@@ -25,6 +25,9 @@ gem 'wdm', '>= 0.1.0' if Gem.win_platform?
 #gem 'bcrypt', '~> 3.1.7' --- now in old repositories
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
+# Límite de intentos de login (fuerza bruta) en la API y en /admin.
+# Ver config/initializers/rack_attack.rb
+gem 'rack-attack', '~> 6.7'
 gem 'money-rails'
 gem 'jwt'
 # ActiveAdmin

@@ -9,7 +9,8 @@ class ApiController < ActionController::API
     for parameter in parameters
       param = array[parameter]
       if(!validate(param))
-        halt_message "Invalid parameters: #{parameter}" , :internal_server_error and return
+        # 400: el error es del pedido, no del servidor (antes devolvía 500).
+        halt_message "Invalid parameters: #{parameter}" , :bad_request and return
       end
     end
     yield
