@@ -26,7 +26,7 @@ end
 
 And(/^I have enable invoices/) do
   DataFactory.enable_invoices
-  DataFactory.enable_alegra_mock
+  DataFactory.load_sales_invoice_531
 end
 
 When(/^I create a new standard balance for client "([^"]*)"$/) do |client|

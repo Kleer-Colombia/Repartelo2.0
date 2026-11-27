@@ -22,24 +22,18 @@
 			</div>
 		</el-row>
 
-		<el-dialog title="Facturas abiertas en alegra" :visible.sync="visible" width="90%"
-		        center>
-<!--			<div v-if="!loaded">-->
-<!--				<h3> Consultando facturas en alegra ... </h3>-->
-<!--			</div>-->
-			<div v-loading="!loaded">
+		<el-dialog :title="'Facturas de venta de los últimos ' + lookbackMonths + ' meses (Drive de contabilidad)'"
+		        :visible.sync="visible" width="90%" center>
+			<div v-loading="!loaded" element-loading-text="Leyendo facturas nuevas del Drive...">
+				<p v-if="lastSync && lastSync.error" style="color: #e6a23c;">
+					No se pudo leer el Drive ({{ lastSync.error }}): se muestran las facturas ya cargadas.
+				</p>
 				<el-row id="tableInvoice">
 					<el-table highlight-current-row @current-change="handleSelectInvoice"
 					        :data="invoices" height="300" size="small">
-						<el-table-column property="id" label="Número" width="100" class="id">
-							<template slot-scope="scope">
-                <span style="float: right;">
-                    {{ scope.row.numberTemplate.number }} ({{scope.row.id}})
-                </span>
-							</template>
-						</el-table-column>
+						<el-table-column property="number" label="Número" width="120"></el-table-column>
 						<el-table-column property="date" label="Fecha Expedición" width="130"></el-table-column>
-						<el-table-column property="client.name" label="Cliente" width="550"></el-table-column>
+						<el-table-column property="client" label="Cliente" width="450"></el-table-column>
 						<el-table-column property="total" label="Monto" width="120">
 							<template slot-scope="scope">
                                 <span style="float: right;">
@@ -47,11 +41,16 @@
                                 </span>
 							</template>
 						</el-table-column>
-						<el-table-column property="client.name" label="Moneda" width="120">
+						<el-table-column property="currency" label="Moneda" width="90">
 							<template slot-scope="scope">
-                                <span style="float: center;" v-if="scope.row.currency">
-                                	{{scope.row.currency.code}}
-                                </span>
+								<span v-if="scope.row.currency">{{ scope.row.currency }}</span>
+							</template>
+						</el-table-column>
+						<el-table-column label="Pago" width="110">
+							<template slot-scope="scope">
+								<el-tag size="mini" :type="scope.row.paid ? 'success' : 'warning'">
+									{{ scope.row.paid ? 'Pagada' : 'Pendiente' }}
+								</el-tag>
 							</template>
 						</el-table-column>
 						<el-table-column property="percentageUsed" label="Usada al">
@@ -109,6 +108,9 @@
 			<el-row>
 				<el-col :offset="3" :span="10" style="padding-top: 10px; text-align: center">
 					TRM: (solo se aplica a monedas diferentes a COP, por favor usa la pactada en el banco)
+					<div v-if="selectedInvoice && selectedInvoice.exchangeRate" style="color: #909399;">
+						TRM de la factura: {{ formatPrice(selectedInvoice.exchangeRate) }}
+					</div>
 				</el-col>
 				<el-col :span="4">
 					<input-money name="trm" v-model="trm"></input-money>
@@ -148,6 +150,8 @@ export default {
         loaded: false,
         visible: false,
         invoices: [],
+        lookbackMonths: 12,
+        lastSync: null,
 	      trm: '1.0',
 	      selectedInvoice: null,
 	      canAddInvoice: false,
@@ -236,7 +240,7 @@ export default {
         }
       },
       addToBalance () {
-        this.income.description = 'Factura ' + this.selectedInvoice.numberTemplate.number + '  (' + this.selectedInvoice.id + ' - ' + this.percentageSelector.percentageTotal + '%) '
+        this.income.description = 'Factura ' + this.selectedInvoice.number + ' (' + this.percentageSelector.percentageTotal + '%) '
         let trm = 1
 
         if (this.selectedInvoice.currency) {
@@ -246,10 +250,9 @@ export default {
 
         this.income.amount = this.selectedInvoice.total * trm
         this.income.trm = trm
-        this.income.invoiceId = this.selectedInvoice.id
+        this.income.invoiceId = this.selectedInvoice.number
         this.income.date = this.selectedInvoice.date
         this.income.invoicePercentageToUse = this.percentageSelector.percentageTotal
-		console.log(this.income)
         balanceConnector.addIncome(this, this.$route.params.id, function (context) {
           context.loaded = false
           context.visible = false

@@ -101,8 +101,16 @@ class DataFactory
     FeatureFlag.create!(feature: "balance-distribute", status: true)
   end
 
-  def self.enable_alegra_mock
-    FeatureFlag.create!(feature: FeatureFlag::ALEGRA_INVOICE_MOCK, status: true)
+  # Factura de venta 531 (los mismos montos que tenía el mock de Alegra;
+  # fecha reciente para que entre en "Buscar factura").
+  # En producción las facturas vienen del Drive de contabilidad.
+  def self.load_sales_invoice_531
+    SalesInvoice.where(number: '531').destroy_all
+    SalesInvoice.create!(number: '531', issue_date: 10.days.ago.to_date, due_date: 20.days.from_now.to_date,
+                         client_name: 'Sparkta', subtotal: 18_988_500, tax_total: 3_607_815, total: 22_596_315,
+                         lines: [{ 'description' => 'Workshop de Agilidad para Ejecutivos', 'quantity' => 1,
+                                   'price' => 18_988_500, 'line_total' => 18_988_500, 'discount' => 0,
+                                   'taxes' => [{ 'name' => 'IVA', 'percent' => 19.0, 'amount' => 3_607_815 }] }])
   end
 
   def self.load_balances

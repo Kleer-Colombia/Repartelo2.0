@@ -287,6 +287,10 @@ comillas** (lo lee `docker --env-file`, que no las quita). Contiene:
   2026-11-25; los usan producción y staging (en Heroku también son las
   mismas en ambas apps). La integración solo **lee** facturas de Alegra
   (`GET /invoices`), así que staging no puede modificar nada allá.
+  Desde 2026-11-27 solo los usa la migración `facturas:migrar_alegra`.
+- `DRIVE_CONTABILIDAD_FOLDER_ID`: id de la carpeta Contabilidad del Drive
+  (ver "Facturas de venta" en la sección 4). La misma en producción y
+  staging; solo se lee.
 - `SMTP_*`, `ACTION_MAILER_*`: vacías (ver Pendientes).
 
 **Nunca** pegar estos valores en chats, tickets ni commits. Si se pierde
@@ -397,6 +401,48 @@ repo, que es público):
 Pruebas automáticas de UI (Playwright headless): con la CSP activa,
 `page.wait_for_function` de Playwright falla (usa `eval`); usar
 `page.evaluate` en un bucle.
+
+### Facturas de venta: Drive de contabilidad en vez de Alegra (desde 2026-11-27)
+
+Kleer Colombia cambia de proveedor de facturación (Alegra → Contapyme). Para
+que el cambio sea transparente, Repártelo ya no consulta Alegra: lee las
+facturas del **Drive de contabilidad**, donde Administración deja el PDF y el
+XML de cada factura y nota crédito. El XML es la factura electrónica DIAN
+(UBL 2.1), cuyo formato fija la DIAN y no el proveedor.
+
+| Tema | Cómo funciona | Dónde |
+|---|---|---|
+| Carpeta | `DRIVE_CONTABILIDAD_FOLDER_ID` (secreto en `.env.kamal`): id de la carpeta "Contabilidad", compartida como "cualquiera con el vínculo". Se lee **sin credenciales** (vista embebida + descarga pública). No va en el repo (es público). | `app/services/drive_invoices/` |
+| Estructura | `<año>/Facturas de venta/<mes>/<factura>/*.xml` y `<año>/Notas crédito/*.pdf`. Los nombres de meses y archivos no importan: se lee el contenido del XML. Solo se aceptan facturas emitidas por el NIT de Kleer (`KLEER_NIT`, por defecto 900957609). | `DriveInvoiceSync` |
+| Sincronización | Al abrir "Buscar factura" o Pagos, si la última lectura tiene más de 10 min: año actual y anterior, sin volver a leer carpetas ya leídas (~5 s). Botón "Leer Drive ahora" en Pagos. A mano: `bin/rails facturas:sync_drive` / `facturas:sync_drive_full` (todos los años, ~25 min). | `lib/tasks/facturas.rake` |
+| Notas crédito | Se lee el PDF y se busca el CUFE de la factura (la DIAN obliga a citarlo); respaldo: el número con prefijo. La factura citada queda **anulada** y no aparece ni en "Buscar factura" ni en Pagos. | `CreditNoteReader` |
+| Identificador | Las facturas se identifican por **número** (`FEKL10758`). `invoices.alegra_id` queda como referencia histórica. | migración `InvoiceNumberInsteadOfAlegraId` |
+| Buscar factura | Últimos `INVOICE_LOOKBACK_MONTHS` meses (12), no anuladas y no usadas al 100%, más las usadas en parte aunque sean viejas. | `FindAvailableInvoices` |
+| Pagos | Sección nueva: facturas pendientes → "Fue pagada" con fecha, monto y Retefuente / Reteica / Reteiva (0 a 3). **Las retenciones de los balances salen de acá** (antes venían de Alegra) y se aplican, prorrateadas, en los balances abiertos que usan la factura. Un balance solo se cierra con todas sus facturas pagadas. El pago de una factura usada en un balance cerrado no se puede cambiar. | `app/services/payments/` |
+| Migración desde Alegra | `bin/rails facturas:migrar_alegra` (después de `sync_drive_full`): completa el número en los balances y toma el estado de Alegra: cerrada → pagada (con sus retenciones), abierta → pendiente (con sus retenciones como sugerencia), anulada → anulada. Re-ejecutable: no pisa pagos cargados en Pagos. | `MigrateFromAlegra` |
+
+Pasaje a un ambiente (staging primero, como siempre):
+
+```bash
+kamal deploy -d staging
+kamal app exec -d staging 'bin/rails db:migrate'
+kamal app exec -d staging 'bin/rails facturas:sync_drive_full'   # ~25 min
+kamal app exec -d staging 'bin/rails facturas:migrar_alegra'
+```
+
+El orden importa en **producción**: correr `db:migrate` con la imagen
+nueva (`kamal app exec --version <v> 'bin/rails db:migrate'`) justo antes
+del deploy, como en el pasaje de seguridad; después del deploy,
+`facturas:sync_drive_full` y `facturas:migrar_alegra`. Hasta que termina la
+migración, Pagos muestra todo como pendiente y no se pueden cerrar balances
+con facturas. La migración tiene que correr **antes** de dar de baja Alegra:
+sin Alegra no hay forma de pasar los ids viejos a números. Es re-ejecutable,
+así que se puede repetir mientras Alegra siga activo (no pisa pagos cargados
+en Pagos).
+
+Pendiente de confirmar con Administración cuando haya facturas de
+Contapyme en el Drive: que suba el XML (no solo el PDF) y que la estructura
+de carpetas se mantenga.
 
 ## 5. Dominios y HTTPS
 
@@ -726,6 +772,10 @@ sesión; nadie trabaja en la carpeta principal; confirmar la rama y revisar
     desplegar y solo se despliega `main`. #59 y #60 mergeados (main =
     producción). Hook `pre-deploy` ahora bloquea staging si la versión no
     está en `origin/main`; CI arreglado.
+  - **Facturas de venta desde el Drive de contabilidad** en vez de Alegra
+    (PR #61), sección **Pagos** y migración desde Alegra.
+    Ver "Facturas de venta" en la sección 4. Probado en local (rspec + carga
+    completa del Drive); pendiente staging.
 
 ## 9. Checklist del corte
 

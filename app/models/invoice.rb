@@ -1,39 +1,19 @@
+# Uso (total o parcial, por porcentaje) de una factura de venta en un
+# balance. Se identifica por `number` (ej. FEKL10758). `alegra_id` es el id
+# interno que se usaba con Alegra; queda solo como referencia histórica.
 class Invoice < ApplicationRecord
   validates :percentage, presence: true
-  validates :invoice_id, presence: true
+  validates :number, presence: true, on: :create
   validates :date, presence: true
   belongs_to :income
   has_many :taxes, dependent: :destroy
 
-  def self.find_invoice_with_percentage_unused
-    invoices = Invoice.where.not(percentage: 100)
-    invoices_ids_to_remove = find_invoice_ids_to_remove(invoices)
-    invoices.select{|invoice| !invoices_ids_to_remove.include?(invoice.invoice_id)}
+  def sales_invoice
+    SalesInvoice.find_by(number: number) if number
   end
 
-  def self.find_invoice_with_percentage_used_at_all
-    invoices = Invoice.all
-    invoices_ids_to_remove = find_invoice_ids_to_remove(invoices)
-    invoices.select{|invoice| invoices_ids_to_remove.include?(invoice.invoice_id)}
-  end
-
-  private
-
-  def self.find_invoice_ids_to_remove(invoices)
-    totals = {}
-    invoices_ids_to_remove = []
-    invoices.each do |invoice|
-      if(totals[invoice.invoice_id])
-        totals[invoice.invoice_id] += invoice.percentage
-      else
-        totals[invoice.invoice_id] = invoice.percentage
-      end
-
-      if(totals[invoice.invoice_id] >= 100)
-        invoices_ids_to_remove << invoice.invoice_id
-      end
-    end
-
-    invoices_ids_to_remove
+  # {número => porcentaje usado sumando todos los balances}
+  def self.used_percentages
+    where.not(number: nil).group(:number).sum(:percentage).transform_values(&:to_f)
   end
 end

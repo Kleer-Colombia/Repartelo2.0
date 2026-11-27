@@ -9,6 +9,7 @@ import Taxes from '../components/taxes/Taxes'
 import Reports from '../components/reports/Reports'
 import DynamicReports from '../components/dynamic_reports/DynamicReports'
 import Clearings from '../components/clearing/Clearings'
+import Payments from '../components/payments/Payments'
 
 Vue.use(Router)
 
@@ -61,6 +62,11 @@ export default new Router({
             path: '/clearing',
             name: 'clearing',
             component: Clearings
+        },
+        {
+            path: '/pagos',
+            name: 'pagos',
+            component: Payments
         }
     ]
 })

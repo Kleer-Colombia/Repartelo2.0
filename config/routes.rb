@@ -18,7 +18,12 @@ Rails.application.routes.draw do
 
       post '/login', to: 'auths#login'
 
-      get '/invoice/', to: 'alegra#find_open_invoices'
+      get '/invoice/', to: 'invoices#find_available'
+      post '/invoice/sync', to: 'invoices#sync'
+
+      get '/payments/', to: 'payments#index'
+      post '/payments/:number', to: 'payments#create'
+      delete '/payments/:number', to: 'payments#destroy'
       get '/featureflags/', to: 'feature_flag#find_feature_flags'
 
       get '/saldos/:kleerer_id', to: 'saldos#find_saldos'

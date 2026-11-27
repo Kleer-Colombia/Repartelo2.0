@@ -1,16 +1,16 @@
 class CloseBalance
   prepend Service
 
-  attr_accessor :balance, :alegra_client, :saldos
+  attr_accessor :balance, :saldos
   def initialize(balance_id)
     @balance = Balance.find(balance_id)
-    @alegra_client = AlegraClientFactory.build
     #TODO move this for a service.
     @saldos =  SaldosActions.new
   end
 
   def call
-    if can_close_the_balance?
+    blocking = blocking_invoices
+    if blocking.empty?
       distributions = @balance.distributions
       distributions.each do |distribution|
         @saldos.add_saldo(distribution: distribution, balance: balance)
@@ -28,25 +28,40 @@ class CloseBalance
       end
 
     else
-      errors.add(:messages, " Las facturas asociadas al balance no se encuentran cerradas en Alegra.
- El balance solo se puede enviar a saldos cuando las facturas esten cerradas.")
+      messages = []
+      if Array(blocking[:unpaid]).any?
+        messages << "Marcá como pagadas en Pagos: #{blocking[:unpaid].join(', ')}."
+      end
+      if Array(blocking[:annulled]).any?
+        messages << "Estas facturas fueron anuladas con nota crédito; sacalas del balance: #{blocking[:annulled].join(', ')}."
+      end
+      errors.add(:messages, "El balance solo se puede enviar a saldos cuando sus facturas estén pagadas. #{messages.join(' ')}")
       errors.add(:error_code, :not_acceptable)
     end
   end
 
   private
 
-  def can_close_the_balance?
-    if ENV["RAILS_ENV"] == "development"
-      true
-    else
-      invoice_ids = @balance.get_invoice_ids
-      can_close = true
-      invoice_ids.each do |invoice_id|
-        can_close = @alegra_client.is_invoice_closed? invoice_id
+  # Facturas que impiden cerrar el balance (antes se consultaba si estaban
+  # cerradas en Alegra):
+  # - sin pago registrado en Pagos (que es de donde salen las retenciones);
+  # - anuladas con nota crédito (no se pueden pagar: hay que sacarlas).
+  # Las facturas de la época de Alegra que no están en el Drive (sin número
+  # o sin XML, ej. anteriores a la facturación electrónica) no bloquean:
+  # nadie las puede marcar como pagadas, y solo se pudieron agregar cuando
+  # Alegra era la fuente.
+  def blocking_invoices
+    result = { unpaid: [], annulled: [] }
+    @balance.incomes.map(&:invoice).compact.each do |invoice|
+      sales_invoice = invoice.sales_invoice
+      next unless sales_invoice
+
+      if sales_invoice.annulled?
+        result[:annulled] << sales_invoice.number
+      elsif !sales_invoice.paid?
+        result[:unpaid] << sales_invoice.number
       end
-      # binding.pry
-      can_close
     end
+    result.transform_values(&:uniq).reject { |_, numbers| numbers.empty? }
   end
 end

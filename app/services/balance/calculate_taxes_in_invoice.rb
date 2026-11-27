@@ -1,30 +1,33 @@
+# Impuestos y descuentos de una factura agregada a un balance, leídos de la
+# factura del Drive (SalesInvoice). Las retenciones salen del pago cargado
+# en Pagos; si todavía no está pagada, se agregan al registrar el pago
+# (ver ApplyPaymentRetentions).
 class CalculateTaxesInInvoice
   prepend Service
 
-  attr_accessor :alegra_invoice, :balance, :invoice, :trm
+  attr_accessor :sales_invoice, :balance, :invoice, :trm
 
   def initialize(data)
-    @alegra_invoice = data[:alegra_invoice]
+    @sales_invoice = data[:sales_invoice]
     @balance = data[:balance]
     @invoice = data[:invoice]
     @trm = data[:trm]
   end
 
   def call
-
     Rails.logger.info("calculating taxes in invoices")
+    @trm = @trm.to_f.positive? ? @trm.to_f : 1.0
     items = consolidate_items
     Rails.logger.info("items : #{items}")
     taxes = consolidate_taxes(items).values
 
-    taxes += add_invoice_taxes(@alegra_invoice).values
+    taxes += InvoiceRetentionTaxes.new(@invoice, @sales_invoice).build(@balance)
 
     save_taxes(taxes)
     save_discounts(items)
 
   rescue StandardError => error
-    puts error
-    puts error.backtrace
+    Rails.logger.error("#{error.class}: #{error.message}\n#{error.backtrace&.first(5)&.join("\n")}")
     errors.add(:messages, "error calculating invoice taxes: #{error.message}")
     errors.add(:error_code, :not_acceptable)
   end
@@ -48,18 +51,23 @@ class CalculateTaxesInInvoice
     end
 
     if(total_discounts > 0)
-      @balance.expenses.create!(description: "Descuentos en factura #{@alegra_invoice["id"]}",amount: total_discounts)
+      @balance.expenses.create!(description: "Descuentos en factura #{@sales_invoice.number}",amount: total_discounts)
     end
   end
 
+  # line_total ya viene neto de descuento (LineExtensionAmount del XML).
   def consolidate_items
-    @alegra_invoice['items'].map do |item|
-      item_summary = calculate_total_item(item)
-      item_summary[:taxes]  = find_taxes_per_item(item, item_summary[:total_item])
-
-      item_summary
+    @sales_invoice.lines.map do |line|
+      total_item = calculate_percentage(line['line_total'].to_f, @invoice.percentage)
+      {
+        total_item: total_item,
+        total_discount: calculate_percentage(line['discount'].to_f, @invoice.percentage),
+        taxes: (line['taxes'] || []).map do |tax|
+          percentage = tax['percent'].to_f
+          { name: tax['name'], percentage: percentage, amount: calculate_percentage(total_item, percentage) }
+        end
+      }
     end
-
   end
 
   def consolidate_taxes(items)
@@ -83,60 +91,9 @@ class CalculateTaxesInInvoice
     taxes
   end
 
-  def add_invoice_taxes(invoice)
-    taxes = {}
-    invoice['retentions']&.each do |retention|
-
-      name = TaxMaster.translate_tax_name(retention['name'])
-
-      Rails.logger.info("******* amount #{retention['amount'].to_f}")
-      amount = calculate_percentage( retention['amount'].to_f , @invoice.percentage)
-
-      if(name.to_s == "RETEIVA")
-        amount = amount * -1
-      end
-
-      name = "#{name} (#{retention['name']})"
-      taxes[name] = Tax.new(name: name,
-              amount: amount,
-              percentage: retention['percentage'],
-              invoice: @invoice)
-    end
-    Rails.logger.info("--- invoice taxes #{taxes}")
-    taxes
-  end
-
-  def find_taxes_per_item(item, total_item)
-    item['tax'].map do |tax|
-      percentage = tax['percentage'].to_f
-      { name: tax['name'],
-        percentage: percentage,
-        amount: calculate_percentage(total_item, percentage)
-      }
-    end
-  end
-
-  def calculate_total_item(item)
-    item_summary = {id: item['id']}
-    discount_factor = 1
-    if item['discount'].to_f > 0
-      discount_factor -= (item['discount'].to_f/100)
-    end
-
-    one_hundred_total = item['price'] * item['quantity'].to_f * discount_factor
-    discount_total = item['price'] * item['quantity'].to_f * (1-discount_factor)
-    total_for_balance = calculate_percentage(one_hundred_total,@invoice.percentage)
-    discount_total_for_balance = calculate_percentage(discount_total,@invoice.percentage)
-    item_summary[:total_item] = total_for_balance
-    item_summary[:total_discount] = discount_total_for_balance
-    item_summary[:discount] = item['discount'].to_f
-
-    item_summary
-  end
-
   #TODO duplicated
   def calculate_percentage(amount, percentage)
-    ((amount * percentage)/100).round(2)
+    ((amount * percentage.to_f)/100).round(2)
   end
 
 end

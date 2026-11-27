@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Datos inventados: nota crédito UBL que anula la factura TEST900. -->
+<CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:ID>NC1</cbc:ID>
+  <cbc:IssueDate>2026-11-10</cbc:IssueDate>
+  <cac:DiscrepancyResponse>
+    <cbc:ResponseCode>2</cbc:ResponseCode>
+    <cbc:Description>Anulación de factura electrónica</cbc:Description>
+  </cac:DiscrepancyResponse>
+  <cac:BillingReference>
+    <cac:InvoiceDocumentReference>
+      <cbc:ID>TEST900</cbc:ID>
+      <cbc:UUID schemeName="CUFE-SHA384">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</cbc:UUID>
+    </cac:InvoiceDocumentReference>
+  </cac:BillingReference>
+</CreditNote>

@@ -7,6 +7,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    Ascii85 (2.0.2)
     actioncable (5.2.8.1)
       actionpack (= 5.2.8.1)
       nio4r (~> 2.0)
@@ -61,11 +62,13 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.10.0)
       public_suffix (>= 2.0.2, < 8.0)
+    afm (0.2.2)
     arbre (1.7.0)
       activesupport (>= 3.0.0)
       ruby2_keywords (>= 0.0.2)
     arel (9.0.0)
     base64 (0.3.0)
+    bigdecimal (3.3.1)
     bindex (0.7.0)
     builder (3.3.0)
     byebug (11.0.1)
@@ -159,6 +162,7 @@ GEM
     has_scope (0.7.2)
       actionpack (>= 4.1)
       activesupport (>= 4.1)
+    hashery (2.2.2)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
     inherited_resources (1.10.0)
@@ -232,6 +236,11 @@ GEM
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     orm_adapter (0.5.0)
+    pdf-reader (2.16.0)
+      Ascii85 (>= 1.0, < 3.0, != 2.0.0)
+      afm (>= 0.2.1, < 2)
+      hashery (~> 2.0)
+      ttfunk
     pg (1.1.4)
     phantomjs (2.1.1.0)
     poltergeist (1.18.1)
@@ -361,6 +370,8 @@ GEM
     thread_safe (0.3.6)
     tilt (2.0.9)
     timeout (0.6.1)
+    ttfunk (1.8.0)
+      bigdecimal (~> 3.1)
     tzinfo (1.2.11)
       thread_safe (~> 0.1)
     uglifier (4.1.20)
@@ -404,6 +415,7 @@ DEPENDENCIES
   jwt (~> 2.10)
   listen (>= 3.0.5, < 3.2)
   money-rails
+  pdf-reader (~> 2.12)
   pg (>= 0.19.0.beta)
   phantomjs
   poltergeist
