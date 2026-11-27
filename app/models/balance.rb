@@ -10,6 +10,11 @@ class Balance < ApplicationRecord
   has_many :distributions, dependent: :destroy
   has_many :percentages, dependent: :destroy
 
+  # El id es el número de balance que ve la gente: se asigna consecutivo
+  # desde `counters` y no desde la secuencia de Postgres, que deja huecos.
+  # Un número borrado no se reutiliza (hay registros, como coaching_sessions
+  # y saldos, que pueden seguir apuntando a él).
+  before_create :assign_consecutive_number
 
 
   def total_incomes
@@ -208,6 +213,13 @@ class Balance < ApplicationRecord
   end
 
   private
+
+  def assign_consecutive_number
+    return if id.present?
+
+    self.id = Counter.next_value!('balances',
+                                  start_after: Balance.maximum(:id))
+  end
 
   def plus_data(data)
     result = 0

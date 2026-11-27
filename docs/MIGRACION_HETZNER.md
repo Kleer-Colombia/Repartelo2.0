@@ -678,6 +678,11 @@ Hallazgo de paso: `config/puma.rb` no configura `workers`, así que
   - **Heroku deja de usarse** (decisión de Pablo). Verificado antes que no
     hubo cambios de datos en Heroku después del dump del 2026-11-24. Las
     apps siguen prendidas hasta que se den de baja.
+  - **Balances con numeración consecutiva** (PR #58): el id dejaba de
+    salir de la secuencia de Postgres (saltaba de a 33) y pasa a salir de
+    la tabla `counters` (migración `CreateCounters`). Staging → prueba de
+    Pablo → producción con `b54234db`, migración corrida antes del deploy
+    con la imagen nueva. Contador en prod: 4179 = último balance.
 
 ## 9. Checklist del corte
 
