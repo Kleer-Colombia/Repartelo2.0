@@ -703,6 +703,9 @@ sesión; nadie trabaja en la carpeta principal; confirmar la rama y revisar
     con la imagen nueva. Contador en prod: 4179 = último balance.
   - **Hotfix Alegra** (incidencia 13): se restauran 5 archivos de Alegra
     borrados por error; staging → OK de Pablo → producción con `67fbb3e`.
+  - **Saldos: validación del alta manual** (formulario con campos
+    obligatorios; 422 con mensaje en español en vez de 500). Rebaseado
+    sobre el hotfix; staging → OK de Pablo → producción con `550fb72`.
 
 ## 9. Checklist del corte
 
