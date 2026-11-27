@@ -670,6 +670,9 @@ Hallazgo de paso: `config/puma.rb` no configura `workers`, así que
   Ruby 2.7/Rails 5.2 (Rails 5.2.8.1, puma 6, rack 2.2.26, nokogiri 1.15.7,
   devise 4.9.4, activeadmin 2.7…); HTTPS forzado + HSTS + CORS cerrado +
   logs en `info`. Ver "Seguridad de la app" en la sección 4.
+  Promovido a producción (`3d4ba2a`) con OK de Pablo: antes del deploy se
+  marcó admin a Kleer.co y se corrió la migración con la imagen nueva
+  (`kamal app exec --version <v> 'bin/rails db:migrate'`). PR #57.
 
 ## 9. Checklist del corte (cuando todo lo anterior esté ✅)
 
