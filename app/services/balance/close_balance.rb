@@ -10,7 +10,8 @@ class CloseBalance
 
   def call
     blocking = blocking_invoices
-    if blocking.empty?
+    distribution = @balance.distribution_check
+    if blocking.empty? && distribution[:ok]
       distributions = @balance.distributions
       distributions.each do |distribution|
         @saldos.add_saldo(distribution: distribution, balance: balance)
@@ -30,17 +31,33 @@ class CloseBalance
     else
       messages = []
       if Array(blocking[:unpaid]).any?
-        messages << "Marcá como pagadas en Pagos: #{blocking[:unpaid].join(', ')}."
+        messages << "Las facturas tienen que estar pagadas: marcalas en Pagos (#{blocking[:unpaid].join(', ')})."
       end
       if Array(blocking[:annulled]).any?
         messages << "Estas facturas fueron anuladas con nota crédito; sacalas del balance: #{blocking[:annulled].join(', ')}."
       end
-      errors.add(:messages, "El balance solo se puede enviar a saldos cuando sus facturas estén pagadas. #{messages.join(' ')}")
+      unless distribution[:ok]
+        messages << distribution_message(distribution)
+      end
+      errors.add(:messages, "No se puede enviar a saldos todavía. #{messages.join(' ')}")
       errors.add(:error_code, :not_acceptable)
     end
   end
 
   private
+
+  # La utilidad tiene que coincidir con la tabla de distribución, si no la
+  # diferencia queda sin repartir (o se reparte de más).
+  def distribution_message(check)
+    return 'Falta distribuir la utilidad: tocá "Distribuir".' unless check[:distributed_at_all]
+
+    "La distribución quedó desactualizada: hay #{money(check[:expected])} para repartir (utilidad + clearings) " \
+      "y la tabla de distribución suma #{money(check[:distributed])}. Volvé a tocar \"Distribuir\"."
+  end
+
+  def money(value)
+    ActiveSupport::NumberHelper.number_to_currency(value, unit: '$', delimiter: '.', separator: ',', precision: 2)
+  end
 
   # Facturas que impiden cerrar el balance (antes se consultaba si estaban
   # cerradas en Alegra):

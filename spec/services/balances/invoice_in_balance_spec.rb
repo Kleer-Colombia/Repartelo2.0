@@ -36,7 +36,12 @@ describe 'Factura en un balance' do
   end
 
   describe CloseBalance do
-    before { TaxMaster.find_or_create_by!(name: 'Clearing') { |t| t.value = 5; t.type_tax = 'post_utility' } }
+    before do
+      TaxMaster.find_or_create_by!(name: 'Clearing') { |t| t.value = 5; t.type_tax = 'post_utility' }
+      # La validación de la distribución tiene su propio spec
+      # (distribution_check_spec.rb); acá solo importan las facturas.
+      allow_any_instance_of(Balance).to receive(:distribution_check).and_return(ok: true, distributed_at_all: true)
+    end
 
     it 'no cierra el balance si alguna factura no está pagada en Pagos' do
       use_in_balance(balance, create_sales_invoice('F1'))
