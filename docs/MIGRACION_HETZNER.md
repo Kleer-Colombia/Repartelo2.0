@@ -57,9 +57,6 @@ Ninguno al 2026-11-25. (El bloqueo de GHCR se resolvió: ver incidencia 8.)
   detalle de hallazgos **no va en este repo** porque es público.
 - **Contraseña temporal** del usuario de administración (prod y QA): se
   cambia entre el 2026-11-26 y el 2026-11-27.
-- **CI roto**: GitHub Actions rechaza el workflow porque usa
-  `actions/cache@v1` (dado de baja). Falla antes de correr los tests; no
-  tiene que ver con la migración.
 
 ---
 
@@ -297,11 +294,19 @@ comillas** (lo lee `docker --env-file`, que no las quita). Contiene:
 (`/root/.kamal/apps/repartelo*/env/`), pero conviene guardar una copia en
 un gestor de contraseñas.
 
-### Regla: staging SIEMPRE antes que producción
+### Regla: PR → main → staging → producción
 
-Todo pasaje de ambientes sigue este orden:
+Desde 2026-11-27 se mergea **antes** de desplegar: staging y producción
+corren siempre un commit de `main` (antes se desplegaba la rama y se
+mergeaba después; eso dejaba `main` atrás de producción y obligaba a
+rebasear ramas en cadena).
+
+Todo cambio sigue este orden:
 
 ```bash
+# 0. PR a main con CI en verde + revisión → merge (OK del usuario).
+#    Desplegar desde main actualizado (git pull, o worktree en origin/main).
+
 # 1. Staging: buildea, pushea y despliega
 kamal deploy -d staging
 kamal app exec -d staging 'bin/rails db:migrate'   # si hay migraciones
@@ -326,15 +331,26 @@ niega a correrla en otro (incidencia 10). El ambiente se distingue por el
 
 | Caso | Resultado |
 |---|---|
-| Deploy a staging | pasa siempre |
+| Deploy a staging de una versión que **está en `origin/main`** | ✅ pasa |
+| Deploy a staging de una rama **sin mergear** o con cambios sin commitear (`_uncommitted_`) | ❌ se cancela, con instrucciones |
+| Emergencia acordada en staging | pasa con `-e KAMAL_ALLOW_UNMERGED=1` |
 | Deploy a producción de una versión que **corre en staging** | ✅ pasa |
 | Deploy a producción de una versión que **no** corre en staging | ❌ se cancela, con instrucciones |
-| `kamal rollback` en producción | pasa (vuelve a una versión que ya estuvo en prod) |
+| `kamal rollback` (staging o producción) | pasa (vuelve a una versión que ya estuvo desplegada) |
 | Emergencia acordada | pasa con `-e KAMAL_ALLOW_PROD_WITHOUT_STAGING=1` en el `docker run` (queda impreso en la salida) |
 
-Probado en los cinco casos el 2026-11-25. Consecuencia práctica: un
+Probado en los cinco casos el 2026-11-25 y, con la regla de `main`, en
+ocho casos el 2026-11-27. El hook hace `git fetch origin main` dentro del
+contenedor de Kamal: desde un worktree hay que montar también el `.git` del
+repo principal (`-v <repo>/.git:<repo>/.git`). Consecuencia práctica: un
 `kamal deploy` "pelado" a producción (que rebuildea) siempre se va a
 bloquear, porque la versión nueva no puede estar en staging. Es a propósito.
+
+### CI (GitHub Actions)
+
+`.github/workflows/ci.yml` corre `rspec` en cada PR y en cada push a
+`main`, con Postgres 17 y Ruby desde `.ruby-version`. Estuvo roto hasta el
+2026-11-27 (usaba `actions/cache@v1`, dado de baja por GitHub).
 
 ### Comandos habituales
 
@@ -706,6 +722,10 @@ sesión; nadie trabaja en la carpeta principal; confirmar la rama y revisar
   - **Saldos: validación del alta manual** (formulario con campos
     obligatorios; 422 con mensaje en español en vez de 500). Rebaseado
     sobre el hotfix; staging → OK de Pablo → producción con `550fb72`.
+  - **Cambio de flujo** (decisión de Pablo): se mergea a `main` ANTES de
+    desplegar y solo se despliega `main`. #59 y #60 mergeados (main =
+    producción). Hook `pre-deploy` ahora bloquea staging si la versión no
+    está en `origin/main`; CI arreglado.
 
 ## 9. Checklist del corte
 

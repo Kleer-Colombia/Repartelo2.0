@@ -1,7 +1,9 @@
 #!/bin/sh
-# Regla del proyecto: a producción solo llega una versión que ya está
-# corriendo (y fue probada) en staging. Ver CLAUDE.md y
-# docs/MIGRACION_HETZNER.md, sección "Promoción staging -> producción".
+# Reglas del proyecto (ver CLAUDE.md y docs/MIGRACION_HETZNER.md):
+#   1. A staging solo llega una versión que ya está en main (se mergea el PR
+#      ANTES de desplegar).
+#   2. A producción solo llega una versión que ya está corriendo (y fue
+#      probada) en staging.
 #
 # Kamal corre este hook antes de cada deploy, con estas variables:
 #   KAMAL_DESTINATION  vacío en producción, "staging" en staging
@@ -10,21 +12,51 @@
 #   KAMAL_HOSTS        hosts separados por coma
 #
 # Emergencia (saltear la verificación, queda registrado en la salida):
-#   pasar -e KAMAL_ALLOW_PROD_WITHOUT_STAGING=1 al docker run de kamal.
+#   pasar -e KAMAL_ALLOW_PROD_WITHOUT_STAGING=1 al docker run de kamal
+#   (producción), o -e KAMAL_ALLOW_UNMERGED=1 (staging).
 
 set -eu
 
-# Deploys a staging (u otro destino): sin restricción.
+# Rollback: vuelve a una versión que ya estuvo desplegada. No bloquearlo:
+# es la salida de emergencia.
+if [ "${KAMAL_COMMAND:-}" = "rollback" ]; then
+  echo "↩️  Rollback ${KAMAL_DESTINATION:-producción} a $KAMAL_VERSION: sin verificación."
+  exit 0
+fi
+
+# --- Staging: la versión tiene que estar en origin/main --------------------
+if [ "${KAMAL_DESTINATION:-}" = "staging" ]; then
+  if [ "${KAMAL_ALLOW_UNMERGED:-}" = "1" ]; then
+    echo "⚠️  KAMAL_ALLOW_UNMERGED=1: deploy a STAGING de una versión que puede no estar en main."
+    exit 0
+  fi
+  case "$KAMAL_VERSION" in
+    *_uncommitted_*)
+      echo "❌ $KAMAL_VERSION incluye cambios sin commitear. A staging solo va lo que está en main."
+      exit 1 ;;
+  esac
+  # El contenedor de kamal corre como root sobre archivos del usuario.
+  git config --global --add safe.directory '*' 2>/dev/null || true
+  if ! git fetch --quiet origin main; then
+    echo "❌ No pude actualizar origin/main (git fetch). Deploy a staging cancelado."
+    exit 1
+  fi
+  if git merge-base --is-ancestor "$KAMAL_VERSION" origin/main 2>/dev/null; then
+    echo "✅ $KAMAL_VERSION está en main. Sigue el deploy a staging."
+    exit 0
+  fi
+  echo "❌ La versión $KAMAL_VERSION no está en main."
+  echo "   Orden obligatorio: PR → revisión → merge a main → kamal deploy -d staging"
+  echo "   (desde main actualizado) → pruebas → OK → producción."
+  exit 1
+fi
+
+# Otros destinos (si se agregaran): sin restricción.
 if [ -n "${KAMAL_DESTINATION:-}" ]; then
   exit 0
 fi
 
-# Rollback: vuelve a una versión que ya estuvo en producción (y por lo tanto
-# ya pasó por staging). No bloquearlo: es la salida de emergencia.
-if [ "${KAMAL_COMMAND:-}" = "rollback" ]; then
-  echo "↩️  Rollback de producción a $KAMAL_VERSION: sin verificación de staging."
-  exit 0
-fi
+# --- Producción: la versión tiene que estar corriendo en staging -----------
 
 if [ "${KAMAL_ALLOW_PROD_WITHOUT_STAGING:-}" = "1" ]; then
   echo "⚠️  KAMAL_ALLOW_PROD_WITHOUT_STAGING=1: deploy a PRODUCCIÓN sin verificar staging."
