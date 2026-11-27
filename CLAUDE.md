@@ -1,8 +1,14 @@
 # Repártelo — instrucciones para Claude
 
-Rails 5.2 + Vue 2 (Webpacker). Hosting: Hetzner con Kamal (migrando desde
-Heroku). Toda la operación está en `docs/MIGRACION_HETZNER.md`: leerlo
-antes de tocar infraestructura o deploy, y mantenerlo actualizado.
+Rails 5.2 + Vue 2 (Webpacker). Hosting: **Hetzner con Kamal, y nada más**.
+Toda la operación está en `docs/MIGRACION_HETZNER.md`: leerlo antes de tocar
+infraestructura o deploy, y mantenerlo actualizado.
+
+**Heroku NO se usa más (desde 2026-11-27).** Los ambientes reales son
+`https://r.kleer.la` (producción) y `https://qa.r.kleer.la` (staging), en
+Hetzner. No desplegar, configurar, migrar ni probar nada en Heroku
+(`repartelo2`, `repartelo2-staging`); sus apps quedan solo hasta que se den
+de baja (decisión del usuario).
 
 ## Regla de deploy: staging SIEMPRE antes que producción
 

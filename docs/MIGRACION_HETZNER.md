@@ -4,6 +4,11 @@ Guía y bitácora de la migración de Repártelo desde Heroku a un server propio
 en Hetzner. El objetivo es **dejar de pagar Heroku**: tanto producción
 (`repartelo2`) como staging (`repartelo2-staging`) pasan a Hetzner.
 
+> **Desde 2026-11-27 Heroku NO se usa.** Producción y staging son
+> exclusivamente Hetzner (tabla de abajo). Todo cambio, deploy, migración o
+> prueba se hace ahí. Las apps de Heroku siguen existiendo solo hasta que se
+> den de baja (paso 8 del checklist del corte); no tocarlas.
+
 Última actualización: **2026-11-27**.
 
 | Ambiente | URL |
@@ -19,12 +24,12 @@ en Hetzner. El objetivo es **dejar de pagar Heroku**: tanto producción
 |---|---|
 | 1. Entorno de desarrollo local | ✅ Funcionando |
 | 2. Server en Hetzner (Docker, firewall, Postgres, backups) | ✅ Listo |
-| 3. Datos de producción cargados en Hetzner | ✅ Backup de Heroku del 2026-11-24 (habrá que refrescarlo antes del corte) |
+| 3. Datos de producción cargados en Hetzner | ✅ Backup de Heroku del 2026-11-24. Verificado el 2026-11-27: Heroku no tuvo cambios después (última modificación por tabla idéntica en ambos), no hace falta refrescar |
 | 4. Staging en Hetzner (base de datos) | ✅ Copia de producción cargada |
-| 5. Deploy de la app (prod y staging) | ✅ Ambos arriba desde 2026-11-25, con la misma imagen. Falta prueba funcional con usuarios (login, pantallas) |
+| 5. Deploy de la app (prod y staging) | ✅ Ambos arriba desde 2026-11-25 y en uso |
 | 6. Dominios + HTTPS | ✅ `r.kleer.la` y `qa.r.kleer.la`, certificados Let's Encrypt (vencen 2027-02-23, se renuevan solos) |
 | 6b. Regla staging → producción | ✅ En `CLAUDE.md` y forzada por el hook `.kamal/hooks/pre-deploy` (sección 4) |
-| 7. Corte: refrescar datos, avisar a usuarios, apagar Heroku | ⬜ Pendiente |
+| 7. Corte | ✅ Hetzner es el único ambiente desde 2026-11-27. ⬜ Dar de baja las apps de Heroku (decisión del usuario) |
 
 ### Pendientes que bloquean
 
@@ -32,9 +37,6 @@ Ninguno al 2026-11-25. (El bloqueo de GHCR se resolvió: ver incidencia 8.)
 
 ### Pendientes que no bloquean
 
-- **Prueba funcional** de staging (`https://qa.r.kleer.la`) con un usuario
-  real: login, pantallas principales, cálculos. Hasta ahora se verificó
-  infraestructura (HTTPS, `/up`, home, conexión a la base correcta, logs).
 - **SMTP / ActionMailer**: `config/deploy.yml` lista `SMTP_*` y
   `ACTION_MAILER_*`, pero ningún archivo de `config/` ni `app/` las lee
   (vienen de la plantilla genérica de `.env`). Confirmar si la app manda
@@ -74,7 +76,7 @@ Ninguno al 2026-11-25. (El bloqueo de GHCR se resolvió: ver incidencia 8.)
   `RAILS_MAX_THREADS`, `WEB_CONCURRENCY`, `PORT` (más las de
   `database.yml` en dev/test).
 
-### Heroku hoy (lo que se va a reemplazar)
+### Heroku (ya no se usa desde 2026-11-27; queda como referencia)
 
 | | Producción | Staging |
 |---|---|---|
@@ -673,19 +675,25 @@ Hallazgo de paso: `config/puma.rb` no configura `workers`, así que
   Promovido a producción (`3d4ba2a`) con OK de Pablo: antes del deploy se
   marcó admin a Kleer.co y se corrió la migración con la imagen nueva
   (`kamal app exec --version <v> 'bin/rails db:migrate'`). PR #57.
+  - **Heroku deja de usarse** (decisión de Pablo). Verificado antes que no
+    hubo cambios de datos en Heroku después del dump del 2026-11-24. Las
+    apps siguen prendidas hasta que se den de baja.
 
-## 9. Checklist del corte (cuando todo lo anterior esté ✅)
+## 9. Checklist del corte
 
-1. ✅ App de producción y staging desplegadas en Hetzner con HTTPS.
-   ⬜ Prueba funcional con usuarios en staging.
-2. ✅ Alegra configurado y probado. ⬜ Decidir CORS.
+Hecho el 2026-11-27: Heroku deja de usarse y Hetzner es el único ambiente.
+
+1. ✅ App de producción y staging desplegadas en Hetzner con HTTPS, en uso.
+2. ✅ Alegra configurado y probado. ✅ CORS cerrado (2026-11-27).
 3. ✅ Commit + sacar `builder.context: .`. ✅ Redeploy desde un commit
    (`b6a36f31`, staging → prod, 2026-11-26).
-4. Usar el `SECRET_KEY_BASE` de Heroku en `.env.kamal` (sesiones).
-5. Avisar a los usuarios de la nueva URL: **https://r.kleer.la**.
-6. `heroku maintenance:on`, refrescar datos (sección 6), promover la
-   versión validada en staging (sección 4), `db:migrate`, prueba de humo.
-7. Ventana de paralelismo con Heroku en mantenimiento (no apagado) por si
-   hay que volver atrás.
-8. Último backup de Heroku guardado fuera de Heroku; apagar dynos y
-   add-ons de `repartelo2` y `repartelo2-staging`.
+4. ➖ `SECRET_KEY_BASE` de Heroku: no hace falta (solo afectaba sesiones
+   abiertas en Heroku; los usuarios ya usan r.kleer.la).
+5. ✅ Usuarios usando **https://r.kleer.la**.
+6. ✅ Datos: Heroku sin cambios desde el dump del 2026-11-24 (verificado
+   el 2026-11-27 comparando la última modificación de cada tabla), así que
+   no hace falta refrescar.
+7. ➖ Paralelismo con Heroku: no se usa.
+8. ⬜ Dar de baja `repartelo2` y `repartelo2-staging` (dynos + add-ons
+   Postgres). El último dump de Heroku ya está guardado fuera de Heroku
+   (`~/backups/repartelo/`). Decisión del usuario: es irreversible.
