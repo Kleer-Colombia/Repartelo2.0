@@ -18,7 +18,7 @@ class SalesInvoice < ApplicationRecord
   def self.retention_kind_for(name)
     translated = TaxMaster.translate_tax_name(name.to_s).to_s
     return translated.downcase if %w[RETEFUENTE RETEICA RETEIVA].include?(translated)
-    return 'reteiva' if name.to_s =~ /iva/i
+    return 'reteiva' if name.to_s =~ /rete\s*iva|\biva\b/i
     return 'reteica' if name.to_s =~ /rete\s*ica|\bica\b/i
 
     'retefuente'

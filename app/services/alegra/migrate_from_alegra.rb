@@ -55,6 +55,15 @@ class MigrateFromAlegra
     @out.puts "Abiertas en Alegra que no están en el Drive (falta el XML): #{missing.sort.inspect}" if missing.any?
   end
 
+  # Alegra guarda las retenciones en la moneda de la factura; en Repártelo
+  # van en COP. Sin tasa de cambio, no se cargan (mejor vacío que en USD).
+  def in_cop(retentions, invoice)
+    return retentions unless invoice.foreign_currency?
+    return {} unless invoice.exchange_rate.to_f.positive?
+
+    retentions.transform_values { |value| (value * invoice.exchange_rate.to_f).round(2) }
+  end
+
   def map_balance_invoices(alegra)
     mapped = 0
     missing = []
@@ -80,8 +89,9 @@ class MigrateFromAlegra
         next
       end
 
+      retentions = in_cop(data[:retentions], invoice)
       changes = { alegra_status: data[:status] }
-      changes[:suggested_retentions] = data[:retentions] if invoice.suggested_retentions.blank? && data[:retentions].any?
+      changes[:suggested_retentions] = retentions if invoice.suggested_retentions.blank? && retentions.any?
       invoice.update_columns(changes)
 
       case data[:status]
@@ -90,7 +100,10 @@ class MigrateFromAlegra
           counts['cerrada, ya tenía pago'] += 1
         else
           invoice.create_payment!(source: 'alegra', amount: data[:total_paid].positive? ? data[:total_paid] : nil,
-                                  **data[:retentions].symbolize_keys)
+                                  **retentions.symbolize_keys)
+          # Los balances abiertos que la usan pasan a tener las retenciones
+          # del pago (las mismas que ya tenía Alegra).
+          ApplyPaymentRetentions.new(invoice.reload).call
           counts['cerrada → pagada'] += 1
         end
       when 'void'

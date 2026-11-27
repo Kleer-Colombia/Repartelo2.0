@@ -41,11 +41,19 @@ class DriveInvoiceSync
   # Drive no está configurado.
   def self.run_if_stale
     return nil unless configured?
+    # Antes de la carga completa (rake facturas:sync_drive_full) una lectura
+    # incremental baja dos años de XML: no se hace dentro de un request.
+    return DriveSyncRun.last_finished unless full_sync_done?
 
     last = DriveSyncRun.last_finished
     return last if last && last.finished_at > STALE_AFTER.ago
 
     new(mode: 'incremental').call
+  end
+
+  def self.full_sync_done?
+    DriveSyncRun.where(mode: 'full', error: nil).where.not(finished_at: nil)
+                .where("NOT (summary ? 'skipped')").exists?
   end
 
   def initialize(mode: 'incremental', client: DriveFolderClient.new, today: Date.current)
@@ -129,9 +137,11 @@ class DriveInvoiceSync
     downloads.each do |file, bytes|
       next if bytes.nil?
 
+      # Cualquier falla de un archivo queda registrada en ese archivo (se
+      # reintenta en la próxima corrida) y no frena al resto.
       begin
         process(file, bytes, path, kind)
-      rescue DianDocumentParser::Error, Nokogiri::SyntaxError, ActiveRecord::RecordInvalid, ArgumentError => e
+      rescue StandardError => e
         record_error(file, path, kind, e)
       end
     end
@@ -196,22 +206,31 @@ class DriveInvoiceSync
     upsert_file(file.id, name: file.name, path: path, kind: 'credit_note', status: 'processed', doc_refs: refs)
   end
 
-  # Marca como anuladas las facturas citadas por alguna nota crédito. Se
-  # corre siempre (no solo con notas nuevas) porque la nota puede haber
-  # llegado antes que la factura.
+  # Marca como anuladas las facturas citadas por notas crédito de
+  # anulación (las parciales —devolución, descuento, ajuste— no anulan).
+  # Recorre todas las notas en cada corrida: la nota puede haber llegado
+  # antes que la factura, y una nota puede citar varias facturas.
   def resolve_credit_notes
-    DriveFile.credit_notes.where(sales_invoice_id: nil).find_each do |note|
+    DriveFile.credit_notes.find_each do |note|
       refs = note.doc_refs || {}
-      invoice = SalesInvoice.find_by(cufe: refs['cufes']) if refs['cufes'].present?
-      invoice ||= SalesInvoice.find_by(number: refs['numbers']) if refs['numbers'].present?
-      next unless invoice
+      next unless refs['annulment'] == true
 
-      unless invoice.annulled?
-        invoice.update!(annulled_by: note.name, annulled_on: note.name.to_s[/\A\d{4}-\d{2}-\d{2}/]&.to_date)
+      invoices = SalesInvoice.where(cufe: refs['cufes'] || []).to_a
+      invoices = SalesInvoice.where(number: refs['numbers'] || []).to_a if invoices.empty?
+      invoices.reject(&:annulled?).each do |invoice|
+        invoice.update!(annulled_by: note.name, annulled_on: date_in_name(note.name))
         @summary['annulled'] += 1
       end
-      note.update!(sales_invoice: invoice)
+      note.update!(sales_invoice: invoices.first) if invoices.any? && note.sales_invoice_id.nil?
+    rescue StandardError => e
+      add_summary_error(note.name, "no se pudo aplicar la nota crédito: #{e.message}")
     end
+  end
+
+  def date_in_name(name)
+    Date.iso8601(name.to_s[/\A\d{4}-\d{2}-\d{2}/].to_s)
+  rescue ArgumentError
+    nil
   end
 
   def kind_for(section_kind)
@@ -254,7 +273,7 @@ class DriveInvoiceSync
 
   def safe_list(folder, path)
     list(folder.id)
-  rescue DriveFolderClient::Error, SocketError, Timeout::Error, SystemCallError, OpenSSL::SSL::SSLError => e
+  rescue StandardError => e
     add_summary_error(path, "no se pudo listar: #{e.message}")
     nil
   end
@@ -263,7 +282,7 @@ class DriveInvoiceSync
     bytes = @client.download(file.id)
     bump('files_downloaded')
     bytes
-  rescue DriveFolderClient::Error, SocketError, Timeout::Error, SystemCallError, OpenSSL::SSL::SSLError => e
+  rescue StandardError => e
     add_summary_error("#{path}/#{file.name}", "no se pudo descargar: #{e.message}")
     nil
   end

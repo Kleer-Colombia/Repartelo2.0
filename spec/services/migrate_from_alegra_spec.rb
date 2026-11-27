@@ -46,6 +46,23 @@ describe MigrateFromAlegra do
     expect(SalesInvoice.find_by(number: 'CONTA1').payment).to be_nil
   end
 
+  it 'aplica las retenciones del pago en los balances abiertos que usan la factura' do
+    invoice = create_sales_invoice('FEKL1')
+    balance = create_balance
+    use_in_balance(balance, invoice)
+
+    run
+
+    expect(balance.reload.taxes.where.not(invoice_id: nil).pluck(:name, :amount).to_h)
+      .to eq('RETEFUENTE' => 110, 'RETEICA' => 9, 'RETEIVA' => -20)
+  end
+
+  it 'pasa a COP las retenciones de facturas en otra moneda' do
+    create_sales_invoice('FEKL1', currency: 'USD', exchange_rate: 4000)
+    run
+    expect(SalesInvoice.find_by(number: 'FEKL1').payment.retefuente).to eq 440_000
+  end
+
   it 'es re-ejecutable y no pisa pagos cargados en Pagos' do
     invoice = create_sales_invoice('FEKL1')
     invoice.create_payment!(paid_on: Date.current, amount: 7, source: 'repartelo')

@@ -47,6 +47,21 @@ describe 'Factura en un balance' do
       expect(balance.reload.editable).to be true
     end
 
+    it 'una factura anulada bloquea el cierre con un mensaje para sacarla' do
+      use_in_balance(balance, create_sales_invoice('F1', annulled_by: 'NC 1'))
+      command = CloseBalance.new(balance.id).call
+
+      expect(command).not_to be_success
+      expect(command.errors[:messages].first).to include('sacalas del balance: F1')
+    end
+
+    it 'una factura de la época de Alegra que no está en el Drive no bloquea el cierre' do
+      income = balance.incomes.create!(description: 'Factura 531', amount: 1)
+      Invoice.new(income: income, alegra_id: 531, date: Date.current, percentage: 100).save!(validate: false)
+
+      expect(CloseBalance.new(balance.id).call).to be_success
+    end
+
     it 'cierra el balance cuando todas sus facturas están pagadas' do
       invoice = create_sales_invoice('F1')
       invoice.create_payment!(paid_on: Date.current, amount: 1, source: 'repartelo')

@@ -30,15 +30,21 @@ describe DianDocumentParser do
     expect(line['taxes']).to eq [{ 'name' => 'IVA', 'percent' => 19.0, 'amount' => 171.0 }]
   end
 
-  it 'toma las retenciones si el XML las informa (como sugerencia)' do
-    expect(DianDocumentParser.parse(attached).attributes[:suggested_retentions]).to eq('retefuente' => 99.0)
+  it 'toma las retenciones si el XML las informa (como sugerencia), pasadas a COP' do
+    # 99 USD a TRM 4000
+    expect(DianDocumentParser.parse(attached).attributes[:suggested_retentions]).to eq('retefuente' => 396_000.0)
   end
 
   it 'lee la factura anulada que referencia una nota crédito' do
     result = DianDocumentParser.parse(file_fixture('dian/credit_note.xml').read)
 
     expect(result.kind).to eq :credit_note
-    expect(result.references).to eq('cufes' => ['a' * 96], 'numbers' => ['TEST900'])
+    expect(result.references).to eq('cufes' => ['a' * 96], 'numbers' => ['TEST900'], 'annulment' => true)
+  end
+
+  it 'una nota crédito parcial (concepto distinto de 2) no es anulación' do
+    xml = file_fixture('dian/credit_note.xml').read.sub('<cbc:ResponseCode>2<', '<cbc:ResponseCode>1<')
+    expect(DianDocumentParser.parse(xml).references['annulment']).to be false
   end
 
   it 'falla con un XML inválido' do

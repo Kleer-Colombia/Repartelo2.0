@@ -38,7 +38,6 @@ class DriveFolderClient
 
   def download(file_id)
     body = get(format(DOWNLOAD_URL, checked_id(file_id)))
-    raise Error, "archivo #{file_id}: excede #{MAX_DOWNLOAD_BYTES} bytes" if body.bytesize > MAX_DOWNLOAD_BYTES
     # Si Google devuelve una página HTML (permiso, aviso, error) no es el archivo.
     if body.lstrip.start_with?('<!DOCTYPE html', '<html')
       raise Error, "archivo #{file_id}: Drive devolvió una página en vez del archivo (¿cambió el permiso de la carpeta?)"
@@ -55,22 +54,38 @@ class DriveFolderClient
     id
   end
 
+  ALLOWED_HOST_SUFFIXES = %w[.google.com .googleusercontent.com].freeze
+
+  # GET a Google (https), siguiendo redirecciones solo dentro de Google y
+  # cortando la descarga en cuanto pasa MAX_DOWNLOAD_BYTES.
   def get(url, redirects = 0)
     uri = URI(url)
-    raise Error, "URL no permitida: #{uri.host}" unless uri.host.to_s.end_with?('.google.com', 'googleusercontent.com')
-
-    response = Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: 10, read_timeout: 30) do |http|
-      http.get(uri.request_uri)
+    unless uri.scheme == 'https' && ALLOWED_HOST_SUFFIXES.any? { |suffix| uri.host.to_s.end_with?(suffix) }
+      raise Error, "URL no permitida: #{uri.host}"
     end
-    case response
-    when Net::HTTPSuccess
-      response.body.to_s.b
-    when Net::HTTPRedirection
-      raise Error, 'demasiadas redirecciones' if redirects >= MAX_REDIRECTS
 
-      get(URI.join(url, response['location']).to_s, redirects + 1)
-    else
-      raise Error, "Drive respondió #{response.code} para #{uri.path}"
+    Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: 10, read_timeout: 30) do |http|
+      http.request(Net::HTTP::Get.new(uri.request_uri)) do |response|
+        case response
+        when Net::HTTPSuccess
+          return read_limited(response)
+        when Net::HTTPRedirection
+          raise Error, 'demasiadas redirecciones' if redirects >= MAX_REDIRECTS
+
+          return get(URI.join(url, response['location']).to_s, redirects + 1)
+        else
+          raise Error, "Drive respondió #{response.code} para #{uri.path}"
+        end
+      end
     end
+  end
+
+  def read_limited(response)
+    body = +''.b
+    response.read_body do |chunk|
+      body << chunk
+      raise Error, "archivo de más de #{MAX_DOWNLOAD_BYTES} bytes" if body.bytesize > MAX_DOWNLOAD_BYTES
+    end
+    body
   end
 end

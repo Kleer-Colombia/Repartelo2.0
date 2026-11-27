@@ -58,6 +58,7 @@ class DianDocumentParser
 
   def invoice_attributes(root)
     currency = text(root, './DocumentCurrencyCode').presence || 'COP'
+    rate = currency == 'COP' ? nil : decimal(text(root, './PaymentExchangeRate/CalculationRate'))
     {
       number: required(root, './ID'),
       supplier_nit: text(root, './AccountingSupplierParty/Party/PartyTaxScheme/CompanyID').presence ||
@@ -67,7 +68,7 @@ class DianDocumentParser
       issue_date: Date.parse(required(root, './IssueDate')),
       due_date: date(text(root, './DueDate').presence || text(root, './PaymentMeans/PaymentDueDate')),
       currency: currency,
-      exchange_rate: currency == 'COP' ? nil : decimal(text(root, './PaymentExchangeRate/CalculationRate')),
+      exchange_rate: rate,
       client_name: customer_name(root),
       client_nit: text(root, './AccountingCustomerParty/Party/PartyTaxScheme/CompanyID').presence ||
         text(root, './AccountingCustomerParty/Party/PartyLegalEntity/CompanyID'),
@@ -75,7 +76,8 @@ class DianDocumentParser
       tax_total: root.xpath('./TaxTotal/TaxAmount').sum { |node| decimal(node.text) || 0 },
       total: decimal(text(root, './LegalMonetaryTotal/PayableAmount')) || 0,
       lines: root.xpath('./InvoiceLine').map { |line| line_attributes(line) },
-      suggested_retentions: withholdings(root)
+      # Las retenciones se cargan y aplican en COP (ver Pagos).
+      suggested_retentions: in_cop(withholdings(root), currency, rate)
     }
   end
 
@@ -119,11 +121,22 @@ class DianDocumentParser
     result
   end
 
+  # Montos en la moneda de la factura → COP. Sin tasa no se puede: mejor no
+  # sugerir nada que sugerir un monto en otra moneda como si fueran pesos.
+  def in_cop(amounts, currency, rate)
+    return amounts if currency == 'COP'
+    return {} unless rate&.positive?
+
+    amounts.transform_values { |value| (value * rate.to_f).round(2) }
+  end
+
   def credit_note_references(root)
     refs = root.xpath('./BillingReference/InvoiceDocumentReference')
     {
       'cufes' => refs.map { |ref| text(ref, './UUID') }.reject(&:blank?),
-      'numbers' => refs.map { |ref| text(ref, './ID') }.reject(&:blank?)
+      'numbers' => refs.map { |ref| text(ref, './ID') }.reject(&:blank?),
+      # Concepto DIAN de la nota: 2 = anulación; 1, 3, 4... son parciales.
+      'annulment' => root.xpath('./DiscrepancyResponse/ResponseCode').map { |code| code.text.strip }.include?('2')
     }
   end
 

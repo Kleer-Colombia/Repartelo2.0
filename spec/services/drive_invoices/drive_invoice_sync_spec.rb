@@ -55,7 +55,7 @@ describe DriveInvoiceSync do
 
   before do
     allow(CreditNoteReader).to receive(:references).with('%PDF-falso')
-                                                   .and_return('cufes' => ['a' * 96], 'numbers' => [])
+                                                   .and_return('cufes' => ['a' * 96], 'numbers' => [], 'annulment' => true)
   end
 
   def sync(mode = 'incremental')
@@ -70,7 +70,7 @@ describe DriveInvoiceSync do
     expect(invoice.drive_path).to eq '2026/Facturas de venta/11. Noviembre/TEST900 - Cliente'
     expect(invoice.annulled_by).to eq '2026-11-10 Nota credito No. 1.pdf'
     expect(invoice.annulled_on).to eq Date.new(2026, 11, 10)
-    expect(invoice.suggested_retentions).to eq('retefuente' => 99.0)
+    expect(invoice.suggested_retentions).to eq('retefuente' => 396_000.0)
     expect(SalesInvoice.where(number: 'OTRO1')).to be_empty
     expect(DriveFile.find_by(drive_id: 'XOTRO').error).to include('no es Kleer')
     expect(run.summary).to include('new_invoices' => 1, 'credit_notes' => 1, 'annulled' => 1)
@@ -103,9 +103,53 @@ describe DriveInvoiceSync do
     expect(SalesInvoice.find_by(number: 'TEST900')).to be_present
   end
 
-  it 'run_if_stale no sincroniza si la última corrida es reciente' do
-    DriveSyncRun.create!(mode: 'incremental', started_at: 1.minute.ago, finished_at: 1.minute.ago)
-    expect(DriveInvoiceSync).not_to receive(:new)
-    DriveInvoiceSync.run_if_stale
+  it 'una nota crédito parcial no anula la factura' do
+    allow(CreditNoteReader).to receive(:references).with('%PDF-falso')
+                                                   .and_return('cufes' => ['a' * 96], 'numbers' => [], 'annulment' => false)
+    sync
+    expect(SalesInvoice.find_by!(number: 'TEST900')).not_to be_annulled
+  end
+
+  it 'una nota crédito que cita varias facturas las anula a todas' do
+    other = SalesInvoice.create!(number: 'OTRA1', issue_date: Date.current, cufe: 'b' * 96)
+    allow(CreditNoteReader).to receive(:references).with('%PDF-falso')
+                                                   .and_return('cufes' => ['a' * 96, 'b' * 96], 'numbers' => [], 'annulment' => true)
+    sync
+    expect(SalesInvoice.find_by!(number: 'TEST900')).to be_annulled
+    expect(other.reload).to be_annulled
+  end
+
+  it 'un archivo que hace fallar al lector queda en error y no frena el resto' do
+    allow(CreditNoteReader).to receive(:references).and_raise(NoMethodError, 'PDF raro')
+    run = sync
+
+    expect(run.error).to be_nil
+    expect(SalesInvoice.find_by(number: 'TEST900')).to be_present
+    expect(DriveFile.find_by(drive_id: 'NC1').status).to eq 'error'
+  end
+
+  describe '.run_if_stale' do
+    def finished_run(mode, at)
+      DriveSyncRun.create!(mode: mode, started_at: at, finished_at: at)
+    end
+
+    it 'no sincroniza dentro de un request si todavía no hubo carga completa' do
+      expect(DriveInvoiceSync).not_to receive(:new)
+      DriveInvoiceSync.run_if_stale
+    end
+
+    it 'no sincroniza si la última corrida es reciente' do
+      finished_run('full', 1.day.ago)
+      finished_run('incremental', 1.minute.ago)
+      expect(DriveInvoiceSync).not_to receive(:new)
+      DriveInvoiceSync.run_if_stale
+    end
+
+    it 'sincroniza si ya hubo carga completa y la última corrida es vieja' do
+      finished_run('full', 1.day.ago)
+      sync_instance = instance_double(DriveInvoiceSync, call: :run)
+      expect(DriveInvoiceSync).to receive(:new).with(mode: 'incremental').and_return(sync_instance)
+      expect(DriveInvoiceSync.run_if_stale).to eq :run
+    end
   end
 end

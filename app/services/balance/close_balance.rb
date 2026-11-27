@@ -9,8 +9,8 @@ class CloseBalance
   end
 
   def call
-    unpaid = unpaid_invoice_numbers
-    if unpaid.empty?
+    blocking = blocking_invoices
+    if blocking.empty?
       distributions = @balance.distributions
       distributions.each do |distribution|
         @saldos.add_saldo(distribution: distribution, balance: balance)
@@ -28,20 +28,40 @@ class CloseBalance
       end
 
     else
-      errors.add(:messages, "El balance solo se puede enviar a saldos cuando sus facturas estén pagadas. " \
-                            "Marcalas como pagadas en Pagos: #{unpaid.join(', ')}")
+      messages = []
+      if Array(blocking[:unpaid]).any?
+        messages << "Marcá como pagadas en Pagos: #{blocking[:unpaid].join(', ')}."
+      end
+      if Array(blocking[:annulled]).any?
+        messages << "Estas facturas fueron anuladas con nota crédito; sacalas del balance: #{blocking[:annulled].join(', ')}."
+      end
+      errors.add(:messages, "El balance solo se puede enviar a saldos cuando sus facturas estén pagadas. #{messages.join(' ')}")
       errors.add(:error_code, :not_acceptable)
     end
   end
 
   private
 
-  # Facturas del balance sin pago registrado en Pagos (que es donde se
-  # cargan sus retenciones). Antes se consultaba el estado en Alegra.
-  def unpaid_invoice_numbers
-    invoices = @balance.incomes.map(&:invoice).compact
-    invoices.reject { |invoice| invoice.sales_invoice&.paid? }
-            .map { |invoice| invoice.number || "id Alegra #{invoice.alegra_id.to_i} (sin número)" }
-            .uniq
+  # Facturas que impiden cerrar el balance (antes se consultaba si estaban
+  # cerradas en Alegra):
+  # - sin pago registrado en Pagos (que es de donde salen las retenciones);
+  # - anuladas con nota crédito (no se pueden pagar: hay que sacarlas).
+  # Las facturas de la época de Alegra que no están en el Drive (sin número
+  # o sin XML, ej. anteriores a la facturación electrónica) no bloquean:
+  # nadie las puede marcar como pagadas, y solo se pudieron agregar cuando
+  # Alegra era la fuente.
+  def blocking_invoices
+    result = { unpaid: [], annulled: [] }
+    @balance.incomes.map(&:invoice).compact.each do |invoice|
+      sales_invoice = invoice.sales_invoice
+      next unless sales_invoice
+
+      if sales_invoice.annulled?
+        result[:annulled] << sales_invoice.number
+      elsif !sales_invoice.paid?
+        result[:unpaid] << sales_invoice.number
+      end
+    end
+    result.transform_values(&:uniq).reject { |_, numbers| numbers.empty? }
   end
 end
