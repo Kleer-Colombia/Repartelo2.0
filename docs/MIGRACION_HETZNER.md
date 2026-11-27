@@ -773,9 +773,25 @@ sesión; nadie trabaja en la carpeta principal; confirmar la rama y revisar
     producción). Hook `pre-deploy` ahora bloquea staging si la versión no
     está en `origin/main`; CI arreglado.
   - **Facturas de venta desde el Drive de contabilidad** en vez de Alegra
-    (PR #61), sección **Pagos** y migración desde Alegra.
-    Ver "Facturas de venta" en la sección 4. Probado en local (rspec + carga
-    completa del Drive); pendiente staging.
+    (PR #61), sección **Pagos** y migración desde Alegra. Ver "Facturas de
+    venta" en la sección 4. En la prueba de QA, Ginneth encontró que se
+    podía enviar a saldos con la distribución desactualizada (algo cambiaba
+    después de "Distribuir"); arreglado en el PR #64: tabla de distribución
+    = utilidad + lo que KleerCo cobra sobre los clearings (verificado en
+    297/297 balances), si no, no se envía a saldos; y Pagos redistribuye
+    solo los balances ya distribuidos.
+    Staging → prueba de Ginneth → OK de Pablo → producción con `d8afbfd`:
+    `db:migrate` con la imagen nueva antes del deploy, después
+    `facturas:sync_drive_full` (690 facturas, 101 notas crédito, 69
+    anuladas, 0 errores) y `facturas:migrar_alegra` (855 facturas de
+    balances pasaron a número; 685 pagadas; 5 pendientes, todas en
+    balances abiertos; ninguna de balance cerrado quedó pendiente).
+    Pendientes: FEKL10761 y FEKL10762 abiertas en Alegra sin XML en el
+    Drive (las tiene que subir Administración); 23 balances cerrados
+    históricos tienen la tabla de distribución distinta de la utilidad
+    (bug anterior, no se tocaron); el balance abierto #3882 tiene la
+    distribución desactualizada (hay que volver a "Distribuir" antes de
+    enviarlo a saldos).
 
 ## 9. Checklist del corte
 
