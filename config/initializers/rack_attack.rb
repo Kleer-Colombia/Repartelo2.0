@@ -42,9 +42,10 @@ class Rack::Attack
     login_identifier(req).to_s.strip.downcase.presence if login_request?(req)
   end
 
-  self.throttled_response_retry_after_header = true
-  self.throttled_responder = lambda do |_request|
-    [429, { "Content-Type" => "application/json" },
+  self.throttled_responder = lambda do |request|
+    match = request.env["rack.attack.match_data"] || {}
+    retry_after = match[:period] ? (match[:period] - (match[:epoch_time].to_i % match[:period])) : 60
+    [429, { "Content-Type" => "application/json", "Retry-After" => retry_after.to_s },
      [{ message: "Demasiados intentos. Probá de nuevo más tarde." }.to_json]]
   end
 end

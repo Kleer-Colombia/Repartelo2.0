@@ -35,6 +35,7 @@ RSpec.describe 'Login de la API', type: :request do
     expect(response).to have_http_status(:unauthorized)
     login('otro@example.com', 'x')
     expect(response).to have_http_status(:too_many_requests)
+    expect(response.headers['Retry-After'].to_i).to be_between(1, 60)
   end
 
   it 'corta con 429 al superar 10 intentos para el mismo usuario desde distintas IPs' do
