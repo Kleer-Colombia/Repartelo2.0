@@ -4,7 +4,7 @@ Guía y bitácora de la migración de Repártelo desde Heroku a un server propio
 en Hetzner. El objetivo es **dejar de pagar Heroku**: tanto producción
 (`repartelo2`) como staging (`repartelo2-staging`) pasan a Hetzner.
 
-Última actualización: **2026-11-26**.
+Última actualización: **2026-11-27**.
 
 | Ambiente | URL |
 |---|---|
@@ -35,11 +35,6 @@ Ninguno al 2026-11-25. (El bloqueo de GHCR se resolvió: ver incidencia 8.)
 - **Prueba funcional** de staging (`https://qa.r.kleer.la`) con un usuario
   real: login, pantallas principales, cálculos. Hasta ahora se verificó
   infraestructura (HTTPS, `/up`, home, conexión a la base correcta, logs).
-- **CORS** (`ALLOWED_ORIGINS`): en Heroku no está definida, así que la app
-  permite cualquier origen (`*`). En Hetzner se dejó igual (la variable no
-  se pasa). Si se quiere restringir: agregarla en `env.clear` de cada
-  `deploy*.yml` (no es secreta), confirmando antes que nada externo
-  consuma la API.
 - **SMTP / ActionMailer**: `config/deploy.yml` lista `SMTP_*` y
   `ACTION_MAILER_*`, pero ningún archivo de `config/` ni `app/` las lee
   (vienen de la plantilla genérica de `.env`). Confirmar si la app manda
@@ -365,6 +360,26 @@ imagen es el SHA del commit. Hasta el 2026-11-25 se usó temporalmente
 
 ---
 
+### Seguridad de la app (desde 2026-11-27)
+
+Lo que hay que saber para operar (el detalle del diagnóstico no va en este
+repo, que es público):
+
+| Tema | Cómo funciona | Dónde |
+|---|---|---|
+| Permisos | Cualquier usuario logueado **lee**; para **modificar** hace falta `users.admin = true` (si no, 403 "no tiene permisos"). | `app/controllers/api_controller.rb` |
+| Dar/quitar admin | `kamal app exec --reuse 'bin/rails runner "User.find_by!(email: %q(x@kleer.la)).update!(admin: true)"'` (con `-d staging` para QA) | — |
+| Límite de logins | 10 intentos/min y 30/h por IP, 10/h por usuario, en `/api/v1/login` y `/admin/login` → 429. El contador vive en memoria: **un deploy lo resetea**. | `config/initializers/rack_attack.rb` |
+| `/admin` | Bloquea la cuenta tras 5 intentos fallidos; se desbloquea sola en 1 h. Contraseñas de 12+ caracteres. | `config/initializers/devise.rb` |
+| HTTPS | `force_ssl` + HSTS (1 año, sin subdominios) + cookies `Secure`. `/up` excluido (healthcheck interno). | `config/environments/production.rb` |
+| CSP | Solo scripts/conexiones del propio dominio. Si algo deja de cargar, la consola del navegador dice `Refused to ...`. | `config/initializers/content_security_policy.rb` |
+| CORS | Cerrado en producción. Para abrirlo a otro dominio: `ALLOWED_ORIGINS` (separados por coma) en `env.clear` del `deploy*.yml`. | `config/initializers/cors.rb` |
+| Logs | Nivel `info`. Para diagnosticar: `LOG_LEVEL: debug` en `env.clear` y redeploy. | `config/environments/production.rb` |
+
+Pruebas automáticas de UI (Playwright headless): con la CSP activa,
+`page.wait_for_function` de Playwright falla (usa `eval`); usar
+`page.evaluate` en un bucle.
+
 ## 5. Dominios y HTTPS
 
 DNS creado el 2026-11-25 por los administradores de `kleer.la`:
@@ -648,6 +663,13 @@ Hallazgo de paso: `config/puma.rb` no configura `workers`, así que
     merge no dispara deploys (Heroku prod sin auto-deploy; Heroku staging
     con auto-deploy solo desde `dockerizing-prod`; Kamal es manual).
   - Diagnóstico de vulnerabilidades (ver "Pendientes que no bloquean").
+- **2026-11-27**: arreglos de seguridad inmediatos (rama `seguridad-inmediata`),
+  uno por uno y cada uno probado en staging: XSS + CSP; límite de logins y
+  bloqueo de cuentas de `/admin` (migración `AddLockableToAdminUsers`);
+  autorización (admin = Kleer.co); gems vulnerables actualizadas dentro de
+  Ruby 2.7/Rails 5.2 (Rails 5.2.8.1, puma 6, rack 2.2.26, nokogiri 1.15.7,
+  devise 4.9.4, activeadmin 2.7…); HTTPS forzado + HSTS + CORS cerrado +
+  logs en `info`. Ver "Seguridad de la app" en la sección 4.
 
 ## 9. Checklist del corte (cuando todo lo anterior esté ✅)
 
