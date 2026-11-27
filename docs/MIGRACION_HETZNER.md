@@ -792,6 +792,8 @@ sesión; nadie trabaja en la carpeta principal; confirmar la rama y revisar
     (bug anterior, no se tocaron); el balance abierto #3882 tiene la
     distribución desactualizada (hay que volver a "Distribuir" antes de
     enviarlo a saldos).
+  - **Kleerers: nombre único** (PR #63), staging → OK de Pablo →
+    producción con `c0034ba`.
 
 ## 9. Checklist del corte
 
