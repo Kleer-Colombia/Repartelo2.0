@@ -149,18 +149,7 @@
     },
     methods: {
       addColorToValue (value, id) {
-        var color = 'black'
-        if (value) {
-          if (Number(value) < 0) {
-            color = 'red'
-          } else {
-            color = 'green'
-          }
-          value = util.formatPrice(value)
-        }
-        return '<span style="color:' + color + '" id="' + id + '">' +
-          value +
-          '</span>'
+        return util.colorValue(value, id)
       },
       updatesaldo () {
         saldosConnector.find(this, this.kleerer.id)
@@ -169,11 +158,7 @@
         router.push(route)
       },
       formatReference (reference) {
-        if (util.validURL(reference)) {
-          return 'Referencia: <a target="_blank" href="' + reference + '"> aquí </a>'
-        } else {
-          return '<span>Ref: ' + reference + '</span>'
-        }
+        return util.formatReference(reference)
       }
     }
   }
