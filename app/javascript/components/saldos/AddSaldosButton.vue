@@ -3,22 +3,22 @@
     <el-button type="primary" @click="dialogFormVisible = true">Agregar registro</el-button>
 
     <el-dialog :title="'Agregando registro para ' + kleerer.name" :visible.sync="dialogFormVisible">
-      <el-form label-width="120px">
-        <el-form-item label="Monto">
+      <el-form ref="saldoForm" :model="saldo" :rules="rules" label-width="120px">
+        <el-form-item label="Monto" prop="amount">
           <input-money name="amount" :format="format" v-model="saldo.amount"></input-money>
           <el-radio v-model="format" label="income">Ingreso</el-radio>
           <el-radio v-model="format" label="expense">Egreso</el-radio>
         </el-form-item>
-        <el-form-item label="Concepto">
+        <el-form-item label="Concepto" prop="concept">
           <el-input placeholder="Concepto"
                     name="concept"
                     v-model="saldo.concept"></el-input>
         </el-form-item>
-        <el-form-item label="Referencia">
+        <el-form-item label="Referencia" prop="reference">
           <el-input name="reference"
                     placeholder="Referencia"
                     v-model="saldo.reference"></el-input>
-          Puede ser un link al soporte de este registro, una ruta del dropbox de K.Co o estar en blanco
+          Link al soporte de este registro o una ruta del dropbox de K.Co
         </el-form-item>
 
         <el-form-item label="Fecha">
@@ -59,6 +59,18 @@
     data() {
       return {
         dialogFormVisible: false,
+        // Mismas reglas que el servidor (app/models/saldo.rb): monto distinto
+        // de 0, concepto y referencia obligatorios. La fecha es opcional (hoy).
+        rules: {
+          amount: [{
+            validator: (rule, value, callback) => {
+              Number(value) ? callback() : callback(new Error('Ingresá un monto distinto de 0'))
+            },
+            trigger: 'blur'
+          }],
+          concept: [{ required: true, whitespace: true, message: 'El concepto es obligatorio', trigger: 'blur' }],
+          reference: [{ required: true, whitespace: true, message: 'La referencia es obligatoria', trigger: 'blur' }]
+        },
         format: "income",
         startDatePicker: {
           disabledDate(time) {
@@ -82,8 +94,11 @@
     },
     methods: {
       addSaldo() {
-        this.convertAmount()
-        saldosConnector.addSaldo(this, {saldo: this.saldo})
+        this.$refs.saldoForm.validate((valid) => {
+          if (!valid) return
+          this.convertAmount()
+          saldosConnector.addSaldo(this, {saldo: this.saldo})
+        })
       },
       convertAmount() {
         this.saldo.amount = Math.abs(this.saldo.amount)
@@ -101,6 +116,7 @@
             kleerer_id: this.kleerer.id
           }
         }
+        if (this.$refs.saldoForm) this.$refs.saldoForm.clearValidate()
         this.dialogFormVisible = false
       },
       validateDate(date){
