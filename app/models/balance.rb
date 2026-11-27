@@ -203,6 +203,29 @@ class Balance < ApplicationRecord
     return data
   end
 
+  # Tolerancia por redondeo (cada línea de la distribución se guarda con 2
+  # decimales).
+  DISTRIBUTION_TOLERANCE = 1
+
+  # Lo que muestra la tabla de distribución contra lo que hay para
+  # repartir. Después de "Distribuir" siempre coinciden:
+  #   tabla = utilidad + lo que KleerCo cobra sobre los clearings
+  # (verificado contra todos los balances recalculados). Si no coinciden,
+  # algo cambió después de distribuir (una retención en Pagos, un egreso,
+  # una factura...) y la distribución guardada quedó vieja.
+  def distribution_check
+    other_post_utility = TaxMaster.where(type_tax: :post_utility).where.not(name: :kleerCo).pluck(:name)
+    expected = resume[:utilidad].to_f + get_tax_of_clearings.to_f
+    distributed = distributions.sum { |d| d.amount.to_f } +
+                  taxes.select { |tax| other_post_utility.include?(tax.name) }.sum { |tax| tax.amount.to_f }
+    {
+      distributed_at_all: distributions.any?,
+      expected: expected.round(2),
+      distributed: distributed.round(2),
+      ok: distributions.any? && (expected - distributed).abs <= DISTRIBUTION_TOLERANCE
+    }
+  end
+
   def close_clearings
     tax = TaxMaster.find_by(name: "Clearing")
     tax_percentage = tax.value * 0.01
