@@ -45,7 +45,7 @@ class SaldosActions
     saldo = Saldo.new(amount: saldo[:amount], kleerer_id: saldo[:kleerer_id],
                       reference: saldo[:reference],
                       concept: saldo[:concept], created_at: saldo[:date], updated_at: saldo[:date])
-    saldo.save!
+    saldo.save!(context: :manual)
   end
 
   def calculate_totals data, summary

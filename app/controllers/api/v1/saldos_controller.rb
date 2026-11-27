@@ -26,21 +26,16 @@ module Api
             begin
               response = @actions.add_saldo saldo: params[:saldo]
               send_response response
+            rescue ActiveRecord::RecordInvalid => error
+              # Datos incompletos/inválidos: es un error del pedido (422), no
+              # del servidor. Mensaje en español para mostrar en pantalla.
+              halt_message(SaldoErrors.message_for(error.record), :unprocessable_entity)
             rescue StandardError => error
               halt_message("can't add saldo: #{error.message}", :internal_server_error)
             end
         end
       end
 
-      def add_saldos_pack
-        validate_parameters [:saldos_pack], params do
-          begin
-            response @actions.add_saldos_pack(params[:saldos_pack])
-          rescue StandardError => error
-            halt_message("can't add saldos: #{error.message}", :internal_server_error)
-          end
-        end
-      end
 
 
     end
