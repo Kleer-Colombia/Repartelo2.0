@@ -615,6 +615,24 @@ Hallazgo de paso: `config/puma.rb` no configura `workers`, así que
 
 ---
 
+### 13. Archivos de Alegra borrados por un commit en la carpeta equivocada
+
+Síntoma (2026-11-27, detectado por otra sesión revisando el código): en
+producción `b54234db`, "Buscar factura" (`/api/v1/invoice/`) daba 404 y
+cerrar balances / agregar ingresos desde facturas fallaban
+(`AlegraClientFactory` no definido).
+
+Causa: el commit `9f695ef` (solo docs, en teoría) se hizo en la carpeta
+principal del repo mientras otra sesión tenía allí su rama activa
+(`facturas-drive`) con 5 bajas de archivos en el índice (`git rm`); el
+commit se las llevó. Llegaron a `main` y a producción con el deploy de
+balances. Sin impacto en usuarios: nadie usó esas pantallas en las ~2 h.
+
+Solución: hotfix `67fbb3e` que restaura los 5 archivos desde `3d4ba2a`.
+Prevención: reglas de trabajo en paralelo en `CLAUDE.md` (un worktree por
+sesión; nadie trabaja en la carpeta principal; confirmar la rama y revisar
+`git status` / `git diff --cached --stat` antes de commitear).
+
 ## 8. Bitácora
 
 - **2025-05**: Heroku pasa a deploy por contenedor (`heroku.yml` + `Dockerfile`).
@@ -683,6 +701,8 @@ Hallazgo de paso: `config/puma.rb` no configura `workers`, así que
     la tabla `counters` (migración `CreateCounters`). Staging → prueba de
     Pablo → producción con `b54234db`, migración corrida antes del deploy
     con la imagen nueva. Contador en prod: 4179 = último balance.
+  - **Hotfix Alegra** (incidencia 13): se restauran 5 archivos de Alegra
+    borrados por error; staging → OK de Pablo → producción con `67fbb3e`.
 
 ## 9. Checklist del corte
 
