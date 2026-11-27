@@ -1,6 +1,9 @@
 module Api
   module V1
     class CoachingSessionsController < ApiController
+      # summary es POST pero, con updatePercentage=false, solo lee: el front lo
+      # llama al abrir un balance de coaching. Solo exige admin si actualiza.
+      skip_before_action :require_admin_for_writes, only: :summary
 
       def create
         validate_parameters [:balanceId, :coaching_session], params do
@@ -22,6 +25,7 @@ module Api
       end
 
       def summary
+        authorize!(:write) if ActiveModel::Type::Boolean.new.cast(params[:updatePercentage])
         validate_parameters [:id, :updatePercentage], params do
           execute_command(SummaryAndUpdateCoachingSession.new(
                             params[:id], params[:updatePercentage]))

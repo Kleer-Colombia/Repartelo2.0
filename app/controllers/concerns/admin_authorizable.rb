@@ -4,7 +4,10 @@ module AdminAuthorizable
     extend ActiveSupport::Concern
   
     included do
-      rescue_from NotPermittedException, with: -> { render json: { error: 'Not Permitted' }, status: :forbidden }
+      rescue_from NotPermittedException, with: lambda {
+        render json: { error: 'Not Permitted', message: 'Tu usuario no tiene permisos para modificar datos.' },
+               status: :forbidden
+      }
     end
   
     def authorize!(action)

@@ -4,7 +4,12 @@ Guía y bitácora de la migración de Repártelo desde Heroku a un server propio
 en Hetzner. El objetivo es **dejar de pagar Heroku**: tanto producción
 (`repartelo2`) como staging (`repartelo2-staging`) pasan a Hetzner.
 
-Última actualización: **2026-11-25**.
+> **Desde 2026-11-27 Heroku NO se usa.** Producción y staging son
+> exclusivamente Hetzner (tabla de abajo). Todo cambio, deploy, migración o
+> prueba se hace ahí. Las apps de Heroku siguen existiendo solo hasta que se
+> den de baja (paso 8 del checklist del corte); no tocarlas.
+
+Última actualización: **2026-11-27**.
 
 | Ambiente | URL |
 |---|---|
@@ -19,12 +24,12 @@ en Hetzner. El objetivo es **dejar de pagar Heroku**: tanto producción
 |---|---|
 | 1. Entorno de desarrollo local | ✅ Funcionando |
 | 2. Server en Hetzner (Docker, firewall, Postgres, backups) | ✅ Listo |
-| 3. Datos de producción cargados en Hetzner | ✅ Backup de Heroku del 2026-11-24 (habrá que refrescarlo antes del corte) |
+| 3. Datos de producción cargados en Hetzner | ✅ Backup de Heroku del 2026-11-24. Verificado el 2026-11-27: Heroku no tuvo cambios después (última modificación por tabla idéntica en ambos), no hace falta refrescar |
 | 4. Staging en Hetzner (base de datos) | ✅ Copia de producción cargada |
-| 5. Deploy de la app (prod y staging) | ✅ Ambos arriba desde 2026-11-25, con la misma imagen. Falta prueba funcional con usuarios (login, pantallas) |
+| 5. Deploy de la app (prod y staging) | ✅ Ambos arriba desde 2026-11-25 y en uso |
 | 6. Dominios + HTTPS | ✅ `r.kleer.la` y `qa.r.kleer.la`, certificados Let's Encrypt (vencen 2027-02-23, se renuevan solos) |
 | 6b. Regla staging → producción | ✅ En `CLAUDE.md` y forzada por el hook `.kamal/hooks/pre-deploy` (sección 4) |
-| 7. Corte: refrescar datos, avisar a usuarios, apagar Heroku | ⬜ Pendiente |
+| 7. Corte | ✅ Hetzner es el único ambiente desde 2026-11-27. ⬜ Dar de baja las apps de Heroku (decisión del usuario) |
 
 ### Pendientes que bloquean
 
@@ -32,14 +37,6 @@ Ninguno al 2026-11-25. (El bloqueo de GHCR se resolvió: ver incidencia 8.)
 
 ### Pendientes que no bloquean
 
-- **Prueba funcional** de staging (`https://qa.r.kleer.la`) con un usuario
-  real: login, pantallas principales, cálculos. Hasta ahora se verificó
-  infraestructura (HTTPS, `/up`, home, conexión a la base correcta, logs).
-- **CORS** (`ALLOWED_ORIGINS`): en Heroku no está definida, así que la app
-  permite cualquier origen (`*`). En Hetzner se dejó igual (la variable no
-  se pasa). Si se quiere restringir: agregarla en `env.clear` de cada
-  `deploy*.yml` (no es secreta), confirmando antes que nada externo
-  consuma la API.
 - **SMTP / ActionMailer**: `config/deploy.yml` lista `SMTP_*` y
   `ACTION_MAILER_*`, pero ningún archivo de `config/` ni `app/` las lee
   (vienen de la plantilla genérica de `.env`). Confirmar si la app manda
@@ -55,7 +52,14 @@ Ninguno al 2026-11-25. (El bloqueo de GHCR se resolvió: ver incidencia 8.)
   pasado por ahí. `db/repartelo20180513.backup` sigue suelto en el repo.
 - **Stack EOL**: Ruby 2.7.7, Rails 5.2, Node 14 y Debian bullseye están
   fuera de soporte. No bloquea la migración, pero es la deuda técnica más
-  grande.
+  grande. Diagnóstico de seguridad hecho el 2026-11-26 (396 alertas de
+  Dependabot + revisión de app y server); el plan se sigue aparte. El
+  detalle de hallazgos **no va en este repo** porque es público.
+- **Contraseña temporal** del usuario de administración (prod y QA): se
+  cambia entre el 2026-11-26 y el 2026-11-27.
+- **CI roto**: GitHub Actions rechaza el workflow porque usa
+  `actions/cache@v1` (dado de baja). Falla antes de correr los tests; no
+  tiene que ver con la migración.
 
 ---
 
@@ -72,7 +76,7 @@ Ninguno al 2026-11-25. (El bloqueo de GHCR se resolvió: ver incidencia 8.)
   `RAILS_MAX_THREADS`, `WEB_CONCURRENCY`, `PORT` (más las de
   `database.yml` en dev/test).
 
-### Heroku hoy (lo que se va a reemplazar)
+### Heroku (ya no se usa desde 2026-11-27; queda como referencia)
 
 | | Producción | Staging |
 |---|---|---|
@@ -358,6 +362,26 @@ imagen es el SHA del commit. Hasta el 2026-11-25 se usó temporalmente
 
 ---
 
+### Seguridad de la app (desde 2026-11-27)
+
+Lo que hay que saber para operar (el detalle del diagnóstico no va en este
+repo, que es público):
+
+| Tema | Cómo funciona | Dónde |
+|---|---|---|
+| Permisos | Cualquier usuario logueado **lee**; para **modificar** hace falta `users.admin = true` (si no, 403 "no tiene permisos"). | `app/controllers/api_controller.rb` |
+| Dar/quitar admin | `kamal app exec --reuse 'bin/rails runner "User.find_by!(email: %q(x@kleer.la)).update!(admin: true)"'` (con `-d staging` para QA) | — |
+| Límite de logins | 10 intentos/min y 30/h por IP, 10/h por usuario, en `/api/v1/login` y `/admin/login` → 429. El contador vive en memoria: **un deploy lo resetea**. | `config/initializers/rack_attack.rb` |
+| `/admin` | Bloquea la cuenta tras 5 intentos fallidos; se desbloquea sola en 1 h. Contraseñas de 12+ caracteres. | `config/initializers/devise.rb` |
+| HTTPS | `force_ssl` + HSTS (1 año, sin subdominios) + cookies `Secure`. `/up` excluido (healthcheck interno). | `config/environments/production.rb` |
+| CSP | Solo scripts/conexiones del propio dominio. Si algo deja de cargar, la consola del navegador dice `Refused to ...`. | `config/initializers/content_security_policy.rb` |
+| CORS | Cerrado en producción. Para abrirlo a otro dominio: `ALLOWED_ORIGINS` (separados por coma) en `env.clear` del `deploy*.yml`. | `config/initializers/cors.rb` |
+| Logs | Nivel `info`. Para diagnosticar: `LOG_LEVEL: debug` en `env.clear` y redeploy. | `config/environments/production.rb` |
+
+Pruebas automáticas de UI (Playwright headless): con la CSP activa,
+`page.wait_for_function` de Playwright falla (usa `eval`); usar
+`page.evaluate` en un bucle.
+
 ## 5. Dominios y HTTPS
 
 DNS creado el 2026-11-25 por los administradores de `kleer.la`:
@@ -633,18 +657,43 @@ Hallazgo de paso: `config/puma.rb` no configura `workers`, así que
   - Alegra configurado (credenciales de Heroku) en staging → probado (trae
     facturas abiertas) → producción (antes 401, ahora OK).
   - Commit de todo lo anterior; Kamal vuelve a buildear desde git.
+- **2026-11-26**:
+  - Primer deploy buildeado desde un commit: `b6a36f31` en staging →
+    pruebas (API, UI headless, logs) → OK de Pablo → producción con
+    `--skip-push --version` (el hook verificó la versión).
+  - PR #56 (`hetzner-kamal-setup` → `main`) mergeado. Verificado antes: el
+    merge no dispara deploys (Heroku prod sin auto-deploy; Heroku staging
+    con auto-deploy solo desde `dockerizing-prod`; Kamal es manual).
+  - Diagnóstico de vulnerabilidades (ver "Pendientes que no bloquean").
+- **2026-11-27**: arreglos de seguridad inmediatos (rama `seguridad-inmediata`),
+  uno por uno y cada uno probado en staging: XSS + CSP; límite de logins y
+  bloqueo de cuentas de `/admin` (migración `AddLockableToAdminUsers`);
+  autorización (admin = Kleer.co); gems vulnerables actualizadas dentro de
+  Ruby 2.7/Rails 5.2 (Rails 5.2.8.1, puma 6, rack 2.2.26, nokogiri 1.15.7,
+  devise 4.9.4, activeadmin 2.7…); HTTPS forzado + HSTS + CORS cerrado +
+  logs en `info`. Ver "Seguridad de la app" en la sección 4.
+  Promovido a producción (`3d4ba2a`) con OK de Pablo: antes del deploy se
+  marcó admin a Kleer.co y se corrió la migración con la imagen nueva
+  (`kamal app exec --version <v> 'bin/rails db:migrate'`). PR #57.
+  - **Heroku deja de usarse** (decisión de Pablo). Verificado antes que no
+    hubo cambios de datos en Heroku después del dump del 2026-11-24. Las
+    apps siguen prendidas hasta que se den de baja.
 
-## 9. Checklist del corte (cuando todo lo anterior esté ✅)
+## 9. Checklist del corte
 
-1. ✅ App de producción y staging desplegadas en Hetzner con HTTPS.
-   ⬜ Prueba funcional con usuarios en staging.
-2. ✅ Alegra configurado y probado. ⬜ Decidir CORS.
-3. ✅ Commit + sacar `builder.context: .`. ⬜ Redeploy desde un commit (staging → prod).
-4. Usar el `SECRET_KEY_BASE` de Heroku en `.env.kamal` (sesiones).
-5. Avisar a los usuarios de la nueva URL: **https://r.kleer.la**.
-6. `heroku maintenance:on`, refrescar datos (sección 6), promover la
-   versión validada en staging (sección 4), `db:migrate`, prueba de humo.
-7. Ventana de paralelismo con Heroku en mantenimiento (no apagado) por si
-   hay que volver atrás.
-8. Último backup de Heroku guardado fuera de Heroku; apagar dynos y
-   add-ons de `repartelo2` y `repartelo2-staging`.
+Hecho el 2026-11-27: Heroku deja de usarse y Hetzner es el único ambiente.
+
+1. ✅ App de producción y staging desplegadas en Hetzner con HTTPS, en uso.
+2. ✅ Alegra configurado y probado. ✅ CORS cerrado (2026-11-27).
+3. ✅ Commit + sacar `builder.context: .`. ✅ Redeploy desde un commit
+   (`b6a36f31`, staging → prod, 2026-11-26).
+4. ➖ `SECRET_KEY_BASE` de Heroku: no hace falta (solo afectaba sesiones
+   abiertas en Heroku; los usuarios ya usan r.kleer.la).
+5. ✅ Usuarios usando **https://r.kleer.la**.
+6. ✅ Datos: Heroku sin cambios desde el dump del 2026-11-24 (verificado
+   el 2026-11-27 comparando la última modificación de cada tabla), así que
+   no hace falta refrescar.
+7. ➖ Paralelismo con Heroku: no se usa.
+8. ⬜ Dar de baja `repartelo2` y `repartelo2-staging` (dynos + add-ons
+   Postgres). El último dump de Heroku ya está guardado fuera de Heroku
+   (`~/backups/repartelo/`). Decisión del usuario: es irreversible.

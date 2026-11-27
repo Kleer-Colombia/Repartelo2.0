@@ -45,11 +45,21 @@ Rails.application.configure do
   # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  # kamal-proxy termina TLS y avisa con X-Forwarded-Proto: https. /up queda
+  # excluido de la redirección porque el healthcheck de kamal-proxy entra por
+  # HTTP interno (si lo redirigiera, Kamal daría el contenedor por caído).
+  # HSTS sin subdominios: no afecta a otros hosts bajo kleer.la.
+  config.force_ssl = true
+  config.ssl_options = {
+    redirect: { exclude: ->(request) { request.path == "/up" } },
+    hsts: { expires: 1.year, subdomains: false, preload: false }
+  }
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
-  config.log_level = :debug
+  # :info (no :debug): no loguear cada query SQL con sus parámetros.
+  # Para diagnosticar, se puede subir con LOG_LEVEL=debug en el deploy.
+  config.log_level = ENV.fetch("LOG_LEVEL", "info").to_sym
 
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
@@ -85,6 +95,10 @@ Rails.application.configure do
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
+
+  # Rails 5.2 no aplica config.log_level a un logger propio (application.rb
+  # y el bloque de arriba definen config.logger): se fija explícitamente.
+  config.logger.level = ActiveSupport::Logger.const_get(config.log_level.to_s.upcase)
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
