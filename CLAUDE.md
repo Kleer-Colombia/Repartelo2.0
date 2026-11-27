@@ -37,7 +37,9 @@ este repo. Reglas:
    (`.claude/worktrees/<nombre>`) y en su propia rama. Nadie trabaja en la
    carpeta principal del repo: ahí puede haber otra sesión y los commits caen
    en la rama equivocada. Antes de commitear, confirmar con
-   `git branch --show-current` que la rama es la propia.
+   `git branch --show-current` que la rama es la propia y revisar
+   `git diff --cached --stat`: un commit se lleva TODO lo que esté en el
+   índice, también lo que preparó otra sesión (pasó: incidencia 13).
 2. **Staging es uno solo: un cambio por vez.** Hay un turno: una rama pasa
    staging → pruebas → OK del usuario → producción, y recién entonces sigue
    la próxima. Antes de desplegar a staging, avisar a las otras sesiones
