@@ -22,7 +22,27 @@ TaxMaster.find_or_create_by!(name: 'RETEICA')       { |t| t.value = 0.966; t.typ
 TaxMaster.find_or_create_by!(name: 'Utilidad')      { |t| t.value = 20;    t.type_tax = 'utility' }
 TaxMaster.find_or_create_by!(name: 'Reserva legal') { |t| t.value = 10;    t.type_tax = 'reservas' }
 
-FeatureFlag.find_or_create_by!(feature: FeatureFlag::ALEGRA_INVOICE_MOCK) { |f| f.status = true }
+FeatureFlag.find_or_create_by!(feature: 'balance-invoices') { |f| f.status = true }
+
+# Facturas de venta de ejemplo (en producción vienen del Drive de
+# contabilidad: DriveInvoiceSync). Una pendiente de pago y una pagada.
+def seed_sales_invoice(number, days_ago, client, subtotal)
+  SalesInvoice.find_or_create_by!(number: number) do |si|
+    si.issue_date = days_ago.days.ago.to_date
+    si.due_date = si.issue_date + 30
+    si.client_name = client
+    si.subtotal = subtotal
+    si.tax_total = (subtotal * 0.19).round
+    si.total = si.subtotal + si.tax_total
+    si.lines = [{ 'description' => 'Taller de ejemplo', 'quantity' => 1, 'price' => subtotal,
+                  'line_total' => subtotal, 'discount' => 0,
+                  'taxes' => [{ 'name' => 'IVA', 'percent' => 19.0, 'amount' => si.tax_total }] }]
+  end
+end
+seed_sales_invoice('DEMO1001', 20, 'Acme Corp', 10_000_000)
+pagada = seed_sales_invoice('DEMO1002', 45, 'Norte SAS', 4_000_000)
+pagada.payment || pagada.create_payment!(paid_on: 5.days.ago.to_date, amount: 4_281_360,
+                                         retefuente: 440_000, reteica: 38_640, reteiva: 0)
 
 # 'default' es un país fijo que usa la pantalla general de Clearings
 # (clearings#find_default_clearings busca Country.find_by(name: 'default')
@@ -93,4 +113,4 @@ AdminUser.find_or_create_by!(email: 'admin@repartelo.local') do |a|
   a.password_confirmation = 'repartelo123'
 end
 
-puts "Seed OK: #{Kleerer.count} kleerers, #{Balance.count} balances, #{Country.count} countries, #{Clearing.count} clearings, #{User.count} users, #{AdminUser.count} admin_users"
+puts "Seed OK: #{Kleerer.count} kleerers, #{Balance.count} balances, #{SalesInvoice.count} facturas, #{Country.count} countries, #{Clearing.count} clearings, #{User.count} users, #{AdminUser.count} admin_users"

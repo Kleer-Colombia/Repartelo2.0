@@ -40,10 +40,18 @@ env:
     RAILS_MAX_THREADS: 5
     WEB_CONCURRENCY: 2
     PORT: 3000
+    # "Buscar factura" en un balance muestra las facturas de estos últimos
+    # meses (app/services/invoices/find_available_invoices.rb).
+    INVOICE_LOOKBACK_MONTHS: 12
   secret:
     - SECRET_KEY_BASE
     - DATABASE_URL
-    # Integración con Alegra (app/services/alegra/alegra_client.rb)
+    # Id de la carpeta "Contabilidad" del Drive de Kleer Colombia, de donde
+    # salen las facturas de venta y notas crédito (DriveInvoiceSync). Va
+    # como secreto porque la carpeta está compartida por vínculo.
+    - DRIVE_CONTABILIDAD_FOLDER_ID
+    # Alegra: ya no se usa en el día a día; solo para la migración inicial
+    # (bin/rails facturas:migrar_alegra). Se puede quitar después.
     - ALEGRA_EMAIL
     - ALEGRA_TOKEN
     # ALLOWED_ORIGINS (CORS, config/initializers/cors.rb) NO se pasa a

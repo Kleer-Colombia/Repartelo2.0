@@ -1,16 +1,16 @@
 class CloseBalance
   prepend Service
 
-  attr_accessor :balance, :alegra_client, :saldos
+  attr_accessor :balance, :saldos
   def initialize(balance_id)
     @balance = Balance.find(balance_id)
-    @alegra_client = AlegraClientFactory.build
     #TODO move this for a service.
     @saldos =  SaldosActions.new
   end
 
   def call
-    if can_close_the_balance?
+    unpaid = unpaid_invoice_numbers
+    if unpaid.empty?
       distributions = @balance.distributions
       distributions.each do |distribution|
         @saldos.add_saldo(distribution: distribution, balance: balance)
@@ -28,25 +28,20 @@ class CloseBalance
       end
 
     else
-      errors.add(:messages, " Las facturas asociadas al balance no se encuentran cerradas en Alegra.
- El balance solo se puede enviar a saldos cuando las facturas esten cerradas.")
+      errors.add(:messages, "El balance solo se puede enviar a saldos cuando sus facturas estén pagadas. " \
+                            "Marcalas como pagadas en Pagos: #{unpaid.join(', ')}")
       errors.add(:error_code, :not_acceptable)
     end
   end
 
   private
 
-  def can_close_the_balance?
-    if ENV["RAILS_ENV"] == "development"
-      true
-    else
-      invoice_ids = @balance.get_invoice_ids
-      can_close = true
-      invoice_ids.each do |invoice_id|
-        can_close = @alegra_client.is_invoice_closed? invoice_id
-      end
-      # binding.pry
-      can_close
-    end
+  # Facturas del balance sin pago registrado en Pagos (que es donde se
+  # cargan sus retenciones). Antes se consultaba el estado en Alegra.
+  def unpaid_invoice_numbers
+    invoices = @balance.incomes.map(&:invoice).compact
+    invoices.reject { |invoice| invoice.sales_invoice&.paid? }
+            .map { |invoice| invoice.number || "id Alegra #{invoice.alegra_id.to_i} (sin número)" }
+            .uniq
   end
 end

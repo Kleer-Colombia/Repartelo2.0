@@ -118,6 +118,29 @@ ActiveRecord::Schema.define(version: 2026_11_27_160000) do
     t.index ["kleerer_id"], name: "index_distributions_on_kleerer_id"
   end
 
+  create_table "drive_files", force: :cascade do |t|
+    t.string "drive_id", null: false
+    t.string "name"
+    t.string "path"
+    t.string "kind", null: false
+    t.string "status", null: false
+    t.text "error"
+    t.jsonb "doc_refs", default: {}, null: false
+    t.bigint "sales_invoice_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["drive_id"], name: "index_drive_files_on_drive_id", unique: true
+    t.index ["sales_invoice_id"], name: "index_drive_files_on_sales_invoice_id"
+  end
+
+  create_table "drive_sync_runs", force: :cascade do |t|
+    t.string "mode", null: false
+    t.datetime "started_at", null: false
+    t.datetime "finished_at"
+    t.jsonb "summary", default: {}, null: false
+    t.text "error"
+  end
+
   create_table "expenses", force: :cascade do |t|
     t.bigint "balance_id"
     t.string "description", null: false
@@ -143,14 +166,30 @@ ActiveRecord::Schema.define(version: 2026_11_27_160000) do
     t.index ["balance_id"], name: "index_incomes_on_balance_id"
   end
 
+  create_table "invoice_payments", force: :cascade do |t|
+    t.bigint "sales_invoice_id", null: false
+    t.date "paid_on"
+    t.decimal "amount"
+    t.decimal "retefuente", default: "0.0", null: false
+    t.decimal "reteica", default: "0.0", null: false
+    t.decimal "reteiva", default: "0.0", null: false
+    t.string "source", default: "repartelo", null: false
+    t.string "registered_by"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sales_invoice_id"], name: "index_invoice_payments_on_sales_invoice_id", unique: true
+  end
+
   create_table "invoices", force: :cascade do |t|
     t.bigint "income_id"
-    t.decimal "invoice_id"
+    t.decimal "alegra_id"
     t.decimal "percentage"
     t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "number"
     t.index ["income_id"], name: "index_invoices_on_income_id"
+    t.index ["number"], name: "index_invoices_on_number"
   end
 
   create_table "kleerers", force: :cascade do |t|
@@ -225,6 +264,33 @@ ActiveRecord::Schema.define(version: 2026_11_27_160000) do
     t.index ["kleerer_id"], name: "index_saldos_on_kleerer_id"
   end
 
+  create_table "sales_invoices", force: :cascade do |t|
+    t.string "number", null: false
+    t.string "cufe"
+    t.string "type_code"
+    t.date "issue_date", null: false
+    t.date "due_date"
+    t.string "client_name"
+    t.string "client_nit"
+    t.string "currency", default: "COP", null: false
+    t.decimal "exchange_rate"
+    t.decimal "subtotal", default: "0.0", null: false
+    t.decimal "tax_total", default: "0.0", null: false
+    t.decimal "total", default: "0.0", null: false
+    t.jsonb "lines", default: [], null: false
+    t.jsonb "suggested_retentions", default: {}, null: false
+    t.string "drive_file_id"
+    t.string "drive_path"
+    t.string "annulled_by"
+    t.date "annulled_on"
+    t.string "alegra_status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cufe"], name: "index_sales_invoices_on_cufe"
+    t.index ["issue_date"], name: "index_sales_invoices_on_issue_date"
+    t.index ["number"], name: "index_sales_invoices_on_number", unique: true
+  end
+
   create_table "tax_masters", force: :cascade do |t|
     t.string "name"
     t.decimal "value"
@@ -256,6 +322,8 @@ ActiveRecord::Schema.define(version: 2026_11_27_160000) do
     t.boolean "admin", default: false
   end
 
+  add_foreign_key "drive_files", "sales_invoices"
+  add_foreign_key "invoice_payments", "sales_invoices"
   add_foreign_key "kleerers_objectives", "kleerers"
   add_foreign_key "kleerers_objectives", "objectives"
   add_foreign_key "taxes", "invoices"

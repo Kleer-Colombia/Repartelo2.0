@@ -145,15 +145,16 @@ class Balance < ApplicationRecord
     master_taxes
   end
 
-  def get_invoice_ids
-    incomes.select {|income| income.invoice&.invoice_id}.map {|income| income.invoice&.invoice_id}
+  # Números de las facturas de venta usadas en este balance.
+  def get_invoice_numbers
+    incomes.map { |income| income.invoice&.number }.compact
   end
 
   # by default select the most older date
   def find_invoice_date
     incomes_ids = incomes.map { |income| income.id }
     older_invoice = Invoice.where(income_id: incomes_ids).order(:date).first
-    {invoice_id: older_invoice&.invoice_id, invoice_date: older_invoice&.date}
+    {invoice_number: older_invoice&.number, invoice_date: older_invoice&.date}
   end
 
   def find_in_invoice_taxes

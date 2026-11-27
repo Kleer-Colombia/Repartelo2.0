@@ -11,6 +11,8 @@
                 </el-menu-item>
                 <el-menu-item index="saldo" id="Saldos" style="float: left;" @click="route_to('/saldos')">Saldos
                 </el-menu-item>
+                <el-menu-item index="pagos" id="Pagos" style="float: left;" @click="route_to('/pagos')">Pagos
+                </el-menu-item>
                 <el-menu-item index="impuesto" id="Impuestos" style="float: left;" @click="route_to('/impuestos')">Impuestos
                 </el-menu-item>
                 <el-menu-item index="reporte" id="Reportes" style="float: left;" @click="route_to('/reportes')">Reportes

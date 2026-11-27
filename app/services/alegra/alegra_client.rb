@@ -1,37 +1,42 @@
-require 'base64'
-
+# Cliente de la API de Alegra. Repártelo ya no consulta Alegra en el uso
+# diario (las facturas vienen del Drive de contabilidad); queda solo para la
+# migración inicial: `bin/rails facturas:migrar_alegra` (lib/tasks/facturas.rake).
 class AlegraClient
+  API_INVOICES = 'https://app.alegra.com/api/v1/invoices/'.freeze
+  PAGE_SIZE = 30 # máximo que acepta la API
 
-  TOKEN = Base64.strict_encode64("#{ENV['ALEGRA_EMAIL']}:#{ENV['ALEGRA_TOKEN']}")
-  API_INVOICES = 'https://app.alegra.com/api/v1/invoices/'
-
-  def get_invoices(status)
-    response = connection.get("?status=#{status}")
-    raise StandardError, "Error conectando con alegra: #{response.status}" unless response.status == 200
-    JSON.parse(response.body)
+  def self.configured?
+    ENV['ALEGRA_EMAIL'].present? && ENV['ALEGRA_TOKEN'].present?
   end
 
-  def get_invoice(invoice_id)
-    response = connection.get("?id=#{invoice_id}")
-    raise StandardError, "Error conectando con alegra: #{response.status}" unless response.status == 200
-    JSON.parse(response.body)[0]
-  end
+  # Recorre todas las facturas (todas las páginas), de la más vieja a la más nueva.
+  def each_invoice
+    return enum_for(:each_invoice) unless block_given?
 
-  def is_invoice_closed?(invoice_id)
-    invoice = get_invoice(invoice_id)
-    invoice['status'] == 'closed'
+    start = 0
+    loop do
+      page = get(start: start, limit: PAGE_SIZE, order_field: 'id', order_direction: 'ASC')
+      page.each { |invoice| yield invoice }
+      break if page.size < PAGE_SIZE
+
+      start += PAGE_SIZE
+      sleep 0.3 # la API limita pedidos por minuto
+    end
   end
 
   private
 
-  def headers
-    {Authorization: "Basic #{TOKEN}"}
+  def get(params)
+    response = connection.get('', params)
+    raise StandardError, "Error conectando con Alegra: #{response.status}" unless response.status == 200
+
+    JSON.parse(response.body)
   end
 
   def connection
-    conn = Faraday.new(url: API_INVOICES)
-    conn.authorization :Basic, TOKEN
-    conn
+    @connection ||= Faraday.new(url: API_INVOICES) do |conn|
+      conn.basic_auth(ENV.fetch('ALEGRA_EMAIL'), ENV.fetch('ALEGRA_TOKEN'))
+      conn.adapter Faraday.default_adapter
+    end
   end
-
 end

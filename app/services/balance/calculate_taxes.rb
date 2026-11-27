@@ -2,6 +2,22 @@ class CalculateTaxes
   prepend Service
 
   attr_accessor :taxes,:total_clearings, :clearings, :expenses, :incomes, :save_in, :taxes_amounts, :taxes_percentages, :incomes_post_iva, :iva
+
+  # Cálculo de impuestos de un balance guardando el resultado en él (lo que
+  # hace el endpoint POST /balance/taxes).
+  def self.for_balance(balance)
+    balance_iva = balance.taxes.find { |e| e.name == 'IVA' }
+    iva = balance_iva ? balance_iva.amount : 0
+
+    new(taxes: TaxMaster.all_taxes(balance),
+        incomes: balance.total_incomes,
+        incomes_post_iva: (balance.total_incomes - iva),
+        iva: iva,
+        expenses: balance.total_expenses,
+        clearings: balance.clearings,
+        total_clearings: balance.total_clearings,
+        save_in: balance)
+  end
   def initialize(data)
     @taxes = data[:taxes]
     @incomes = data[:incomes] ? data[:incomes] : 0

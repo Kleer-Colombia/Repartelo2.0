@@ -36,6 +36,9 @@ gem 'jwt', '~> 2.10'
 gem 'devise'
 gem 'activeadmin'
 gem 'faraday', '~> 0.15.4'
+# Lee el texto de las notas crédito en PDF del Drive de contabilidad
+# (app/services/drive_invoices/credit_note_reader.rb).
+gem 'pdf-reader', '~> 2.12'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

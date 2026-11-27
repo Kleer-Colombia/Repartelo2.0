@@ -12,7 +12,7 @@ class AddIncome
                                  invoice_percentage: invoice_percentage))
     if is_invoice
       add_service(CalculateTaxesInInvoice.new(balance: balance,
-                                              alegra_invoice: Service::INSPECT,
+                                              sales_invoice: Service::INSPECT,
                                               invoice: Service::INSPECT,
                                               trm: service_income['trm']))
     end

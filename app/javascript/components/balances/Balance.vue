@@ -248,7 +248,7 @@ export default {
       filterByInvoice(){
         return this.balances.filter(balance => {
           return balance.incomes.some(income => {
-            return income.description.includes('Factura') && income.description.includes(this.filters.keyword.toLowerCase())
+            return income.description.includes('Factura') && income.description.toLowerCase().includes(this.filters.keyword.toLowerCase())
           })
         })
       }
