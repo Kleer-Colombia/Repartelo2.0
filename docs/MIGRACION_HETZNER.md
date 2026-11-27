@@ -4,7 +4,7 @@ Guía y bitácora de la migración de Repártelo desde Heroku a un server propio
 en Hetzner. El objetivo es **dejar de pagar Heroku**: tanto producción
 (`repartelo2`) como staging (`repartelo2-staging`) pasan a Hetzner.
 
-Última actualización: **2026-11-25**.
+Última actualización: **2026-11-26**.
 
 | Ambiente | URL |
 |---|---|
@@ -55,7 +55,14 @@ Ninguno al 2026-11-25. (El bloqueo de GHCR se resolvió: ver incidencia 8.)
   pasado por ahí. `db/repartelo20180513.backup` sigue suelto en el repo.
 - **Stack EOL**: Ruby 2.7.7, Rails 5.2, Node 14 y Debian bullseye están
   fuera de soporte. No bloquea la migración, pero es la deuda técnica más
-  grande.
+  grande. Diagnóstico de seguridad hecho el 2026-11-26 (396 alertas de
+  Dependabot + revisión de app y server); el plan se sigue aparte. El
+  detalle de hallazgos **no va en este repo** porque es público.
+- **Contraseña temporal** del usuario de administración (prod y QA): se
+  cambia entre el 2026-11-26 y el 2026-11-27.
+- **CI roto**: GitHub Actions rechaza el workflow porque usa
+  `actions/cache@v1` (dado de baja). Falla antes de correr los tests; no
+  tiene que ver con la migración.
 
 ---
 
@@ -633,13 +640,22 @@ Hallazgo de paso: `config/puma.rb` no configura `workers`, así que
   - Alegra configurado (credenciales de Heroku) en staging → probado (trae
     facturas abiertas) → producción (antes 401, ahora OK).
   - Commit de todo lo anterior; Kamal vuelve a buildear desde git.
+- **2026-11-26**:
+  - Primer deploy buildeado desde un commit: `b6a36f31` en staging →
+    pruebas (API, UI headless, logs) → OK de Pablo → producción con
+    `--skip-push --version` (el hook verificó la versión).
+  - PR #56 (`hetzner-kamal-setup` → `main`) mergeado. Verificado antes: el
+    merge no dispara deploys (Heroku prod sin auto-deploy; Heroku staging
+    con auto-deploy solo desde `dockerizing-prod`; Kamal es manual).
+  - Diagnóstico de vulnerabilidades (ver "Pendientes que no bloquean").
 
 ## 9. Checklist del corte (cuando todo lo anterior esté ✅)
 
 1. ✅ App de producción y staging desplegadas en Hetzner con HTTPS.
    ⬜ Prueba funcional con usuarios en staging.
 2. ✅ Alegra configurado y probado. ⬜ Decidir CORS.
-3. ✅ Commit + sacar `builder.context: .`. ⬜ Redeploy desde un commit (staging → prod).
+3. ✅ Commit + sacar `builder.context: .`. ✅ Redeploy desde un commit
+   (`b6a36f31`, staging → prod, 2026-11-26).
 4. Usar el `SECRET_KEY_BASE` de Heroku en `.env.kamal` (sesiones).
 5. Avisar a los usuarios de la nueva URL: **https://r.kleer.la**.
 6. `heroku maintenance:on`, refrescar datos (sección 6), promover la
