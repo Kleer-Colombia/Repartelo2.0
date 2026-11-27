@@ -7,14 +7,16 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'rails', '~> 5.2.3'
+gem 'rails', '~> 5.2.8'
 gem 'pg', '>= 0.19.0.beta'
 
 #Old repositories
-gem 'mimemagic', github: 'mimemagicrb/mimemagic', ref: '01f92d86d15d85cfd0f20dabd025dcbd36a8a60f'
+# mimemagic (fijado desde git) ya no hace falta: solo lo pedía marcel 0.3
+# (Rails 5.2.3); Rails 5.2.8 usa marcel 1.x, que no depende de él.
 gem 'bcrypt', git: 'https://github.com/codahale/bcrypt-ruby.git', :require => 'bcrypt'
 
-gem 'puma', '3.12.0'
+# 6.x es la última serie compatible con Ruby 2.7 (puma 7 pide Ruby 3).
+gem 'puma', '~> 6.4'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'webpacker', '~> 5.x'
@@ -29,7 +31,7 @@ gem 'rack-cors'
 # Ver config/initializers/rack_attack.rb
 gem 'rack-attack', '~> 6.7'
 gem 'money-rails'
-gem 'jwt'
+gem 'jwt', '~> 2.10'
 # ActiveAdmin
 gem 'devise'
 gem 'activeadmin'
