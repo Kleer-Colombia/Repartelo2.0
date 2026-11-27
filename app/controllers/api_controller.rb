@@ -3,6 +3,11 @@ class ApiController < ActionController::API
   include AdminAuthorizable
   include TokenAuthenticatable
 
+  # Autorización: cualquier usuario logueado puede leer (GET/HEAD); para
+  # modificar datos (POST/PUT/PATCH/DELETE) hace falta users.admin = true.
+  # Va después de authenticate_user (lo registra TokenAuthenticatable).
+  before_action :require_admin_for_writes
+
   rescue_from ActiveRecord::RecordNotFound, with: -> { render json: { error: 'Not found' }, status: :not_found }
 
   def validate_parameters(parameters, array)
@@ -35,6 +40,10 @@ class ApiController < ActionController::API
   end
 
   private
+
+  def require_admin_for_writes
+    authorize!(request.get? || request.head? ? :read : :write)
+  end
 
   #TODO inspeccionar los hash y los arrays y hacerlos recursivos?
   def validate(parameter)

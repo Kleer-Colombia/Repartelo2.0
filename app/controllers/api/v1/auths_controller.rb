@@ -3,6 +3,7 @@ module Api
     module V1
       class AuthsController < ApiController
         skip_before_action :authenticate_user
+        skip_before_action :require_admin_for_writes
 
         def login
           validate_parameters [:username,:password], params do
