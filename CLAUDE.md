@@ -28,6 +28,36 @@ Todo pasaje de ambientes sigue este orden, sin excepciones (tampoco para
 Si staging falla, producción no se toca. El hook `.kamal/hooks/pre-deploy`
 bloquea un deploy a producción cuya versión no esté corriendo en staging.
 
+## Trabajo en paralelo (varias sesiones a la vez)
+
+Es habitual que haya varias sesiones de Claude trabajando al mismo tiempo en
+este repo. Reglas:
+
+1. **Un worktree por sesión.** Cada sesión trabaja en su propio worktree
+   (`.claude/worktrees/<nombre>`) y en su propia rama. Nadie trabaja en la
+   carpeta principal del repo: ahí puede haber otra sesión y los commits caen
+   en la rama equivocada. Antes de commitear, confirmar con
+   `git branch --show-current` que la rama es la propia.
+2. **Staging es uno solo: un cambio por vez.** Hay un turno: una rama pasa
+   staging → pruebas → OK del usuario → producción, y recién entonces sigue
+   la próxima. Antes de desplegar a staging, avisar a las otras sesiones
+   (`ListAgents` / `SendMessage`) y confirmar que nadie está probando ahí.
+3. **Cada deploy incluye lo que ya está en producción.** Antes de desplegar,
+   rebasear la rama sobre la última rama que llegó a producción. Si no, al
+   promover se **borra de producción** lo que subió otra sesión (el hook
+   `pre-deploy` no lo detecta: solo compara contra staging). Al terminar un
+   pasaje a producción, avisar a las otras sesiones rama, SHA y versión.
+4. **Integrar en `main` cuanto antes.** PRs chicos que se mergean apenas
+   pasan producción; así el punto 3 se cumple solo y se puede desplegar
+   siempre desde `main`.
+5. **Recursos locales compartidos:** el contenedor de desarrollo
+   (`at_repartelo-repartelo-1`) monta solo la carpeta principal, y la base
+   de test es una sola. Para tests desde un worktree, usar un contenedor
+   aparte con el worktree montado y una base propia (`DATABASE_URL=…/repartelo_test_<rama>`).
+   No reiniciar ni modificar contenedores de otra sesión.
+6. **Migraciones:** avisar a las otras sesiones al crear una, porque
+   staging y producción las reciben en el orden en que llegan los deploys.
+
 ## Otras reglas del proyecto
 
 - Secretos reales solo en `.env.kamal` (no trackeado). Nunca mostrarlos ni
