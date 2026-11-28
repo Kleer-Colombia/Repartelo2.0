@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Kamal desde su imagen oficial de Docker (sin Ruby local).
+#
+# Equivale a la función de docs/MIGRACION_HETZNER.md ("Kamal sin instalar
+# Ruby"), y además funciona desde un worktree (.claude/worktrees/<nombre>):
+#   - monta el repo principal en la misma ruta, porque el .git de un
+#     worktree apunta al repo principal;
+#   - toma .env.kamal del repo principal (no está trackeado, no se copia);
+#   - marca el repo como safe.directory (el contenedor corre como root).
+#
+# Uso: correr desde el repo o un worktree, en el commit a desplegar
+# (para staging, un worktree en origin/main):
+#   script/kamal deploy -d staging
+# En la máquina de Pablo, ~/.local/bin/kamal llama a este script.
+set -euo pipefail
+
+COMMON_DIR=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || {
+  echo "kamal: correr desde el repo de Repártelo o uno de sus worktrees" >&2; exit 1; }
+REPO=$(dirname "$COMMON_DIR")
+
+[ -f "$REPO/.env.kamal" ] || { echo "kamal: falta $REPO/.env.kamal" >&2; exit 1; }
+[ -n "${SSH_AUTH_SOCK:-}" ] || { echo "kamal: no hay agente SSH (ssh-add)" >&2; exit 1; }
+
+TTY=()
+[ -t 0 ] && [ -t 1 ] && TTY=(-it)
+
+exec docker run --rm "${TTY[@]}" \
+  -v "$REPO:$REPO" -w "$PWD" \
+  -v "$SSH_AUTH_SOCK:/ssh-agent" -e SSH_AUTH_SOCK=/ssh-agent \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$HOME/.ssh/known_hosts:/root/.ssh/known_hosts:ro" \
+  -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0='*' \
+  --env-file "$REPO/.env.kamal" \
+  ghcr.io/basecamp/kamal:latest "$@"

@@ -255,6 +255,11 @@ kamal() {
 Requisitos: estar en la carpeta del proyecto, tener la clave SSH cargada
 en el agente (`ssh-add -l`) y el archivo `.env.kamal` completo.
 
+Desde 2026-11-27 está también como script en el repo, **`script/kamal`**,
+que además funciona desde un worktree (monta el repo principal en la misma
+ruta y toma su `.env.kamal`). En la máquina de Pablo, `~/.local/bin/kamal`
+llama a ese script.
+
 ### Archivos de configuración
 
 | Archivo | En git | Qué tiene |
@@ -496,6 +501,29 @@ scp ~/backups/repartelo/corte.dump root@2.29.193.202:/root/corte.dump
 ssh root@2.29.193.202 'docker exec -i repartelo-postgres pg_restore -U repartelo -d repartelo_production --clean --if-exists --no-owner --no-acl < /root/corte.dump && rm /root/corte.dump'
 ```
 
+### Copiar producción a staging
+
+Para que staging vuelva a ser copia exacta de producción (por ejemplo,
+después de una prueba de QA que dejó datos). Reemplaza **toda** la base de
+staging; avisar antes a las otras sesiones y pedir OK al usuario. Los datos
+no salen del server:
+
+```bash
+ssh root@2.29.193.202 'set -o pipefail; docker exec repartelo-postgres pg_dump -U repartelo -Fc repartelo_production \
+  | docker exec -i repartelo-staging-postgres pg_restore -U repartelo -d repartelo_staging --clean --if-exists --no-owner --no-acl'
+```
+
+Verificar con un conteo por tabla en las dos bases (deben ser idénticos) y
+reiniciar la app de staging **con la versión explícita**, para que no quede
+con conexiones a tablas recreadas:
+
+```bash
+kamal app boot -d staging --version "$(kamal app version -d staging | grep -Eo '^[0-9a-f]{40}')"
+```
+
+(Sin `--version`, `kamal app boot` deja staging reportando `latest-staging`
+en vez del SHA, y el hook de producción no puede comparar versiones.)
+
 ### Backups automáticos en el server
 
 - Script: `script/backup_postgres.sh` (en el repo), instalado en el server
@@ -695,6 +723,26 @@ Prevención: reglas de trabajo en paralelo en `CLAUDE.md` (un worktree por
 sesión; nadie trabaja en la carpeta principal; confirmar la rama y revisar
 `git status` / `git diff --cached --stat` antes de commitear).
 
+### 14. Imagen de desarrollo vieja y disco raíz lleno (máquina local)
+
+Síntoma (2026-11-27): al recrear `at_repartelo-repartelo-1` (para agregarle
+una variable de entorno) el contenedor no arrancó: faltaban gemas (Rails
+5.2.8.1, puma 6, pdf-reader…). `docker compose build` fallaba en apt con
+"invalid signature" y `bundle install` con "No space left on device".
+
+Causa: las gemas de la actualización de seguridad se habían instalado a mano
+dentro del contenedor, no en la imagen (de julio), así que se perdieron al
+recrearlo. Y el disco raíz de la máquina (`/dev/sda4`) estaba al 100%: los
+errores de apt eran por falta de espacio. Además, el `DATABASE_URL` del
+`.env` (trackeado) hace que test y desarrollo usen la misma base
+(`dockerized_app`).
+
+Solución: Pablo liberó espacio. El override instala las gemas al arrancar
+(`command:` con `bundle install`). Los tests desde un worktree corren en un
+contenedor aparte con base y volumen de gemas propios (ver `CLAUDE.md`,
+"Herramientas locales"). Pendiente: reconstruir la imagen (ver
+`docs/HANDOFF.md`).
+
 ## 8. Bitácora
 
 - **2025-05**: Heroku pasa a deploy por contenedor (`heroku.yml` + `Dockerfile`).
@@ -773,9 +821,29 @@ sesión; nadie trabaja en la carpeta principal; confirmar la rama y revisar
     producción). Hook `pre-deploy` ahora bloquea staging si la versión no
     está en `origin/main`; CI arreglado.
   - **Facturas de venta desde el Drive de contabilidad** en vez de Alegra
-    (PR #61), sección **Pagos** y migración desde Alegra.
-    Ver "Facturas de venta" en la sección 4. Probado en local (rspec + carga
-    completa del Drive); pendiente staging.
+    (PR #61), sección **Pagos** y migración desde Alegra. Ver "Facturas de
+    venta" en la sección 4. En la prueba de QA, Ginneth encontró que se
+    podía enviar a saldos con la distribución desactualizada (algo cambiaba
+    después de "Distribuir"); arreglado en el PR #64: tabla de distribución
+    = utilidad + lo que KleerCo cobra sobre los clearings (verificado en
+    297/297 balances), si no, no se envía a saldos; y Pagos redistribuye
+    solo los balances ya distribuidos.
+    Staging → prueba de Ginneth → OK de Pablo → producción con `d8afbfd`:
+    `db:migrate` con la imagen nueva antes del deploy, después
+    `facturas:sync_drive_full` (690 facturas, 101 notas crédito, 69
+    anuladas, 0 errores) y `facturas:migrar_alegra` (855 facturas de
+    balances pasaron a número; 685 pagadas; 5 pendientes, todas en
+    balances abiertos; ninguna de balance cerrado quedó pendiente).
+    Lo que quedó pendiente está en `docs/HANDOFF.md`.
+  - **Kleerers: nombre único** (PR #63), staging → OK de Pablo →
+    producción con `c0034ba`.
+  - **Staging vuelve a ser copia de producción** (después de la prueba de
+    QA): `pg_dump | pg_restore` dentro del server, 30 tablas y 28.664 filas
+    idénticas; app reiniciada con `--version` explícito.
+  - **Estado y continuidad**: se adopta el método de HomeSuite/tas-king:
+    `docs/STATUS.md` (solo publicaciones y verificaciones) y
+    `docs/HANDOFF.md` (lo pendiente fuera de un PR); reglas en `CLAUDE.md`.
+    Desde acá, las publicaciones se registran en STATUS.
 
 ## 9. Checklist del corte
 
